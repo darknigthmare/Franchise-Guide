@@ -1,0 +1,423 @@
+{
+  "base_archive": "FranchiseGuide_Suite_V0_10.rar",
+  "target": "0.13.0",
+  "excluded": [
+    "MANIFEST.sha256",
+    "desktop/dist",
+    "desktop/resources",
+    "docs/CHANGED_FILES.md",
+    "docs/CHANGE_AUDIT.json",
+    "tests/results",
+    "web-preview"
+  ],
+  "changes": [
+    {
+      "path": "CHANGELOG.md",
+      "status": "modified",
+      "before_sha256": "e5a50c4abd33e12a5133a42ec95fa16fba1124352190df3f9827d291dbf6800a",
+      "after_sha256": "9fe3baf8160ba70ef8963440ebe7297585b97623f124bec1a4c7eaec4a68d3c4"
+    },
+    {
+      "path": "FranchiseGuide-Web.bat",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "ffdfeff6e4d0d82ff5e5f387c092deee2d192e5535c31a3a78a2b55025dc7e6e"
+    },
+    {
+      "path": "FranchiseGuide-Web.sh",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "c8851ea1ab87db20ee309e46ca11cf5c40944838bfbcd838ad994718f3d7d9dc"
+    },
+    {
+      "path": "README.md",
+      "status": "modified",
+      "before_sha256": "0166731adc5cdb54b724fef71b12a73a5ac193944cba5c166389319b98b56a3b",
+      "after_sha256": "0202528d1fe5074a3febe6d5f2d37ae2a6b6b986eadbb93e0d6953941020b248"
+    },
+    {
+      "path": "RELEASE.json",
+      "status": "modified",
+      "before_sha256": "6062ba0facb7a519d3841d11cf40e56852195557388f64765ae5845cc40d04eb",
+      "after_sha256": "42dcb6949d2303dd34d9229136314dd389cbc676200c5b36567549c8d69c8ef5"
+    },
+    {
+      "path": "START_HERE.md",
+      "status": "modified",
+      "before_sha256": "e0e71cdda6252ecfcece4694ef92bf2a0f396857fb65a14a28653542c3b5b1dd",
+      "after_sha256": "1e25fcf6417ff52917e004b426a3c02dd6367dc2abab4636a1a7ac27541ba9b5"
+    },
+    {
+      "path": "UPSTREAM_NOTICE.md",
+      "status": "modified",
+      "before_sha256": "16c7b6a5d61f619ac13c0d2a1c14c45b6eb55c698fe5d2c49c6c037151faa19f",
+      "after_sha256": "e68965009ba889c48a204bc2473755cb55b371cf15b30abcdec3ef0745723dbf"
+    },
+    {
+      "path": "app/build.gradle.kts",
+      "status": "modified",
+      "before_sha256": "51bce3c6ed5036bf36e7787d5da6a601bafeec2e7ca814c5bc4d8767ea66a56d",
+      "after_sha256": "432f3d5f34542b540f3d557e67eb00e9ac0acb057f23c1b34c99426bd5056e16"
+    },
+    {
+      "path": "app/src/main/java/com/franchiseguide/app/data/AppRepository.kt",
+      "status": "modified",
+      "before_sha256": "4e1d2067cb40b370c83bf2ea018068667a3bf9a2be513d5b310ed3858a124352",
+      "after_sha256": "3a016b74b92fe784225057aca04303826d269a7a2bc3334174017662142e485c"
+    },
+    {
+      "path": "app/src/main/java/com/franchiseguide/app/data/GamingCodec.kt",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "0fe8854353e4055a0900c0364b89d28cf99850128173277e5322852662b52b19"
+    },
+    {
+      "path": "app/src/main/java/com/franchiseguide/app/data/SeriesGuideImporter.kt",
+      "status": "modified",
+      "before_sha256": "6d88aa3915b20a2648adad738a33bdd3635e6d4b63704bf34f3ebfc3296f726b",
+      "after_sha256": "9a4de05a5c4732ccf6a553f7961cac249a79e24869fc0fb952635da5c03974be"
+    },
+    {
+      "path": "app/src/main/java/com/franchiseguide/app/model/GamingModels.kt",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "f616e1f6ef409b1db63374c64175f4a3ff5b2e21b364183c9e8664b357d86bb0"
+    },
+    {
+      "path": "app/src/main/java/com/franchiseguide/app/model/ReleaseRules.kt",
+      "status": "modified",
+      "before_sha256": "0da831f85cbaf185ecfc78cb3fd383a164eb81be0eaafbd34814dd38a4d935df",
+      "after_sha256": "fe0a996dda3e3c51e70de4c9069efaabbf0cd87eff45344c1fefa7b483ca24a1"
+    },
+    {
+      "path": "app/src/main/java/com/franchiseguide/app/network/TraktClient.kt",
+      "status": "modified",
+      "before_sha256": "c11745ecb9cecb9216664d373a7d4a4a79fede39f81be7193949d7e46afad2d5",
+      "after_sha256": "f7896acea8da79a26e4d6624387c33a22e6ee8b33fd84128a9743edecab47d91"
+    },
+    {
+      "path": "app/src/main/java/com/franchiseguide/app/ui/FranchiseGuideApp.kt",
+      "status": "modified",
+      "before_sha256": "f77b3c9fbf804a5cd869d0a60c1114414e620f9fe0e5cd4fc298d875a50e2844",
+      "after_sha256": "f9f2fac285d5461b870669f87f2c231f6f81e5bdb5720ce1c6a4e05bf7c0240f"
+    },
+    {
+      "path": "app/src/main/java/com/franchiseguide/app/ui/GamingAchievementsPanel.kt",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "08215556427bd1007baaafc170987b0d1777e90e94599644efc011ef42899c88"
+    },
+    {
+      "path": "app/src/main/java/com/franchiseguide/app/ui/Screens.kt",
+      "status": "modified",
+      "before_sha256": "11daeb689e5c529b7575b35ac94b4f73fad92b4afa039fb64424571b961d5ecd",
+      "after_sha256": "07903174868286e58876aa3b7c14a6e5d25246af0d9e7c947501325e845b2f10"
+    },
+    {
+      "path": "desktop/README.md",
+      "status": "modified",
+      "before_sha256": "d36474c608e7a3c52ec5c46a78a3eb26208924e911fc8ba1240afa5ac73cc62a",
+      "after_sha256": "0f24e87c5bfaaf21f6a080fa26c46c85e729a901d9b4abcc0ef9d4650316f6bb"
+    },
+    {
+      "path": "desktop/src/com/franchiseguide/desktop/Main.java",
+      "status": "modified",
+      "before_sha256": "2a87ec8d5c85c631e3786d519e4f7933b86bdd6a7ba039f3ce989fea986540b2",
+      "after_sha256": "5932f64a3e4fd84f3931038391299f682816627a4bf38e1d2ce959e512a51871"
+    },
+    {
+      "path": "desktop/src/com/franchiseguide/desktop/SteamBridge.java",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "443dbbf4145b3f027d28e7db907c101d79d2358ab2f39a276338c4cc6809afd1"
+    },
+    {
+      "path": "docs/ANDROID_BUILD.md",
+      "status": "modified",
+      "before_sha256": "dd77ac5d93fb7b85d120b5af7b1bd7c03c411fa6381a49d8c84d7e8eeff03cb3",
+      "after_sha256": "a98acaa8059b563d2d3ed264019e44cbf38e129c4247c747f8863dd1d06ea1c1"
+    },
+    {
+      "path": "docs/BUG_REGISTER.md",
+      "status": "modified",
+      "before_sha256": "0f1c44eee52adf6060bfa1245a816835e05741820d15726ec36c893f76b9f948",
+      "after_sha256": "c7660ae569633480f2d1b1336370c06ff32ecb951c2751538d2748b53a8a33eb"
+    },
+    {
+      "path": "docs/BUILD.md",
+      "status": "modified",
+      "before_sha256": "eb462cbcf3e0d4da13824cac5ffcb2d9a7b1524b933e43214e4c2e6379fc506d",
+      "after_sha256": "8afbc820555b62b995aed45c661aadf81eaaf97fe7ef8ee9a42e0cabbccd4138"
+    },
+    {
+      "path": "docs/COMMERCIAL_READINESS.md",
+      "status": "modified",
+      "before_sha256": "3b7e51b8fbc3b9dd95b1a16f78cf3f26f20c6c1531896685450ca45470ed37a5",
+      "after_sha256": "4d3f06bb5064a83f70bc9716339662a5f6774d65e2abbd2de4a7502e1e8cd04a"
+    },
+    {
+      "path": "docs/DEPENDENCIES_DECLARED.json",
+      "status": "modified",
+      "before_sha256": "eb08272ea58c0568b56f21ef33a009c8d9369b29bb56a7c9654fdb3869b959fd",
+      "after_sha256": "59c561ca791ef578353f6fa061898e9d228a1c2d32860332d43f6604e92802de"
+    },
+    {
+      "path": "docs/DESKTOP.md",
+      "status": "modified",
+      "before_sha256": "d36474c608e7a3c52ec5c46a78a3eb26208924e911fc8ba1240afa5ac73cc62a",
+      "after_sha256": "87ca2fd63019c7f099b93183a73851fca22cf62f08259cccb477eb201df97316"
+    },
+    {
+      "path": "docs/FEATURE_MATRIX.md",
+      "status": "modified",
+      "before_sha256": "f9d910d0d47ec1785876922617820df182f00b5d477337abffb62bf2c4ee1fe2",
+      "after_sha256": "8e88808a82a4a21570f67816d6aefd26432154308eda7efdd00bd80455152756"
+    },
+    {
+      "path": "docs/GAMING_ACHIEVEMENTS.md",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "f7d4e117a8d9e8726d5fca3b618620c826550ff897e336fff660faa94ffb2093"
+    },
+    {
+      "path": "docs/PRIVACY_TECHNICAL.md",
+      "status": "modified",
+      "before_sha256": "a64fdde695a49152020e53b13a4175cf2ce337ea34e327a8922dd8f54200f14f",
+      "after_sha256": "75c7680fc0e940d392da5c35e1c5c1cb17578b94027b9b0da0ba0cd739595325"
+    },
+    {
+      "path": "docs/QA_REPORT.md",
+      "status": "modified",
+      "before_sha256": "e1c805de046dc0536733e3b039d4685d0cc79c83d2b31a9df077ecd66540df93",
+      "after_sha256": "425f689268092a102b6cb1e550723b997e6f34253e1064757b9ab57da2925be7"
+    },
+    {
+      "path": "docs/RELEASE_GATES.json",
+      "status": "modified",
+      "before_sha256": "a23cdaf906363ab34c17c486b285fb3df03d0f67834daab80ff3aa5ac9a0abd8",
+      "after_sha256": "99e0a0e0187004ddbf26795e2eced2ccda140272d6af6fe4e8245745b7fcce6a"
+    },
+    {
+      "path": "docs/SECURITY_AND_DATA.md",
+      "status": "modified",
+      "before_sha256": "7318c33b960b1a74b1b37581157c1d265addf6fb3d4c084ed58fbeac9095a31b",
+      "after_sha256": "6bb0b71efbbb0445d5443b55615daee44d8156670c1a35a1a9e54679bc5119d3"
+    },
+    {
+      "path": "docs/SERIESGUIDE_IMPORT.md",
+      "status": "modified",
+      "before_sha256": "797a7ac62f415753200493806d85856dd62f9add53a1fdbebe9ab4cc4fcbaeb4",
+      "after_sha256": "f26ea2316d66e74bfcb4d20ba12254cdd2d457bd5f68b3df449a3c0c369ee95b"
+    },
+    {
+      "path": "docs/SOURCES_TECHNIQUES.md",
+      "status": "modified",
+      "before_sha256": "aaa27ba330ee771ef914ffe7e4d9123eef6dd369d586302806c335a562bb6a68",
+      "after_sha256": "63be422396271b9afa91cee29f1f15afc45febb4feff69bbdd955272b425a55e"
+    },
+    {
+      "path": "docs/THIRD_PARTY_ATTRIBUTION.md",
+      "status": "modified",
+      "before_sha256": "d412c5f9dd823600d7780457bf9a84b82b4b5141b8a31c49dd85e333aa673ce7",
+      "after_sha256": "7a8e025488445f3dd1e80120f60a6ab467755665990213a9406fb3f8b032978c"
+    },
+    {
+      "path": "docs/WEB.md",
+      "status": "modified",
+      "before_sha256": "8c1f4497a982f553ebd189682a9edb44eeb92770ac3978836275c3360bc90697",
+      "after_sha256": "77e9aca6910a9bc9a207c9616d40bff342910495b9c4dc1259be3d3f2047f354"
+    },
+    {
+      "path": "examples/checklist-personnelle.json",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "24b0f604653408515a578d06bb095358e5ab0c7379dfab453637fb701f238e8b"
+    },
+    {
+      "path": "examples/trophees-psn-fictifs.json",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "16b193299c09f26c81584d4e3f90a9719cb844f12378db4e1f2c311679f18166"
+    },
+    {
+      "path": "server/start.cjs",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "54f85799e31c2760117d9853d006a89a7f4be495f3bb6a92e797a8d82a73d988"
+    },
+    {
+      "path": "server/steam-bridge.cjs",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "906c823fe7ac54b4ea05feb96256f206362a2fed3526a88699eeb5fb95cb3598"
+    },
+    {
+      "path": "tests/GamingRulesTest.kt",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "5a64cf659ec2b28fd3582fbe217a2eed3e8a4aa2a58a88439eb86a0d5dd3b748"
+    },
+    {
+      "path": "tests/ReleaseRulesTest.kt",
+      "status": "modified",
+      "before_sha256": "5f889c8843633dfcc0b0389021c6140709640f1bf32c6957b207a2a827fa3cba",
+      "after_sha256": "5cfde5b85476787ceedf6e0d90a792875fd22379448e811acdf53594aa217154"
+    },
+    {
+      "path": "tests/SteamBridgeTest.java",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "3bd841320fa948b98a79b3861cce773662c0dc45980fd262d164047febd29296"
+    },
+    {
+      "path": "tests/browser_harness.py",
+      "status": "modified",
+      "before_sha256": "1e8d3c81031d9dcd2ada4954ad5d6876a68914889d11a9549b3578aa4436ed23",
+      "after_sha256": "e434f0b3ee36d6ae96b966a72beeb74c0aeb1b08efad83c829a648abd7b172f5"
+    },
+    {
+      "path": "tests/browser_v011.py",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "2ddb07b3655de49507fb30374a083c07a8fb0be4c32e5b52528d1596e06809cd"
+    },
+    {
+      "path": "tests/desktop_http.py",
+      "status": "modified",
+      "before_sha256": "a1f2f13a8d60461f757c2bfde19a8f2f76b4bde509adffe0f2e28d728dc512cd",
+      "after_sha256": "5623d7661b32e2167270b9a53ab00ceb82d666e60125f0e59574a7e5df694060"
+    },
+    {
+      "path": "tests/gaming-v011.test.cjs",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "249cb8f9fd6d5c913e1d713f6f33d2a55518becd3144713305672ee656a221fd"
+    },
+    {
+      "path": "tests/release-v010.test.cjs",
+      "status": "modified",
+      "before_sha256": "260f987256589d5b060e086b51b011595cbd8f41b58a4e37a002a8399db5d066",
+      "after_sha256": "738d5b09f1e378f36740d9dfaf415ae2cb9fa5bff1d2fcbdcc028d95a816bd61"
+    },
+    {
+      "path": "tests/steam-bridge.test.cjs",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "37e8081d67438fec55dc2f32e05a8f66e5c2cfbe3bd2a6e661c4cc1864c590f3"
+    },
+    {
+      "path": "tests/web-core.test.cjs",
+      "status": "modified",
+      "before_sha256": "42aab7ecbb7b4cce31c871077859c47a9b99f6eda8840099eac8f4b43cc1961a",
+      "after_sha256": "4bd6d4ec38e54e81c3b063d031cd3e3fb04b38d12418b12df252694df7b581c7"
+    },
+    {
+      "path": "tests/web-local-server.test.cjs",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "d9cf90d53c26ffc6c15618150d7265a066e6a762f92c6063a398834a51e60a35"
+    },
+    {
+      "path": "tools/build_pc.sh",
+      "status": "modified",
+      "before_sha256": "9a65529aee7d750e98ce69913b716d249cc2aa4b5742f5c4f073a7fe8e25eebe",
+      "after_sha256": "f1d03b088fe50e350c4fa2aa82307d85627f49f967a3ff4479aa2aa78af2075a"
+    },
+    {
+      "path": "tools/run_checks.sh",
+      "status": "modified",
+      "before_sha256": "720f2c15987c1d7c875e6744c37f587a43cabdf5f168c07589d2bce8e83ad1d6",
+      "after_sha256": "396d8466298e354549086e6e31b9359882f21ec7b282dcce1a5424d94c16f5b8"
+    },
+    {
+      "path": "tools/validate_project.py",
+      "status": "modified",
+      "before_sha256": "b283a5496e678b24bb8a1318a8405c6b397412ae9d267ba1e27602ac5bd8d2a5",
+      "after_sha256": "c3537741320bf0e48cc8c062b8e56fc722bcf0e22802e2c075a5530372ed9ae7"
+    },
+    {
+      "path": "web/README.md",
+      "status": "modified",
+      "before_sha256": "8c1f4497a982f553ebd189682a9edb44eeb92770ac3978836275c3360bc90697",
+      "after_sha256": "f77474070672858ac1519ec8049ae20e75e2df35f7264f489a4f9879e31c71d7"
+    },
+    {
+      "path": "web/app.css",
+      "status": "modified",
+      "before_sha256": "7e7b64e7564164972ada789cc968318a59c911b6cf975e91c0ce6f44edc8b888",
+      "after_sha256": "be5e7debdf3068dbbdf7149d37b7f5edcb8cb5c1453ce6385d3af58e50eeddce"
+    },
+    {
+      "path": "web/app.js",
+      "status": "modified",
+      "before_sha256": "66fc2d20650cbd92683365c5adceff25b6d2d5b2f9afa4d123f605deae185d85",
+      "after_sha256": "d71f271592b8c5fc8331650bf85a481ac283df5dc33af2b418f7003ca48194a1"
+    },
+    {
+      "path": "web/backup.js",
+      "status": "modified",
+      "before_sha256": "f24ad598994543efe4405d908fc3ca2ff985d83e942f9de09d11905ed3d26f4e",
+      "after_sha256": "0a057e1fd42601e72f278ac4214180992cdf39cf53d481b2aba8a1726eed6590"
+    },
+    {
+      "path": "web/core.js",
+      "status": "modified",
+      "before_sha256": "1c59f88ca7de3be3cb0bfa1404490e4298f1423c19cedadbacb8806dca168437",
+      "after_sha256": "f578a743503fed66546a6783f8c50266af0b69acd7f5cf9f37091e5f86f4f30a"
+    },
+    {
+      "path": "web/gaming-core.js",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "ce372a142a877b76c76450b6b95537c80d4f1653fb0d1fdf5c02a7bdc457f512"
+    },
+    {
+      "path": "web/gaming.js",
+      "status": "added",
+      "before_sha256": null,
+      "after_sha256": "fab1f7f1e99cd2f526dee4316ba8cdf90de30b1832d8a1e810b37c23347b75d6"
+    },
+    {
+      "path": "web/index.html",
+      "status": "modified",
+      "before_sha256": "4db00510ca6fa2e544dd90cb46ad1742eeeb5fe71527058d401ba76882c98be3",
+      "after_sha256": "34231e809e3d3277458b1c966924eb44a023196ab3e42b6c06fa1496c0bca994"
+    },
+    {
+      "path": "web/integrated.js",
+      "status": "modified",
+      "before_sha256": "3c4b9a7c13f465de47daa7098fc86ff11ad32ddeb8c7131cb257808e09bd2757",
+      "after_sha256": "fd8f9de339fb67d8d9c59acea58ef0361417ecdde868195e336654d9750c664f"
+    },
+    {
+      "path": "web/maintenance.js",
+      "status": "modified",
+      "before_sha256": "0e29fc21375dde9e55b70c8d056d3c6358f84d202a4e18ec3394ae6dc65e1a86",
+      "after_sha256": "946e59ee8458e713f07f231c74cf1b917f758abf88f2e10115eaee6a4e41e5fb"
+    },
+    {
+      "path": "web/manifest.webmanifest",
+      "status": "modified",
+      "before_sha256": "15aae867f50c5204ca0338b36270358a7d47d2f37805ddb720d378035519e5e9",
+      "after_sha256": "0cbe9d40cc0d0b993e5b8f8d0e543c6a801a51aef1795c0da4b88732fab9088d"
+    },
+    {
+      "path": "web/persistence.js",
+      "status": "modified",
+      "before_sha256": "1bf02cb1abafb12255d11f16bad7a608104640b43a1ac0b4614983e6369c26a3",
+      "after_sha256": "f4adf144d5226a1e973b248d17f9714c904686cbaa0d5eeacb181313464c8af4"
+    },
+    {
+      "path": "web/release.js",
+      "status": "modified",
+      "before_sha256": "99234824754c4ebdbaa3a7d2f83d2409a21b4604fe41dcde546083688261f503",
+      "after_sha256": "110d8eeb76e9855824c250ed8152291b3a049d2ff3ddb456ee251b2fe6621a8a"
+    },
+    {
+      "path": "web/sw.js",
+      "status": "modified",
+      "before_sha256": "c8b86ba538f69315861a31a94331fc410f048cc166e26b10f73c5e8fa6e03c1c",
+      "after_sha256": "6a4d768df5e4884909aec0e8af302e5cca9dd21c2762967a671eb4bedb67992d"
+    }
+  ]
+}

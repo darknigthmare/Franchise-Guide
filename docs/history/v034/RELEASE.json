@@ -1,0 +1,27 @@
+{
+  "name": "FranchiseGuide Suite",
+  "version": "0.34.0",
+  "base": "User-supplied V0.33 ZIP",
+  "base_zip_sha256": "65343acbb86b829b7ebdca93030ff32d1520b070130777507c7ce0a4fcd09540",
+  "portable_schema": 11,
+  "protected_container_version": 1,
+  "delivered": [
+    "Multi-category franchise scanner",
+    "Independent category retries",
+    "Atomic sanitized grey suggestions",
+    "Web/PC and Android source wiring"
+  ],
+  "not_delivered": [
+    "Android APK/AAB or SDK validation",
+    "Real provider accounts",
+    "Canonical franchise completeness",
+    "Commercial certification"
+  ],
+  "tests": {
+    "node": 1465,
+    "scanner_node": 11,
+    "scanner_kotlin": 9,
+    "scanner_chromium": 9,
+    "pc_probe": true
+  }
+}

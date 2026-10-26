@@ -1,0 +1,6 @@
+'use strict';
+const fs=require('node:fs'),A=require('node:assert/strict'),C=require('../web/trakt-checkin-core.js');
+const base=()=>({media:[{id:'movie',kind:'movie',title:'Film',added:true,tmdbId:101,runtimeMinutes:120,plays:0,watchHistory:[]},{id:'show',kind:'show',title:'Série',added:true,tmdbId:201}],episodes:[{id:'ep',showId:'show',title:'Pilote',season:1,num:1,tmdbId:301,runtimeMinutes:45,plays:0,watchHistory:[]}]});
+const movie=C.target(base(),'movie','movie'),episode=C.target(base(),'episode','ep'),s=C.create(movie,'qa-user','slot-app',1700000000000),finish=C.beginFinish(s,1700000060000),timing=C.timing(s,s.startedAt+60000),applied=C.apply(base(),finish),eps=C.apply(base(),C.beginFinish(C.create(episode,'qa','slot',1700000000000),1700000030000));
+const output=[movie.identity.replace(/\[|\]|"/g,'').replace(/,/g,':'),episode.identity.replace(/\[|\]|"/g,'').replace(/,/g,':'),s.expectedEndAt,timing.remaining,timing.percent,C.recentMatch(finish,[{watched_at:'2023-11-14T22:14:20.000Z',movie:{ids:{tmdb:101}}}],finish.finishAt+1000),applied.media[0].plays,eps.episodes[0].plays,C.completionMode(s,s.expectedEndAt)].join('|');
+A.equal(fs.readFileSync(process.argv[2],'utf8'),output);console.log('PASS JVM/JavaScript check-in domain parity:',output);

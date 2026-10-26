@@ -1,0 +1,33 @@
+'use strict';
+const {test}=require('node:test'),A=require('node:assert/strict'),P=require('../web/autosetup-core.js');
+const show=()=>({id:11,name:'Série de test sans clé',summary:'<p>Résumé <b>de test</b>.</p>',premiered:'2022-01-04',ended:null,status:'Running',runtime:0,language:'English',genres:['Drama'],rating:{average:0},externals:{imdb:'tt111',thetvdb:222},image:{original:'https://static.tvmaze.com/a.jpg'},network:{name:'Test'}});
+const seasons=()=>[{id:44,number:1,name:'Première saison',episodeOrder:3,image:{original:'https://static.tvmaze.com/s.jpg'}},{id:45,number:2,name:''}];
+const eps=()=>[{id:501,season:1,number:1,name:'Pilote',airdate:'2022-01-04',runtime:null,summary:'<p>Épisode</p>',type:'regular',rating:{average:0}},{id:502,season:1,number:2,name:'Suite',airdate:'',runtime:0,type:'regular'},{id:503,season:2,number:null,name:'Spécial bonus',airdate:null,type:'significant_special'}];
+const cast=()=>[{person:{id:73,name:'Artiste de test',image:{medium:'https://static.tvmaze.com/p.jpg'}},character:{name:'Rôle'}}];
+const apple=()=>({kind:'feature-movie',trackId:811,trackName:'Film Apple de test',releaseDate:'2002-02-03T08:00:00Z',trackViewUrl:'https://itunes.apple.com/fr/movie/id811',trackTimeMillis:3600000,longDescription:'Description',artworkUrl100:'https://example.test/image',previewUrl:'https://example.test/preview',artistName:'Source artist'});
+const free=()=>({id:91,title:'Jeu gratuit test',release_date:'2022-01-01',thumbnail:'https://www.freetogame.com/91.jpg',platform:'PC (Windows), Web Browser',short_description:'Description',freetogame_profile_url:'https://www.freetogame.com/test'});
+test('Public TV show preserves source IDs without fabricating TMDb',()=>{const m=P.tvShow(show());A.equal(m.id,'tvmaze-show-11');A.equal(m.tmdbId,undefined);A.equal(m.imdbId,'tt111');A.equal(m.tvdbId,222);A.equal(m.ratings[0].label,'TVmaze');});
+test('TVmaze zero score and duration are not unknown',()=>{const m=P.tvShow(show());A.equal(m.catalogRating,0);A.equal(m.runtimeMinutes,0);});
+test('TVmaze exposes only its allowed HTTPS artwork',()=>{const m=P.tvShow({...show(),image:{original:'http://evil.test/image'}});A.equal(m.posterUrl,null);});
+test('TVmaze full bundle contains every received season including specials',()=>{const m=P.tvBundle(show(),seasons(),eps(),cast(),'local-title');A.equal(m.seasons.length,3);A.equal(m._pendingEpisodes.length,3);A.equal(m._pendingEpisodes[2].season,0);A.equal(m._pendingEpisodes[2].numberUnknown,true);A.equal(m.catalogComplete,true);});
+test('Stable episode IDs permit later metadata without invented numbers',()=>{const e=P.tvBundle(show(),seasons(),eps(),cast(),'s')._pendingEpisodes[2];A.equal(e.id,'tvmaze-episode-503');A.equal(e.num,0);A.equal(e.date,null);A.equal(e.runtimeMinutes,0);A.equal(e.tmdbId,null);});
+test('Cast links retain correct TVmaze namespace',()=>{const c=P.tvBundle(show(),seasons(),eps(),cast(),'s').credits[0];A.equal(c.id,'tvmaze-person-73');A.equal(c.externalUrl,'https://www.tvmaze.com/people/73');A.equal(c.profileUrl,'https://static.tvmaze.com/p.jpg');});
+test('Received future seasons without episodes do not invent episodes from order count',()=>A.equal(P.tvBundle(show(),seasons(),eps(),cast(),'s').episodeCount,2));
+for(const [name,change] of [
+ ['absent season',e=>e[0].season=9],['duplicate id',e=>e[1].id=e[0].id],['duplicate numbering',e=>e[1].number=1],['invalid number',e=>e[0].number=-1],['impossible date',e=>e[0].airdate='2025-02-30'],['invalid score',e=>e[0].rating.average=11]
+])test('TVmaze rejects '+name+' before commit',()=>{const e=eps();change(e);A.throws(()=>P.tvBundle(show(),seasons(),e,cast(),'s'));});
+test('TVmaze missing response arrays are not silently empty',()=>A.throws(()=>P.tvBundle(show(),seasons(),null,cast(),'s')));
+test('TVmaze duplicate seasons rejected',()=>A.throws(()=>P.tvBundle(show(),[...seasons(),seasons()[0]],eps(),cast(),'s')));
+test('HTML cleans scripts as well as visible tags',()=>A.equal(P.clean('<script>secret()</script><p>Hello &amp; world</p>'),'Hello & world'));
+test('TVmaze paginated search never repeats the first page',()=>{const rows=Array.from({length:23},(_,i)=>({show:{...show(),id:i+1}}));A.equal(P.tvSearch(rows,1).items.length,20);A.equal(P.tvSearch(rows,2).items[0].sourceId,'21');A.equal(P.tvSearch(rows,2).more,false);});
+test('Apple fallback is explicitly metadata-only and movie-only',()=>{const m=P.movie(apple(),'FR');A.equal(m.kind,'movie');A.equal(m.source,'itunes');A.equal(m.runtimeMinutes,60);A.equal(m.posterUrl,null);A.equal(m.previewUrl,undefined);A.equal(m.credits.length,0);A.equal(m.ratings.length,0);});
+test('Apple search filters non-movies rather than relabelling a song',()=>{const r=P.movieSearch({resultCount:2,results:[apple(),{kind:'song'}]},'FR',1);A.equal(r.items.length,1);});
+test('Apple count mismatch rejected',()=>A.throws(()=>P.movieSearch({resultCount:4,results:[apple()]},'FR',1)));
+test('Apple redirects to arbitrary hosts are not stored',()=>A.throws(()=>P.movie({...apple(),trackViewUrl:'https://evil.test/movie'})));
+test('Apple missing artwork never fabricates a film poster',()=>A.equal(P.movie(apple()).posterUrl,null));
+test('FreeToGame explicit platform list not all video games',()=>{const g=P.game(free());A.deepEqual(g.platforms,['PC (Windows)','Web Browser']);A.equal(g.source,'freetogame');A.equal(g.tmdbId,undefined);A.equal(g.rating,undefined);A.equal(g.progressTotal,100);});
+test('FreeToGame accents search and pagination use all received games',()=>{const g=Array.from({length:30},(_,i)=>({...free(),id:i+1,title:'Écho '+i}));A.equal(P.games(g,'echo',2).items.length,10);A.equal(P.games(g,'zz',1).items.length,0);});
+test('FreeToGame untrusted artwork URL discarded',()=>A.equal(P.game({...free(),thumbnail:'https://www.freetogame.com.evil.test/p'}).posterUrl,null));
+test('Limits and provider identifiers are checked',()=>{for(const x of [0,-1,'1x',1.2,NaN])A.throws(()=>P.id(x));for(const p of [0,-1,1.5,1001])A.throws(()=>P.slice([],p));});
+test('No keyless source advertises arbitrary titles as TMDb/RAWG',()=>A.deepEqual([...P.SOURCES],['tvmaze','itunes','freetogame']));
+test('Attribution notices identify source and restricted scope',()=>{A.match(P.info('itunes').scope,/limitée/);A.match(P.info('freetogame').scope,/free-to-play/);A.match(P.info('tvmaze').scope,/traduction/);A.ok(P.info('openlibrary').url);});

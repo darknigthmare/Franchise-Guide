@@ -1,0 +1,5 @@
+const fs=require('node:fs'),A=require('node:assert/strict'),D=require('../web/episode-detail-core.js'),raw=require('./fixtures/v024/episode.json');
+const state={media:[{id:'s',kind:'show',title:'Série QA',tmdbId:111,added:true}],episodes:[{id:'e1',showId:'s',season:1,num:1,tmdbId:501,title:'Local',plays:3,watched:true,rating:6,userNote:'Avant',lastWatchedAt:2000,watchHistory:[1000,2000]}]};
+const p=D.parse(raw,D.request(state.media[0],state.episodes[0],'fr-FR'),1700000000000),after=D.apply(state,D.prepare(state,'s','e1',{rating:'9',userNote:' New '},1000),1001);
+const text=[p.title,p.overview,p.airDate,String(p.runtime),String(p.rating),String(p.votes),p.productionCode,p.sourceUrl,p.stillUrl||'',p.groups.map(g=>g.kind+':'+g.people.map(c=>`${c.id},${c.name},${c.roles.join('/')}`).join(';')).join('|'),String(after.episodes[0].rating),after.episodes[0].userNote,String(after.episodes[0].plays)].join('\n');
+A.equal(fs.readFileSync(process.argv[2],'utf8'),text);console.log('PASS: episode detail and personal edit parity JavaScript/Kotlin, exact Unicode bytes.');

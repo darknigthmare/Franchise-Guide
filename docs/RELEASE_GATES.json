@@ -1,0 +1,92 @@
+{
+  "release": "0.36.0",
+  "assessed_at": "2026-10-26",
+  "verdict": "NO-GO",
+  "gates": [
+    {
+      "id": "android-release",
+      "status": "partial",
+      "why": "SDK36 Compose compilation and debug APK assembly succeeded. Initial lint found13 errors; compatibility fixes are in progress. testDebugUnitTest has NO-SOURCE. Device and signed distribution validation remain open.",
+      "evidence": "docs/QA_REPORT.md",
+      "required": "Real build/lint/test artifacts, signed release and device matrix"
+    },
+    {
+      "id": "live-service-roundtrip",
+      "status": "unverified",
+      "why": "Steam OpenID, Trakt and RetroAchievements have no authorized real-account end-to-end validation in this release.",
+      "evidence": "docs/QA_REPORT.md",
+      "required": "Authorized test account and real authentication/sync/error/revoke tests"
+    },
+    {
+      "id": "web-origin-pwa",
+      "status": "partial",
+      "why": "Real Chrome HTTP origin, confirmed import, localStorage/IndexedDB, two tabs and offline reload pass 22 controls. Installed PWA, update from older shells, other engines and quota eviction remain unverified.",
+      "evidence": "docs/QA_REPORT.md; tests/browser-origin.cjs",
+      "required": "Real HTTPS origin, CSP/install/offline/update/persistent/multibrowser evidence"
+    },
+    {
+      "id": "desktop-real-users",
+      "status": "unverified",
+      "why": "Java17 JAR0.36.0 rebuilt;109 HTTP and9 startup controls pass. Windows/macOS graphical user sessions remain unverified.",
+      "evidence": "docs/QA_REPORT.md",
+      "required": "Real OS install/start/exit/browser/profile regression tests"
+    },
+    {
+      "id": "commercial-provider-rights",
+      "status": "blocked",
+      "why": "No current commercial-rights and attribution review for the intended offering; inherited legal notes are not revalidated approval.",
+      "evidence": "docs/COMMERCIAL_READINESS.md",
+      "required": "Applicable written provider/brand/image permission and attribution audit"
+    },
+    {
+      "id": "public-auth-architecture",
+      "status": "blocked",
+      "why": "Local personal credentials architecture, no multiuser secret backend",
+      "evidence": "docs/SECURITY_AND_DATA.md",
+      "required": "Documented public auth design, isolation/revocation/security review"
+    },
+    {
+      "id": "privacy-publisher-store",
+      "status": "blocked",
+      "why": "Technical notice only, no real publisher legal dossier/store declarations",
+      "evidence": "docs/PRIVACY_TECHNICAL.md",
+      "required": "Validated publisher policy, privacy/store/legal/support package"
+    },
+    {
+      "id": "supply-chain-release",
+      "status": "unverified",
+      "why": "Locked npm QA dependencies installed and tested; direct Android dependencies documented. Complete resolved release SBOM, advisory/license audit and signed installers remain open.",
+      "evidence": "docs/DEPENDENCIES_DECLARED.json",
+      "required": "Complete resolved inventory, licenses/security audit, signatures and update validation"
+    },
+    {
+      "id": "claimed-feature-parity",
+      "status": "blocked",
+      "why": "Social, cloud, advanced settings and native runtime not fully equivalent",
+      "evidence": "docs/FEATURE_MATRIX.md",
+      "required": "Narrow promise to tested scope or complete/test remaining advertised functions"
+    },
+    {
+      "id": "gaming-scope-and-provider-access",
+      "status": "unverified",
+      "why": "Steam and RetroAchievements personal bridges use controlled upstream fixtures; other automatic gaming adapters and native Steam/Retro sync are absent.",
+      "evidence": "docs/FEATURE_MATRIX.md; docs/RETROACHIEVEMENTS.md; docs/QA_REPORT.md",
+      "required": "Authorized real-account read tests, provider access/right validation, accurate marketed platform scope"
+    },
+    {
+      "id": "calendar-external-interop",
+      "status": "unverified",
+      "why": "ICS rules covered by current Node tests; no actual calendar app import or provider event created. Historical JS/Kotlin ICS parity was not rerun in this pass.",
+      "evidence": "docs/QA_REPORT.md; docs/AGENDA_ET_HISTORIQUE.md",
+      "required": "Authorized import/reimport/sharing validation in target calendar clients before claiming interoperability."
+    },
+    {
+      "id": "live-watch-availability",
+      "status": "unverified",
+      "why": "Country/season offers validated with controlled TMDb shapes, not real credentials, current provider availability or external playback. Native UI compiles; device validation remains open.",
+      "evidence": "docs/QA_REPORT.md",
+      "required": "Authorized real reads by country/season, provider-link review and native SDK/device validation; no price or entitlement claim until independently confirmed."
+    }
+  ],
+  "note": "Automated and real-origin local checks do not close real-account, device, distribution or commercial gates. Historical V0.35 assessment retained in docs/archives/v035/."
+}

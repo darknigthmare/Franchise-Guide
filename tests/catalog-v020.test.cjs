@@ -1,0 +1,28 @@
+'use strict';
+const {test}=require('node:test'),A=require('node:assert/strict'),C=require('../web/catalog-core.js');
+const now=1700000000000,media=(extra={})=>({id:'s',kind:'show',title:'S',added:true,tmdbId:111,source:'tmdb',catalogComplete:false,...extra});
+const rows=(items=[media()],settings={tmdbKey:'fixture'},runtime={})=>C.audit(items,[],settings,runtime,now);
+test('Incomplete series with key is eligible',()=>A.equal(rows()[0].status,'incomplete'));
+test('Missing key prevents network work',()=>A.equal(rows([media()],{})[0].status,'key-missing'));
+test('Manual title without provider identity is unsupported, not title-matched',()=>A.equal(rows([media({tmdbId:null,source:'local'})])[0].status,'unsupported'));
+test('Steam and Retro game metadata are not a RAWG identity',()=>{for(const source of ['steam','retro'])A.equal(rows([{id:'g',kind:'game',source,sourceId:'1'}])[0].status,'unsupported');});
+test('Existing provider aliases can resolve catalog source',()=>{A.equal(C.provider({kind:'game',rawgId:'44'}),'rawg');A.equal(C.provider({kind:'book',openLibraryId:'/works/OL1W'}),'openlibrary');});
+test('A missing poster alone does not cause repeated incomplete repair',()=>{const r=rows([media({catalogComplete:true,episodeCount:0,catalogUpdatedAt:now})]);A.equal(r[0].status,'current');A.equal(r[0].missingPoster,true);A.deepEqual(C.plan(r),[]);});
+test('Announced regular episode deficit is detected without counting specials',()=>{const r=C.audit([media({catalogComplete:true,episodeCount:2})],[{showId:'s',season:1},{showId:'s',season:0}],{tmdbKey:'key'},{},now);A.equal(r[0].incomplete,true);A.equal(r[0].episodesLoaded,1);});
+test('Series days and finished-series ninety-day policy differ',()=>{const a=rows([media({catalogComplete:true,catalogUpdatedAt:now-2*86400000,status:'CONTINUING'}),media({id:'end',catalogComplete:true,catalogUpdatedAt:now-2*86400000,status:'ENDED'})]);A.equal(a[0].status,'outdated');A.equal(a[1].status,'current');});
+test('Full movies follow thirty-day policy',()=>A.equal(rows([media({kind:'movie',catalogComplete:true,catalogUpdatedAt:now-2*86400000})])[0].status,'current'));
+test('Failure records five-minute initial retry',()=>{const row=rows()[0],r=C.failure(null,row,{message:'Network'},now);A.equal(r.items[0].retryAt,now+300000);A.equal(rows([media()],{tmdbKey:'key'},r)[0].status,'waiting');});
+test('Increasing failures back off and cap at one hour',()=>{const row=rows()[0];let r;for(let i=0;i<10;i++)r=C.failure(r,row,{},now);A.equal(r.items[0].retryAt,now+3600000);});
+test('HTTP 429 delays all titles sharing the catalogue',()=>{const r=C.failure(null,rows()[0],{status:429,retryAfter:'120'},now);A.ok(rows([media(),media({id:'other'})],{tmdbKey:'key'},r).every(x=>x.status==='waiting'));});
+test('HTTP 429 does not block another catalogue',()=>{const r=C.failure(null,rows()[0],{status:429,retryAfter:'120'},now),x=rows([media({id:'b',kind:'book',source:'openlibrary',sourceId:'/works/OL1W'})],{},r);A.equal(x[0].status,'incomplete');});
+test('HTTP date Retry-After is supported',()=>{const r=C.failure(null,rows()[0],{status:429,retryAfter:new Date(now+180000).toUTCString()},now);A.equal(r.items[0].retryAt,now+180000);});
+test('An absurd Retry-After is bounded to 24 hours',()=>{const r=C.failure(null,rows()[0],{status:429,retryAfter:'99999999'},now);A.equal(r.items[0].retryAt,now+86400000);});
+test('Fair plan skips waiting titles instead of blocking later ones',()=>{const items=Array.from({length:5},(_,i)=>media({id:'s'+i})),row=rows(items),r=C.failure(null,row[0],{},now);A.equal(C.plan(rows(items,{tmdbKey:'key'},r),{limit:3})[0].id,'s1');});
+test('Repair plan limits to eight titles and automated plan to three',()=>{const r=rows(Array.from({length:50},(_,i)=>media({id:'s'+i})));A.equal(C.plan(r).length,8);A.equal(C.plan(r,{limit:3}).length,3);});
+test('Success resets per-title failure without clearing provider limits',()=>{let r=C.failure(null,rows()[0],{status:429,retryAfter:'120'},now);r=C.success(r,'s',now+1);A.equal(r.items[0].failures,0);A.equal(r.providers.length,1);});
+test('Fingerprint excludes personal fields but includes provider identity and language',()=>{const m=media();A.equal(C.fingerprint(m),C.fingerprint({...m,rating:9,userNote:'New',progressCurrent:15}));A.notEqual(C.fingerprint(m),C.fingerprint({...m,contentLanguage:'en-US'}));});
+test('Removed and suggested records are not planned',()=>A.equal(rows([media({added:false}),media({id:'u',isSuggestion:true})]).length,0));
+test('Unknown runtime record shape is reset safely',()=>A.deepEqual(C.runtime({version:99,items:[{id:'x'}]}),{version:1,items:[],providers:[]}));
+test('Planning is non-mutating and uses oldest attempts first',()=>{const input=rows([media({id:'z'}),media({id:'a'})]),before=JSON.stringify(input);C.plan(input);A.equal(JSON.stringify(input),before);});
+
+test('Malformed optional provider runtime cannot crash catalogue screen',()=>{A.deepEqual(C.runtime({version:1,items:[],providers:'invalid'}).providers,[]);A.deepEqual(C.runtime({version:1,items:[],providers:[null]}).providers,[]);});

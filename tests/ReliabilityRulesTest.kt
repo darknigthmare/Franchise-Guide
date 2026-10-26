@@ -1,0 +1,35 @@
+import com.franchiseguide.app.model.*
+import java.time.LocalDate
+private var passed=0
+private fun checkRule(name:String,v:Boolean){check(v){name};passed++;println("PASS $name")}
+fun main(){
+ val a=Episode("a","s",1,1,"Test",LocalDate.of(2020,1,1),tmdbId=10,tvdbId=20,watched=true,plays=1,lastWatchedAt=100)
+ checkRule("same episode retains explicit identity",TrackingRules.sameEpisode(a,a.copy(number=5)))
+ checkRule("TMDb equality cannot mask TVDB conflict",!TrackingRules.sameEpisode(a,a.copy(tvdbId=21)))
+ checkRule("TVDB equality cannot mask TMDb conflict",!TrackingRules.sameEpisode(a,a.copy(tmdbId=11)))
+ checkRule("same numbering cannot mask TVDB conflict",!TrackingRules.sameEpisode(a.copy(tmdbId=null),a.copy(tmdbId=null,tvdbId=21)))
+ checkRule("different parent never shares history",!TrackingRules.sameEpisode(a,a.copy(showId="t")))
+ checkRule("unknown numbering with no shared IDs not equivalent",!TrackingRules.sameEpisode(a,a.copy(tmdbId=null,tvdbId=null,numberUnknown=true)))
+ val p=a.copy(id="tvmaze-episode-100",tmdbId=null,tvdbId=null)
+ checkRule("public TV identity cannot be inferred by number",!TrackingRules.sameEpisode(p,p.copy(id="tvmaze-episode-200")))
+ checkRule("same TVmaze identity survives renumbering",TrackingRules.sameEpisode(p,p.copy(number=5)))
+ checkRule("TVmaze and unknown ID not inferred by number",!TrackingRules.sameEpisode(p,p.copy(id="other")))
+ checkRule("explicit number fallback without conflicting IDs retained",TrackingRules.sameEpisode(a.copy(tmdbId=null,tvdbId=null),a.copy(id="b",tmdbId=null,tvdbId=null)))
+ val dates=ReliabilityRules.unionHistory(a,a.copy(lastWatchedAt=200))
+ checkRule("import keeps two distinct dates",dates==listOf(100L,200L))
+ checkRule("reimport of same date idempotent",ReliabilityRules.unionHistory(a,a)==listOf(100L))
+ checkRule("all recorded valid dates retained before raising count",ReliabilityRules.unionHistory(a.copy(watchHistory=listOf(50L,75L)),a.copy(lastWatchedAt=200))==listOf(50L,75L,100L,200L))
+ checkRule("unwatched imported dates ignored",ReliabilityRules.unionHistory(a,a.copy(watched=false,lastWatchedAt=200))==listOf(100L))
+ checkRule("skipped imported dates ignored",ReliabilityRules.unionHistory(a,a.copy(skipped=true,lastWatchedAt=200))==listOf(100L))
+ checkRule("invalid dates filtered",ReliabilityRules.unionHistory(a.copy(lastWatchedAt=-1),a.copy(lastWatchedAt=0,watchHistory=listOf(Long.MAX_VALUE)))==emptyList<Long>())
+ checkRule("accent insensitive query",ReliabilityRules.folded(" Éléphant  BLEU ")=="elephant bleu")
+ checkRule("Unicode title preserved",ReliabilityRules.folded("三体")=="三体")
+ val m=MediaItem("m",tmdbId=1,kind=MediaKind.SHOW,title="M",tvdbId=2,imdbId="tt3",source="tmdb",sourceId="1")
+ checkRule("media TMDb mismatch blocked",ReliabilityRules.mediaConflict(m,m.copy(tmdbId=4)))
+ checkRule("media TVDB mismatch blocked",ReliabilityRules.mediaConflict(m,m.copy(tvdbId=4)))
+ checkRule("media IMDb mismatch blocked",ReliabilityRules.mediaConflict(m,m.copy(imdbId="tt4")))
+ checkRule("media source mismatch blocked",ReliabilityRules.mediaConflict(m,m.copy(sourceId="2")))
+ checkRule("matching aliases preserved",!ReliabilityRules.mediaConflict(m,m.copy(id="new")))
+ checkRule("absent metadata not a conflict",!ReliabilityRules.mediaConflict(m,m.copy(tvdbId=null,imdbId=null)))
+ println("ReliabilityRules: $passed assertions passed on JVM; Android framework not executed.")
+}

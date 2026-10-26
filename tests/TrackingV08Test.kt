@@ -1,0 +1,41 @@
+import com.franchiseguide.app.model.*
+private var passed=0
+private fun verify(name:String,condition:Boolean){check(condition){name};passed++;println("PASS $name")}
+fun main(){
+    val e=Episode("e","s",1,1,"Episode",null)
+    val s=MediaItem("s",1,MediaKind.SHOW,"S",added=true)
+    val m=MediaItem("m",2,MediaKind.MOVIE,"M",added=true)
+    val seen=TrackingRules.episode(e,"watch",100)
+    verify("Initial watch stores one date",seen.watchHistory==listOf(100L))
+    verify("Idempotent watch preserves date",TrackingRules.episode(seen,"watch",200).watchHistory==listOf(100L))
+    val replay=TrackingRules.episode(seen,"replay",200)
+    verify("Rewatch keeps both actual dates",replay.watchHistory==listOf(100L,200L)&&replay.plays==2)
+    verify("Legacy plays without dates stay undated",TrackingRules.knownHistory(e.copy(watched=true,plays=5)).isEmpty())
+    verify("Legacy last date does not create five dates",TrackingRules.knownHistory(e.copy(watched=true,plays=5,lastWatchedAt=100))==listOf(100L))
+    verify("Replay after legacy import adds only actual date",TrackingRules.knownHistory(TrackingRules.episode(e.copy(watched=true,plays=5),"replay",300))==listOf(300L))
+    verify("Skip preserves previous historical dates",TrackingRules.knownHistory(TrackingRules.episode(replay,"skip"))==TrackingRules.knownHistory(replay))
+    verify("Unwatch removes history",TrackingRules.knownHistory(TrackingRules.episode(replay,"unwatch")).isEmpty())
+    verify("Invalid date values filtered",TrackingRules.knownHistory(e.copy(watched=true,plays=5,watchHistory=listOf(-1,0,100,100,Long.MAX_VALUE)))==listOf(100L))
+    val done=TrackingRules.completed(m,true,100)
+    verify("Completed movie records date",done.watchHistory==listOf(100L))
+    verify("Repeated completed action is idempotent",TrackingRules.completed(done,true,200).lastWatchedAt==100L)
+    val rewatched=TrackingRules.completed(done,true,200,true)
+    verify("Completed replay records second date",rewatched.watchHistory==listOf(100L,200L))
+    verify("Uncompleted clears dates",TrackingRules.completed(rewatched,false).watchHistory.isEmpty())
+    val activities=TrackingRules.activities(listOf(s,done),listOf(replay,e.copy(id="orphan",showId="missing",watched=true,lastWatchedAt=999)))
+    verify("History lists all known dates",activities.size==3)
+    verify("History excludes orphan",activities.none{it.mediaId=="missing"})
+    verify("History is ordered by date",activities.first().at==200L)
+    verify("Unknown numbering shown explicitly",e.copy(season=-1,number=0,seasonUnknown=true,numberUnknown=true).code.contains("compléter"))
+    val unknown=e.copy(season=-1,number=0,seasonUnknown=true,numberUnknown=true,tmdbId=123)
+    verify("Unknown numbered distinct episodes never conflate",!TrackingRules.sameEpisode(unknown,unknown.copy(id="other",tmdbId=124)))
+    verify("Unknown episode matched by its provider ID",TrackingRules.sameEpisode(unknown,e.copy(tmdbId=123)))
+    verify("Episode identity is scoped to parent",!TrackingRules.sameEpisode(unknown,unknown.copy(showId="other-show")))
+    verify("Conflicting IDs are not merged by number",!TrackingRules.sameEpisode(e.copy(tmdbId=1),e.copy(tmdbId=2)))
+    val episodes=(0 until 50000).map { e.copy(id="e$it",showId="s${it/100}",watched=it%2==0) }
+    val shows=(0 until 500).map{s.copy(id="s$it",title="S $it")}
+    val start=System.nanoTime();val sorted=TrackingRules.sort(shows,SortMode.REMAINING,true,episodes)
+    verify("Large grouped sort retains every show",sorted.size==500)
+    println("500 shows / 50000 episodes sort ms: ${(System.nanoTime()-start)/1000000}")
+    println("$passed V0.8 domain assertions passed")
+}

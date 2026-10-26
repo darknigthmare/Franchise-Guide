@@ -1,0 +1,2 @@
+/* Test-only IPC bridge. Real production core on Node WebCrypto; fixtures only. Never logs input. */
+const P=require('../web/protected-backup-core.js');let input='';process.stdin.setEncoding('utf8');process.stdin.on('data',s=>input+=s);process.stdin.on('end',async()=>{try{const x=JSON.parse(input);const result=await P[x.action](Buffer.from(x.bytes,'base64'),x.password);process.stdout.write(JSON.stringify({ok:true,bytes:Buffer.from(result).toString('base64')}));}catch(e){process.stdout.write(JSON.stringify({ok:false,error:e.message,code:e.code,name:e.name}));}});

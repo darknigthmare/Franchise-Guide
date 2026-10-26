@@ -1,0 +1,6 @@
+const fs=require('node:fs'),A=require('node:assert/strict'),S=require('../web/book-selection-core.js'),B=require('../web/book-editions-core.js');
+const m={id:'m',kind:'book',source:'openlibrary',sourceId:'/works/OL1W',title:'Œuvre QA',added:true,progressCurrent:20,progressTotal:0,progressUnit:'pages',watched:true,plays:2,watchHistory:[1000,2000],lastWatchedAt:2000,trackingStatus:'active',rating:9,userNote:'Privé',personalFormat:'Mon poche'};
+const e=B.edition({key:'/books/OL10M',title:'Édition QA',works:[{key:'/works/OL1W'}],number_of_pages:220,publish_date:'2001',publishers:['Maison QA'],languages:[{key:'/languages/fre'}],physical_format:'Poche',isbn_13:['9780140328721'],isbn_10:['0140328726'],covers:[123]},'/works/OL1W');
+const result=S.apply(m,S.prepare(m,e,900,{now:1000}),1001),pages=S.apply(m,S.prepare(m,e,900,{now:1000,usePages:true}),1001),cleared=S.clear(pages,S.prepareClear(pages,1002),1003),s=result.selectedEdition;
+const text=[S.input('0140328726'),s.work,s.editionId,s.title,s.observedAt,s.selectedAt,s.isbns.join('|'),s.coverId,pages.progressTotal,pages.plays,pages.userNote,cleared.selectedEdition?.title??'null'].join('\n')+'\n';
+A.equal(text,fs.readFileSync(process.argv[2],'utf8'));console.log('Book selection and ISBN exact JavaScript/Kotlin output parity: OK');

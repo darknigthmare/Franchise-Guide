@@ -1,0 +1,11 @@
+'use strict';process.env.TZ='UTC';const fs=require('node:fs'),A=require('node:assert/strict'),I=require('../web/insights-core.js'),P=require('../web/progress-core.js');
+const d1=Date.parse('2026-10-01T12:00:00Z'),d2=Date.parse('2026-10-02T12:00:00Z'),now=Date.parse('2026-10-06T12:00:00Z');
+const movie={id:'movie',kind:'movie',title:'Film témoin',added:true,watched:true,plays:3,lastWatchedAt:d2,watchHistory:[d1,d2],runtimeMinutes:100};
+const show={id:'show',kind:'show',title:'Série témoin',added:true,watched:true,lastWatchedAt:d2,catalogComplete:true,episodeCount:1};
+const book=P.update({id:'book',kind:'book',title:'Livre test',added:true,progressTotal:100,progressUnit:'pages'},{current:100,total:100,unit:'pages'},d1);
+const g1={id:'g1',kind:'game',added:true,playtimeMinutes:25,steam:{appId:'570',accounts:{'76561198000000001':{playtimeMinutes:60},'76561198000000002':{playtimeMinutes:120}}}};
+const g2={...g1,id:'g2',playtimeMinutes:null,steam:{appId:'570',accounts:{'76561198000000001':{playtimeMinutes:80}}}};
+const gaming={accounts:[{id:'a',provider:'steam',externalId:'76561198000000001',label:'Profil privé A'},{id:'b',provider:'steam',externalId:'76561198000000002',label:'Profil privé B'}],sets:[{id:'set',mediaId:'g1',provider:'steam',platform:'PC',externalGameId:'570',accountId:'a',title:'Set',completeCatalog:true,achievements:[{earned:true,hardcoreEarned:true,localDone:true},{earned:null,localDone:true}]}]};
+const a=I.analyse([movie,show,book,g1,g2],[{id:'ep',showId:'show',season:1,num:1,title:'Pilote',watched:true,plays:1,watchHistory:[d1],runtimeMinutes:45}],gaming,{now});
+const result={titles:a.library.total,episodes:a.library.episodes,plays:a.history.totalPlays,known:a.history.knownPlays,undated:a.history.undatedPlays,windowMinutes:a.history.windowVideoMinutes,uniqueMinutes:a.history.uniqueVideoMinutes,allMinutes:a.history.totalVideoMinutes,pages:a.library.currentPages,declaredMinutes:a.library.declaredGameMinutes,caughtUp:a.library.caughtUp,steamMinutes:a.gaming.steam.map(s=>s.minutes),normal:a.gaming.sets[0].earned,hardcore:a.gaming.sets[0].hardcore,local:a.gaming.sets[0].localDone};
+A.deepEqual(result,JSON.parse(fs.readFileSync(process.argv[2],'utf8')));console.log('Statistics JS/Kotlin deterministic aggregate parity: OK');

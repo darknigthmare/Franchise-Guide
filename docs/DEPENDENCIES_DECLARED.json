@@ -1,0 +1,42 @@
+{
+  "release": "0.36.0",
+  "scope": "Direct declarations and npm locked QA dependencies updated for this revision. Android build status is recorded in docs/QA_REPORT.md. Not a full resolved SBOM or vulnerability clearance.",
+  "android_plugins": {
+    "agp": "8.10.1",
+    "kotlin_and_compose": "2.0.21"
+  },
+  "gradle": "8.11.1",
+  "compose_bom": "2024.12.01",
+  "android_dependencies": [
+    "androidx.core:core-ktx:1.15.0",
+    "androidx.activity:activity-compose:1.10.0",
+    "androidx.lifecycle:lifecycle-runtime-ktx:2.8.7",
+    "androidx.lifecycle:lifecycle-runtime-compose:2.8.7",
+    "androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7",
+    "androidx.work:work-runtime-ktx:2.10.0",
+    "androidx.compose.material3:material3",
+    "androidx.compose.material:material-icons-extended",
+    "androidx.compose.ui:ui",
+    "androidx.compose.ui:ui-tooling-preview",
+    "io.coil-kt:coil-compose:2.7.0",
+    "androidx.compose.ui:ui-tooling"
+  ],
+  "web_runtime_dependencies": "No package/CDN JS dependency; local application scripts; browser APIs",
+  "desktop_runtime": "Java17+ standard library and embedded application Web source",
+  "qa_only": {
+    "node": "Node 22+",
+    "dom_direct": {
+      "jsdom": "26.1.0",
+      "fake-indexeddb": "6.2.2",
+      "playwright": "1.62.1"
+    },
+    "npm_lock": "package-lock.json, 43 resolved package entries; no production npm dependency",
+    "kotlin": "2.0.21 and coroutines JVM",
+    "real_json_codec": "org.json:json:20240303",
+    "signatures": "hand-written Android/Compose/org.json signatures for non-UI typecheck only",
+    "archives": "Python standard library and libarchive for independent extraction",
+    "historical_browser_suites": "Python Playwright/Chromium required to rerun; not executed for V0.14"
+  },
+  "optional_web_server_runtime": "Node22+ standard library only; no production npm dependency",
+  "qa_dependency_resolution_current": "npm ci succeeded. jsdom and fake-indexeddb suites executed. Chromium real-origin test executed with official Chrome for Testing156.0.8078.47. Android resolution/build tracked separately."
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#E9E7F2">
+    <TextView android:id="@+id/widget_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:textStyle="bold" android:textSize="18sp" android:textColor="#1D1B20" />
+    <TextView android:id="@+id/widget_stats" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:textSize="12sp" android:textColor="#49454F" />
+    <TextView android:id="@+id/widget_next" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:maxLines="2" android:textSize="14sp" android:textColor="#1D1B20" />
+    <Button
+        android:id="@+id/widget_watch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Marquer vu"
+        android:textAllCaps="false" />
+</LinearLayout>

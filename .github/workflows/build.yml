@@ -1,0 +1,87 @@
+name: FranchiseGuide validation
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: validation-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  web-pc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci --ignore-scripts
+      - run: npm run check:structure
+      - run: npm test
+      - run: npm run build:pc
+      - run: python tests/desktop_http.py && python tests/desktop_startup.py
+      - name: Java gateways with controlled HTTP providers
+        run: |
+          mkdir -p .work/java-tests
+          javac --release 17 -d .work/java-tests desktop/src/com/franchiseguide/desktop/*.java tests/*Test.java
+          for cls in AutoServicesTest SteamBridgeTest SteamAuthTest RetroBridgeTest; do
+            java -cp .work/java-tests com.franchiseguide.desktop.$cls
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FranchiseGuide-PC
+          path: desktop/dist/FranchiseGuide-PC.jar
+          if-no-files-found: error
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-origin-results
+          path: tests/results/current/browser-origin/
+          if-no-files-found: warn
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - run: gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Android-debug-after-successful-build
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-reports
+          path: app/build/reports/
+          if-no-files-found: warn

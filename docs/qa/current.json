@@ -1,0 +1,76 @@
+{
+  "release": "0.36.0",
+  "assessed_at": "2026-10-26",
+  "source_archive_sha256": "6628593fb329ea964d6f73b95c072bef5f26810715fcf08943d2421c79dde022",
+  "scope": "Local execution on recovered and corrected source; provider responses controlled, no real accounts",
+  "checks": {
+    "node": {
+      "command": "npm test",
+      "passed": 1580,
+      "failed": 0,
+      "skipped": 0,
+      "runtime": "Node24.22.1"
+    },
+    "structure": {
+      "passed": 216
+    },
+    "java_gateways": {
+      "runtime": "JDK17",
+      "assertions": {
+        "AutoServicesTest": 81,
+        "SteamBridgeTest": 35,
+        "SteamAuthTest": 53,
+        "RetroBridgeTest": 184
+      }
+    },
+    "pc": {
+      "version": "0.36.0",
+      "rebuilt": true,
+      "probe": "passed",
+      "http_controls": 109,
+      "startup_controls": 9
+    },
+    "browser": {
+      "command": "npm run test:browser",
+      "engine": "Chrome156.0.8078.47",
+      "passed": 22,
+      "real_origin": true,
+      "real_indexeddb": true,
+      "offline_reload": true,
+      "two_tab_write_lock": true
+    },
+    "kotlin_checkin": {
+      "compiler": "Kotlin2.0.21",
+      "model_files_compiled": 27,
+      "assertions_passed": 33,
+      "js_parity": "passed",
+      "automated_in_ci": false
+    },
+    "extracted_web": {
+      "suite_controls": 110,
+      "isolated_copy_controls": 110,
+      "mismatched_version_rejected": true
+    },
+    "android": {
+      "jdk": 17,
+      "compile_sdk": 36,
+      "build_tools": "35.0.0",
+      "version_name": "0.36.0",
+      "version_code": 36,
+      "compileDebugKotlin": "passed",
+      "assembleDebug": "passed",
+      "testDebugUnitTest": "NO-SOURCE",
+      "lintDebug": "13 errors; fixes in progress",
+      "device_tested": false
+    }
+  },
+  "limitations": [
+    "No real provider accounts",
+    "No Android device or signed distribution qualification",
+    "No installed PWA or upgrade matrix",
+    "No multi-device cloud synchronization",
+    "No automatic external backup",
+    "Historical test totals are not current proof"
+  ],
+  "details": "docs/QA_REPORT.md"
+}

@@ -1,0 +1,53 @@
+{
+  "name": "FranchiseGuide Suite",
+  "version": "0.36.0",
+  "base": "Recovered Drive V0.35 ZIP",
+  "base_zip_sha256": "6628593fb329ea964d6f73b95c072bef5f26810715fcf08943d2421c79dde022",
+  "portable_schema": 11,
+  "protected_container_version": 1,
+  "reads_portable_schemas": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "delivered": [
+    "Recoverable Trakt movie/episode check-ins",
+    "Due check-in remote-history verification preventing duplicate watch writes",
+    "Today dashboard and backup reminder",
+    "More complete local erase on Web/PC",
+    "Android source rules, panel and widget wiring",
+    "Java17-compatible PC JAR, Web/PWA and personal servers",
+    "Complete Android/Web/PC source import into the requested GitHub repository",
+    "Detailed remaining-work Excel and machine-readable backlog",
+    "Trakt uncertain completion and acknowledgement fixes",
+    "Local gateway JSON credential redaction, duplicate-header and cooldown fixes",
+    "Strict PC Steam JSON and UTF-8 validation",
+    "Reproducible Web copies and automated GitHub validation",
+    "Android SDK36 Compose compilation and debug APK assembly; lint compatibility fixes in progress",
+    "Real Chrome local-origin storage, offline reload and two-tab write-lock checks"
+  ],
+  "not_delivered": [
+    "SeriesGuide Cloud or general multi-device synchronization",
+    "Weekly automatic external backup / automatic Drive copy",
+    "Background Web completion while application is closed",
+    "Real provider accounts or credentials",
+    "New PSN/Xbox/Epic/GOG connectors or commercial certification",
+    "Android device validation, signed distribution and automatic Kotlin regression integration in CI",
+    "PWA installed state, upgrades and full cross-browser validation"
+  ],
+  "tests": {
+    "current_evidence": "docs/QA_REPORT.md",
+    "historical_results": "docs/archives/v035/RELEASE.json",
+    "note": "Only results recorded for this source revision belong to this release."
+  },
+  "all_runtime_credentials_included": false,
+  "assessed_at": "2026-10-26"
+}

@@ -1,0 +1,61 @@
+'use strict';
+const {test}=require('node:test'),A=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const I=require('../web/import-core.js'),C=require('../web/core.js'),G=require('../web/gaming-core.js');
+const copy=x=>JSON.parse(JSON.stringify(x));
+const base=()=>({schema:8,media:[{id:'s',kind:'show',title:'Série test',added:true,tmdbId:111,listIds:[],lastWatchedAt:1700000000000}],episodes:[{id:'e',showId:'s',season:1,num:1,title:'Titre épisode privé',watched:true,plays:1,watchHistory:[1700000000000],lastWatchedAt:1700000000000,runtimeMinutes:52,rating:9,userNote:'Ma note privée'}],suggestions:[],lists:[],customFranchises:[],gaming:{version:1,accounts:[],sets:[]},settings:{language:'fr-FR',tmdbKey:'not-in-report'}});
+function parser(before=base()){
+ const env={state:copy(before),seed:{settings:{}},clone:copy,FGCore:C,FGGaming:G,FGReliability:require('../web/reliability-core.js'),FGSteam:{metadata:copy},TextEncoder,TextDecoder,Date,Map,Set,JSON,tmdbImage:x=>x?`https://image.tmdb.org/t/p/w500${x}`:null,assignFranchise:()=>{},migrate:x=>x,save:()=>{throw Error('Unexpected write')},requireSafetySnapshot:()=>{throw Error('Unexpected snapshot')},prepareLibraryReplacement:()=>{throw Error('Unexpected runtime change')},render:()=>{throw Error('Unexpected render')}};
+ const ctx=vm.createContext(env);vm.runInContext(fs.readFileSync(require.resolve('../web/backup.js'),'utf8'),ctx);return ctx;
+}
+const sg=(ep={},show={})=>JSON.stringify([{tmdb_id:111,title:'Série test',language:'fr-FR',seasons:[{season:1,episodes:[{episode:1,...ep}]}],...show}]);
+test('Review validates one portable or up to ten SeriesGuide files',()=>{A.equal(I.validateFiles([{size:42}],'portable'),42);A.equal(I.validateFiles(Array.from({length:10},()=>({size:2})),'seriesguide'),20);});
+test('Portable multi-file import rejected',()=>A.throws(()=>I.validateFiles([{size:2},{size:3}],'portable')));
+test('Empty selection rejected',()=>A.throws(()=>I.validateFiles([],'portable')));
+test('More than ten SeriesGuide files rejected',()=>A.throws(()=>I.validateFiles(Array.from({length:11},()=>({size:2})),'seriesguide')));
+test('Empty source file rejected',()=>A.throws(()=>I.validateFiles([{size:0}],'portable')));
+test('Individual file over32MiB rejected',()=>A.throws(()=>I.validateFiles([{size:I.MAX_FILE+1}],'portable')));
+test('Aggregate greater than64MiB rejected',()=>A.throws(()=>I.validateFiles([{size:I.MAX_FILE},{size:I.MAX_FILE},{size:1}],'seriesguide')));
+test('Invalid fractional file length rejected',()=>A.throws(()=>I.validateFiles([{size:2.5}],'portable')));
+test('Exact budget accepted',()=>A.equal(I.validateFiles([{size:I.MAX_FILE},{size:I.MAX_FILE}],'seriesguide'),I.MAX_TOTAL));
+test('Counters distinguish four media types and hidden followed titles',()=>{const s=base();s.media.push(...['movie','game','book'].map(kind=>({id:kind,kind,title:kind,added:true,hidden:true})));const c=I.count(s);A.deepEqual([c.show,c.movie,c.game,c.book,c.titles],[1,1,1,1,4]);});
+test('Series last aggregate is not a separate viewing event',()=>A.equal(I.count(base()).datedViewings,1));
+test('Unknown historical count is not turned into dates',()=>{const s=base();s.episodes[0]={...s.episodes[0],watchHistory:[],lastWatchedAt:null,plays:30};A.equal(I.count(s).datedViewings,0);});
+test('Duplicate identical seconds counted once',()=>{const s=base();s.episodes[0].watchHistory.push(1700000000001);A.equal(I.count(s).datedViewings,1);});
+test('Private notes counted without exposing note content',()=>A.equal(I.count(base()).notes,1));
+test('Removed entries and lost dates detected',()=>{const b=base(),a=base();a.media=[];a.episodes=[];const r=I.compare(b,a);A.equal(r.changes.removed,1);A.equal(r.loss.dates,1);A.equal(r.loss.notes,1);A.equal(r.loss.ratings,1);});
+test('Same title with different local id is not inferred to match',()=>{const a=base();a.media[0].id='different';const r=I.compare(base(),a);A.equal(r.changes.added,1);A.equal(r.changes.removed,1);});
+test('Metadata-only modification is distinct from removed title',()=>{const a=base();a.media[0].title='Nouveau titre';const r=I.compare(base(),a);A.equal(r.changes.modified,1);A.equal(r.loss.dates,0);});
+test('Unchanged objects with reordered keys remain equal',()=>{const b=base(),a=base();a.media[0]=Object.fromEntries(Object.entries(a.media[0]).reverse());A.equal(I.compare(b,a).changes.unchanged,1);});
+test('Counters include accounts sets achievements',()=>{const s=base();s.gaming={accounts:[{id:'a'}],sets:[{achievements:[{},{}]}]};const c=I.count(s);A.deepEqual([c.accounts,c.sets,c.achievements],[1,1,2]);});
+test('Baseline content guard accepts exact state',()=>{const b=base();A.doesNotThrow(()=>I.guard({epoch:2,revision:3,baseKey:I.contentKey(b)},copy(b),2,3));});
+for(const [name,mutate] of [['watched',s=>s.episodes[0].watched=false],['private note',s=>s.episodes[0].userNote='Other'],['preferences',s=>s.settings.language='en-US'],['metadata',s=>s.media[0].overview='New'],['gaming',s=>s.gaming.accounts.push({id:'a'})]])test('Guard rejects changed '+name,()=>{const s=base(),key=I.contentKey(s);mutate(s);A.throws(()=>I.guard({epoch:2,revision:3,baseKey:key},s,2,3));});
+test('Generation change rejected even if data match',()=>A.throws(()=>I.guard({epoch:2,revision:3,baseKey:I.contentKey(base())},base(),4,3)));
+test('Another writer revision rejected',()=>A.throws(()=>I.guard({epoch:2,revision:3,baseKey:I.contentKey(base())},base(),2,4)));
+test('Title filtering covers hidden beyond initial batch',()=>{const rows=Array.from({length:120},(_,i)=>({id:''+i,title:'Titre '+i,kind:'movie',change:'added'}));A.equal(I.filterRows(rows,'119')[0].id,'119');});
+test('Title filtering handles accents case and combined criteria',()=>{const rows=[{title:'L’Épisode',kind:'show',change:'added'},{title:'L’Épisode',kind:'movie',change:'removed'}];A.equal(I.filterRows(rows,'épisode','show','added').length,1);});
+test('Report excludes raw data notes profiles and key',()=>{const p={mode:'portable',files:[{name:'sauvegarde.json',size:42}],comparison:I.compare(base(),base()),report:null};const raw=JSON.stringify(I.publicReport(p));A.ok(!raw.includes('Ma note privée')&&!raw.includes('not-in-report')&&!raw.includes('Titre épisode privé'));});
+test('Comparison never mutates either source snapshot',()=>{const b=base(),a=base(),raw=JSON.stringify([b,a]);I.compare(b,a);A.equal(JSON.stringify([b,a]),raw);});
+test('SeriesGuide staging does not write storage render or mutate live state',()=>{const ctx=parser(),before=JSON.stringify(ctx.state);const out=ctx.stageSeriesGuide([sg()],[]);A.equal(out.report.shows,1);A.equal(JSON.stringify(ctx.state),before);});
+test('SeriesGuide import does not replace known52min episode with default45',()=>{const ctx=parser();A.equal(ctx.stageSeriesGuide([sg()]).staged.episodes[0].runtimeMinutes,52);});
+test('Explicit zero duration survives SeriesGuide staging',()=>{const s=base();s.episodes[0].runtimeMinutes=0;const ctx=parser(s);A.equal(ctx.stageSeriesGuide([sg()]).staged.episodes[0].runtimeMinutes,0);});
+test('Private episode note and local note score retained',()=>{const ctx=parser();const e=ctx.stageSeriesGuide([sg()]).staged.episodes[0];A.equal(e.userNote,'Ma note privée');A.equal(e.rating,9);});
+test('Exact known additional viewing date imported, no synthetic date',()=>{const ctx=parser();const e=ctx.stageSeriesGuide([sg({watched:true,plays:2,last_watched_ms:1700000100000})]).staged.episodes[0];A.deepEqual([...e.watchHistory],[1700000000000,1700000100000]);A.equal(e.plays,2);});
+test('Invalid second SeriesGuide file rolls back whole preparation',()=>{const ctx=parser(),before=JSON.stringify(ctx.state);A.throws(()=>ctx.stageSeriesGuide([sg(),'{broken']));A.equal(JSON.stringify(ctx.state),before);});
+test('SeriesGuide string false is rejected rather than treated as true',()=>A.throws(()=>parser().stageSeriesGuide([sg({watched:'false'})])));
+test('SeriesGuide invalid plays cannot become zero silently',()=>A.throws(()=>parser().stageSeriesGuide([sg({plays:-1})])));
+test('SeriesGuide invalid episode array rejected',()=>A.throws(()=>parser().stageSeriesGuide([JSON.stringify([{tmdb_id:111,seasons:[{season:1,episodes:{}}]}])])));
+test('SeriesGuide list references are resolved after all files regardless of order',()=>{const ctx=parser();const list=JSON.stringify([{list_id:'l',name:'QA',items:[{type:'tmdb-show',externalId:'111'}]}]);const r=ctx.stageSeriesGuide([list,sg()],['lists.json','shows.json']);A.equal(r.report.linked,1);A.equal(r.report.skipped,0);A.equal(r.staged.media[0].listIds.length,1);});
+test('Unresolved SeriesGuide list links are counted not invented',()=>{const ctx=parser();const out=ctx.stageSeriesGuide([JSON.stringify([{name:'Liste',items:[{type:'tmdb-show',externalId:'999'}]}])]);A.equal(out.report.skipped,1);A.equal(out.staged.media.length,1);});
+test('Repeated SeriesGuide staged import is idempotent',()=>{const ctx=parser();const one=ctx.stageSeriesGuide([sg()]).staged;const two=ctx.stageSeriesGuide([sg()],[],one).staged;A.deepEqual(JSON.parse(JSON.stringify(two)),JSON.parse(JSON.stringify(one)));});
+
+test('Series private notes count but aggregate viewing date does not double count',()=>{const s={media:[{id:'s',kind:'show',added:true,lastWatchedAt:1000,userNote:'Private show'}],episodes:[{id:'e',showId:'s',lastWatchedAt:1000,userNote:'Private episode'}]};A.equal(I.count(s).notes,2);A.equal(I.count(s).datedViewings,1);});
+
+test('Impossible SeriesGuide calendar date is rejected instead of rolled into March',()=>{const env=parser();A.throws(()=>env.stageSeriesGuide([sg({}, {first_aired:'2026-02-31'})],['shows.json'],base()),/impossible/);});
+test('Valid leap-day show date is preserved',()=>{const env=parser();const out=env.stageSeriesGuide([sg({}, {first_aired:'2024-02-29'})],['shows.json'],base());A.equal(out.staged.media[0].releaseDate,'2024-02-29');});
+test('Negative unknown episode date sentinel is not invented',()=>{const env=parser();const out=env.stageSeriesGuide([sg({first_aired:-1})],['shows.json'],base());A.equal(out.staged.episodes[0].date,null);});
+test('Malformed date cannot be hidden behind a previous known date',()=>{const env=parser();A.throws(()=>env.stageSeriesGuide([sg({first_aired:'2026-02-31'})],['shows.json'],base()));});
+
+test('Documented SeriesGuide show ISO timestamp accepted with episode epoch milliseconds',()=>{const env=parser();const out=env.stageSeriesGuide([sg({first_aired:1517558400000},{first_aired:'2018-02-02T08:00:00Z'})],['shows.json'],base());A.equal(out.staged.media[0].releaseDate,'2018-02-02');A.equal(out.staged.episodes[0].date,'2018-02-02');});
+test('Date with offset is consistently converted to UTC calendar day',()=>{const env=parser();const out=env.stageSeriesGuide([sg({}, {first_aired:'2026-03-01T01:00:00+02:00'})],['shows.json'],base());A.equal(out.staged.media[0].releaseDate,'2026-02-28');});
+test('Impossible clock time not silently rolled into next day',()=>{const env=parser();A.throws(()=>env.stageSeriesGuide([sg({}, {first_aired:'2026-02-28T24:00:00Z'})],['shows.json'],base()));});
+test('Non-date object refused',()=>{const env=parser();A.throws(()=>env.stageSeriesGuide([sg({}, {first_aired:{value:'2026-01-01'}})],['shows.json'],base()));});

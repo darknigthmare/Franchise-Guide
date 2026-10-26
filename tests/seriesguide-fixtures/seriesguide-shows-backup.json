@@ -1,0 +1,25 @@
+[
+  {
+    "tmdb_id": 68421,
+    "tvdb_id": 332331,
+    "imdb_id": "tt2261227",
+    "title": "Altered Carbon",
+    "language": "fr-FR",
+    "first_aired": "2018-02-02T08:00:00Z",
+    "favorite": true,
+    "hidden": false,
+    "status": "ended",
+    "runtime": 50,
+    "network": "Netflix",
+    "seasons": [
+      {
+        "season": 1,
+        "tmdb_id": 61343,
+        "tvdb_id": 1234,
+        "episodes": [
+          {"tmdb_id": 991306, "tvdb_id": 1401623, "episode": 1, "title": "Out of the Past", "first_aired": 1517558400000, "watched": true, "plays": 1, "skipped": false, "collected": true}
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,92 @@
+{
+  "name": "FranchiseGuide Suite",
+  "version": "0.28.0",
+  "base": "Uploaded Suite V0.27 ZIP",
+  "base_zip_sha256": "b92b19733f0f85c2b54f1bfc90b0f6d86fc35ddc88a9734850101a12c31fd58e",
+  "portable_schema": 11,
+  "reads_portable_schemas": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "delivered": [
+    "Explicit keyless ISBN lookup on Web/PC, bounded candidate search and edition/work/ISBN identity verification",
+    "Persisted personal Open Library edition reference, optional page total, protected history and clear-reference action",
+    "Strict ISBN978/979 prefix correction; catalogue work title refreshed; per-entry consultation time preserved",
+    "Schema11 normalized reference codecs and old-format read compatibility",
+    "Android source model/client/panel for an existing work; no SDK/Compose qualification",
+    "Rebuilt Java17 PC JAR, canonical Web/PWA, tests and documentation"
+  ],
+  "not_delivered": [
+    "Barcode camera scanner, multiple independent physical copies, exhaustive ISBN or lending service",
+    "Global new-book ISBN add flow on native Android",
+    "New gaming connector, real provider credentials, shared multiuser backend or Drive library sync",
+    "APK/AAB/EXE, Android SDK/Compose/device qualification",
+    "Real account/API, browser-origin persistence or PWA installation qualification",
+    "Commercial readiness or zero-bug certification"
+  ],
+  "web_engine": "web/ canonical;62 files matched to web-preview,embedded desktop and JAR at packaging",
+  "tests": {
+    "available_commands_passed": 64,
+    "available_commands_failed": 0,
+    "node_tests": 1310,
+    "new_node_tests": 46,
+    "chromium_assertions": 1195,
+    "new_chromium_assertions": 55,
+    "chromium_groups": {
+      "browser_harness": 64,
+      "browser_v08": 45,
+      "browser_v09": 39,
+      "browser_v010": 70,
+      "browser_v011": 64,
+      "browser_v012": 54,
+      "browser_v015": 63,
+      "browser_v016": 62,
+      "browser_v017": 72,
+      "browser_v018": 64,
+      "browser_v019": 60,
+      "browser_v020": 68,
+      "browser_v021": 65,
+      "browser_v022": 65,
+      "browser_v023": 71,
+      "browser_v024": 78,
+      "browser_v025": 44,
+      "browser_v026": 54,
+      "browser_v027": 38,
+      "browser_v028": 55
+    },
+    "kotlin_domain_assertions": 834,
+    "new_kotlin_selection_assertions": 45,
+    "additional_schema_acceptance_assertion": 1,
+    "franchise_scenarios": 1,
+    "cross_platform_comparisons": 11,
+    "desktop_http": 104,
+    "desktop_startup": 9,
+    "java_provider_assertions": 333,
+    "structure_checks": 168,
+    "bootstrap_checks": 8,
+    "not_run": [
+      {
+        "name": "tests/retro-orchestration-v014.test.cjs",
+        "reason": "Missing locked QA dependencies: jsdom. Not executed on this host; no earlier result counted."
+      },
+      {
+        "name": "tests/web-dom-v014.test.cjs",
+        "reason": "Missing locked QA dependencies: jsdom, fake-indexeddb. Not executed on this host; no earlier result counted."
+      },
+      {
+        "name": "Kotlin GamingCodecRetroTest + MediaIdentityCodecTest against real org.json",
+        "reason": "FG_JSON_JAR is not provided or does not exist. Signature stubs are separate and are not parser execution."
+      }
+    ]
+  },
+  "all_runtime_credentials_included": false
+}

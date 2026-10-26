@@ -1,0 +1,132 @@
+{
+  "name": "FranchiseGuide Suite",
+  "version": "0.20.0",
+  "date": "2026-10-06",
+  "base": "Actual available Suite V0.19 RAR",
+  "base_rar_sha256": "6ef63432d3b30203e3eb92c73fe8c8369e1eea0522f8a9d0a1bef32207f969a1",
+  "portable_schema": 9,
+  "reads_portable_schemas": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "web_engine": "web/ canonical, exact web-preview and embedded JAR copies verified during packaging",
+  "delivered": [
+    "Separate current progress and historical completions for games/books",
+    "Shared read-only statistics/history with precise unknown values and per-profile gaming metrics",
+    "Web/PC numeric summary JSON and detailed history JSON/CSV",
+    "Web/PC catalogue health, bounded maintenance and persistent retry controls",
+    "Android progress and insight rules, source panels and codecs; not an SDK/Compose build",
+    "Compiled Java17 PC, static Web/PWA and personal Node22 server",
+    "Executable test sources, recorded available-host results and declared exclusions"
+  ],
+  "not_delivered": [
+    "Android APK/AAB, SDK/Compose or device validation",
+    "Full native parity for CSV and catalogue maintenance UI",
+    "New gaming providers or real account authentication proof",
+    "Public deployment or general cloud",
+    "Installed PWA/offline/real multi-tab origin verification",
+    "Native Windows EXE or graphical Windows/macOS test",
+    "Commercial clearance, exhaustive SeriesGuide parity or absence-of-bugs guarantee"
+  ],
+  "tests": {
+    "version": "0.20.0",
+    "base_rar_sha256": "6ef63432d3b30203e3eb92c73fe8c8369e1eea0522f8a9d0a1bef32207f969a1",
+    "available_host_run": {
+      "commands_passed": 41,
+      "commands_failed": 0,
+      "not_run": [
+        {
+          "name": "tests/retro-orchestration-v014.test.cjs",
+          "reason": "Missing locked QA dependencies: jsdom. Not executed on this host; no earlier result counted."
+        },
+        {
+          "name": "tests/web-dom-v014.test.cjs",
+          "reason": "Missing locked QA dependencies: jsdom, fake-indexeddb. Not executed on this host; no earlier result counted."
+        },
+        {
+          "name": "Kotlin GamingCodecRetroTest + MediaIdentityCodecTest against real org.json",
+          "reason": "FG_JSON_JAR is not provided or does not exist. Signature stubs are separate and are not parser execution."
+        }
+      ]
+    },
+    "node": {
+      "tests": 897,
+      "passed": 897,
+      "new_v020_tests": 82
+    },
+    "chromium": {
+      "assertions": 725,
+      "groups": {
+        "browser_harness": 64,
+        "browser_v08": 45,
+        "browser_v09": 39,
+        "browser_v010": 70,
+        "browser_v011": 64,
+        "browser_v012": 54,
+        "browser_v015": 63,
+        "browser_v016": 62,
+        "browser_v017": 72,
+        "browser_v018": 64,
+        "browser_v019": 60,
+        "browser_v020": 68
+      },
+      "new_v020_assertions": 68,
+      "scope": "Real production scripts, DOM and CSS with controlled provider, image, clock and storage fixtures; no real persistent origin or account"
+    },
+    "kotlin": {
+      "assertions": 496,
+      "groups": {
+        "TrackingRulesTest": 42,
+        "TrackingV08Test": 22,
+        "IntegrationRulesTest": 15,
+        "ReleaseRulesTest": 48,
+        "GamingRulesTest": 52,
+        "SteamMetadataTest": 20,
+        "ActivityRulesTest": 53,
+        "LibraryRulesTest": 56,
+        "ImportReviewRulesTest": 60,
+        "FranchiseRulesTest": 56,
+        "InsightsProgressRulesTest": 72
+      },
+      "franchise_scenarios": 1,
+      "new_v020_domain_assertions": 72,
+      "scope": "Pure Kotlin rules on JVM; no Android SDK/Compose/runtime JSON"
+    },
+    "parity": {
+      "insight_counters": true,
+      "franchise_counts_and_order": true,
+      "import_counters": true,
+      "calendar_unicode_bytes": true
+    },
+    "desktop": {
+      "http": 75,
+      "startup": 9,
+      "java_release": 17
+    },
+    "java_handlers": {
+      "SteamBridgeTest": 28,
+      "SteamAuthTest": 53,
+      "RetroBridgeTest": 184
+    },
+    "structure": 80,
+    "bootstrap": 8,
+    "native_non_ui_signature_compile": true,
+    "real_origin_attempt": {
+      "version": "0.20.0",
+      "url": "http://127.0.0.1:47720/",
+      "agent_browser": "bash: line 21: agent-browser: command not found\n",
+      "server_http_status": 200,
+      "navigation": "blocked or failed",
+      "error": "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at http://127.0.0.1:47720/\nCall log:\n  - navigating to \"http://127.0.0.1:47720/\", waiting until \"domcontentloaded\"\n"
+    }
+  },
+  "credentials_included": false,
+  "commercial_verdict": "NO-GO"
+}
