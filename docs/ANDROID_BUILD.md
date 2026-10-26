@@ -29,3 +29,5 @@ Compilation Compose, assemblage de développement et lint exécutés avec succè
 L’APK local vérifié fait 19 796 878 octets, porte la version 0.36.0/code 36 (minSdk 26, targetSdk 36), et sa signature de développement APK v2 est valide. SHA-256 : `9b596e254675f8ad4f1a488c5b2a7de39076a61a4d635cc4c9fc8b767bf167eb`. Une reconstruction, notamment avec une autre clé de développement, produit un autre hash.
 
 Le projet limite Gradle à 1 536 Mio de heap et un worker, et utilise la compilation Kotlin dans le processus Gradle. Ce réglage a permis la compilation complète dans l’environnement de recette.
+
+Le même code a aussi réussi les trois jobs de [l’exécution GitHub 40403868550](https://github.com/darknigthmare/Franchise-Guide/actions/runs/40403868550). [Télécharger l’APK de développement produite par GitHub](https://github.com/darknigthmare/Franchise-Guide/actions/runs/40403868550/artifacts/12691310204) ; [rapports de lint](https://github.com/darknigthmare/Franchise-Guide/actions/runs/40403868550/artifacts/12691290247). La clé debug de la CI est propre à son environnement : le hash de cet APK peut différer du hash local indiqué ci-dessus.

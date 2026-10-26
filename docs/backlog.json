@@ -44,12 +44,12 @@
       "platform": "Toutes",
       "title": "Exécuter les contrôles à chaque modification",
       "status": "Partiel",
-      "current": "Workflow push/PR publié et exécuté. Groupes Web/PC et Android distants réussis. Le test navigateur corrigé réussit localement sur la version Chromium de CI et sur Chrome 156 ; sa nouvelle exécution distante reste à observer.",
+      "current": "Workflow push/PR publié et exécuté. Les trois jobs distants web-pc, browser et android réussissent dans la CI finale. Le test navigateur corrigé réussit également localement sur Chrome 156 et sur la version Chromium de CI.",
       "steps": "Déclencher la CI sur push et PR. Installer les dépendances verrouillées et exécuter les suites appropriées, avec journaux et artefacts.",
       "acceptance": "Un commit propre passe les contrôles automatiques. Une régression injectée fait échouer le job concerné.",
       "dependencies": "FG-001",
       "evidence": ".github/workflows/build.yml; package.json; docs/QA_REPORT.md; docs/qa/current.json",
-      "validation": "Web/PC : GitHub Actions 40402158558 réussi. Android : job 121851777726 du run 40402512586 réussi, APK et rapports publiés. ChromeHeadlessShell 151 et Chrome 156 : 22/22 contrôles chacun après correction du test ; correction navigateur à republier.",
+      "validation": "GitHub Actions 40403868550 : COMPLETED/SUCCESS le 26/10/2026 à 21:26:39 UTC, commit 8f7f1b7. Jobs web-pc, browser et android réussis. Navigateur CI : 22/22 contrôles. APK et rapports Android publiés.",
       "followup": "L’injection contrôlée de régression reste à exercer pour fermer le critère. La divergence navigator.onLine est un diagnostic navigateur ; la preuve hors ligne utilise désormais le rejet réel d’une requête sans cache."
     },
     {
@@ -64,7 +64,7 @@
       "acceptance": "APK debug produit, tests et lint réussis. Aucune compilation avec stubs présentée comme build Android.",
       "dependencies": "FG-002",
       "evidence": "app/build.gradle.kts; build.gradle.kts; app/src/main/java/com/franchiseguide/app/ui/FranchisePanels.kt; app/src/main/java/com/franchiseguide/app/ui/InsightsPanels.kt; app/src/main/java/com/franchiseguide/app/ui/WatchAvailabilityScreen.kt; docs/ANDROID_BUILD.md; docs/qa/current.json",
-      "validation": "Local : assembleDebug + testDebugUnitTest + lintDebug, exit 0 en 5 min 24 s. CI Android : même groupe réussi en 5 min 55 s. Lint : 0 erreur, 31 avertissements, 1 remarque. JUnit Android : NO-SOURCE, aucun test exécuté. APK debug v2 vérifiée.",
+      "validation": "Local : assembleDebug + testDebugUnitTest + lintDebug, exit 0 en 5 min 24 s. Même groupe réussi dans la CI finale 40403868550. Lint : 0 erreur, 31 avertissements, 1 remarque. JUnit Android : NO-SOURCE, aucun test exécuté. APK locale debug v2 vérifiée.",
       "followup": "Complément pour clore le critère de tests : ajouter/exécuter de vrais tests unitaires Android. Les 31 avertissements lint ne sont pas 31 bugs fonctionnels : 21 UseKtx, 6 dépendances, 1 ApplySharedPref, 1 ObsoleteSdkInt, 1 Overdraw et 1 HardcodedText. Préserver le commit synchrone requis par la sécurité."
     },
     {
@@ -1429,7 +1429,7 @@
       "acceptance": "Aucun groupe manquant compté réussi. Les problèmes bloquants restent ouverts dans le suivi avant annonce de disponibilité.",
       "dependencies": "FG-002, FG-003, FG-021, FG-082",
       "evidence": "docs/QA_REPORT.md; tests/browser-origin.cjs; tools/validate_project.py; docs/RELEASE_GATES.json; docs/qa/current.json",
-      "validation": "Node : 1 580/1 580, 0 échec/ignoré. Structure : 216. Passerelles Java : 353 assertions. Navigateurs : 22/22 sur Chrome 156 et ChromeHeadlessShell 151. Kotlin check-in : 33 assertions + parité. SDK/APK/lint réussis localement et en CI ; JUnit Android NO-SOURCE. Relance navigateur distante à observer.",
+      "validation": "Node : 1 580/1 580, 0 échec/ignoré. Structure : 216. Passerelles Java : 353 assertions. Navigateurs : 22/22 sur Chrome 156 et ChromeHeadlessShell 151. Kotlin check-in : 33 assertions + parité. SDK/APK/lint réussis localement et en CI ; JUnit Android NO-SOURCE. Trois jobs de la CI finale 40403868550 réussis.",
       "followup": ""
     },
     {
@@ -1623,16 +1623,25 @@
       "jsonCodecRuntime": "Non exécuté"
     },
     "ci": {
-      "webPC": "Réussi dans GitHub Actions 40402158558",
-      "browserFix": "22/22 contrôles sur ChromeHeadlessShell 151 exact de CI et sur Chrome 156 ; correction à republier",
+      "finalRun": {
+        "id": 40403868550,
+        "status": "COMPLETED/SUCCESS",
+        "completedAt": "2026-10-26T21:26:39Z",
+        "commit": "8f7f1b7f4b0319042f03bc4b55977fde23d741b2",
+        "jobs": {
+          "web-pc": "SUCCESS",
+          "browser": "SUCCESS",
+          "android": "SUCCESS"
+        }
+      },
+      "webPC": "Réussi dans GitHub Actions 40403868550 : Node 1 580/1 580 et passerelles Java 353 assertions",
+      "browserFix": "Correction publiée ; 22/22 contrôles dans le job distant avec ChromeHeadlessShell 151.0.7922.34. Également 22/22 sur Chrome 156 en local.",
       "remoteAndroid": {
         "status": "Réussi",
-        "runId": 40402512586,
-        "jobId": 121851777726,
-        "commit": "6f5340f804987a3e1a0c6a5f6e44155908dc5897",
-        "duration": "5 min 55 s",
-        "apkArtifactId": 12689617072,
-        "reportsArtifactId": 12689736840,
+        "runId": 40403868550,
+        "commit": "8f7f1b7f4b0319042f03bc4b55977fde23d741b2",
+        "apkArtifactId": 12691310204,
+        "reportsArtifactId": 12691290247,
         "testDebugUnitTest": "NO-SOURCE",
         "lint": {
           "errors": 0,

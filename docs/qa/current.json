@@ -124,15 +124,22 @@
     "xlsx_container_verified": true,
     "npm_ci": "passed using cached packages with --offline",
     "web_http_status": 200,
-    "pc_rebuild_and_probe": "passed"
+    "pc_rebuild_and_probe": "passed",
+    "verified_updated_clone_commit": "8f7f1b7f4b0319042f03bc4b55977fde23d741b2",
+    "documentation_only_follow_up": "Final CI evidence and workbook update; application and test sources unchanged."
   },
   "ci": {
-    "source_commit": "6f5340f804987a3e1a0c6a5f6e44155908dc5897",
-    "run_url": "https://github.com/darknigthmare/Franchise-Guide/actions/runs/40402512586",
+    "source_commit": "8f7f1b7f4b0319042f03bc4b55977fde23d741b2",
+    "run_id": 40403868550,
+    "run_url": "https://github.com/darknigthmare/Franchise-Guide/actions/runs/40403868550",
+    "completed_at": "2026-10-26T21:26:39Z",
+    "conclusion": "success",
     "web_pc": "success",
-    "android": "success",
-    "browser": "Old navigator.onLine assertion failed on Chromium151; updated transport assertion passes22 controls on both local engines, awaiting publication and remote run.",
-    "android_apk_artifact_id": 12689617072,
-    "android_reports_artifact_id": 12689736840
+    "browser": "success:22 real-origin controls on Chrome151.0.7922.34",
+    "android": "success:assembleDebug and lintDebug; testDebugUnitTest NO-SOURCE",
+    "android_apk_artifact_id": 12691310204,
+    "android_reports_artifact_id": 12691290247,
+    "pc_artifact_id": 12690450052,
+    "browser_artifact_id": 12689867263
   }
 }
