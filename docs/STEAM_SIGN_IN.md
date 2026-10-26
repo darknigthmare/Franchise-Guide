@@ -1,10 +1,12 @@
-# Connexion Steam — FranchiseGuide V0.15
+# Connexion Steam — FranchiseGuide 0.36.0
+
+Le portable courant est au **schéma 11**, avec lecture des anciennes sauvegardes **1 à 11**. Les champs gaming introduits dans le schéma 8 sont conservés. Les instructions ci-dessous décrivent le connecteur personnel actuel ; la portée des essais de cette version est dans [QA_REPORT.md](QA_REPORT.md).
 
 ## Ce qui est livré
 
 Le parcours **Se connecter avec Steam → retour dans FranchiseGuide → récupération des jeux → lecture des succès** est intégré au Web/PC. Steam OpenID 2.0 identifie le compte auprès du serveur personnel. La Steam Web API fournit ensuite les données accessibles, avec une clé configurée côté serveur.
 
-La V0.15 ajoute séparément RetroAchievements : il s’agit d’une association de profil public par pseudo et ULID, sans authentification du propriétaire ni session RA. Ce parcours utilise une autre clé serveur ; voir `RETROACHIEVEMENTS.md`.
+RetroAchievements possède un parcours séparé : il s’agit d’une association de profil public par pseudo et ULID, sans authentification du propriétaire ni session RA. Ce parcours utilise une autre clé serveur ; voir [RETROACHIEVEMENTS.md](RETROACHIEVEMENTS.md).
 
 La connexion n’est pas une autorisation de lire des données privées. Aucun mot de passe Steam, cookie Sony, NPSSO ou clé de l’utilisateur n’est saisi dans les formulaires du navigateur. La session ne signifie pas que le joueur possède tous les jeux affichés localement : l’application conserve aussi les fiches manuelles et les imports.
 
@@ -48,7 +50,7 @@ Les suppressions locales suivantes ne sont pas une transaction unique. Si l’ef
 
 Import de bibliothèque borné à 20 000 entrées ; espace gaming limité à 100 profils, 2 000 listes, 5 000 succès par liste et 100 000 succès au total. L’interface affiche les listes différées quand la limite est atteinte ; elle ne prétend pas avoir tout synchronisé. Le test de 2 100 jeux confirme 2 100 titres préservés, 2 000 liaisons créées et 100 différées. Ces limites ne constituent pas une garantie de stockage : le quota du navigateur peut être atteint plus tôt.
 
-Les refus de quota conservent l’enregistrement précédent et une copie de travail exportable quand la bibliothèque a été préparée. L’application tente également une copie portable dans IndexedDB, sans garantir que ce stockage sera disponible. Les exports portables restent au schéma **8** et excluent les clés et sessions ; ils contiennent néanmoins des profils et historiques personnels. L’export brut préserve l’original sans nettoyage et peut contenir des secrets.
+Les refus de quota conservent l’enregistrement précédent et une copie de travail exportable quand la bibliothèque a été préparée. L’application tente également une copie portable dans IndexedDB, sans garantir que ce stockage sera disponible. Les nouveaux exports portables sont au **schéma 11** et excluent les clés et sessions ; ils contiennent néanmoins des profils et historiques personnels. Les anciens exports au schéma 8 restent lisibles. L’export brut préserve l’original sans nettoyage et peut contenir des secrets.
 
 ## Autres connexions — ne pas confondre les états
 
@@ -57,7 +59,7 @@ Les refus de quota conservent l’enregistrement précédent et une copie de tra
 | Steam Web/PC | OpenID côté serveur personnel, récupération de bibliothèque et succès ; interface intégrée, tests avec amont simulé. |
 | RetroAchievements Web/PC | Profil public par pseudo/ULID, jeux avec progression et succès normal/Hardcore ; association sans authentification du propriétaire. |
 | Trakt | Parcours par code appareil et synchronisation existants ; aucun compte réel utilisé dans les essais. |
-| Steam et RetroAchievements Android natifs | Métadonnées et relevés transportés au schéma 8 ; connexions et lectures réseau natives absentes. |
+| Steam et RetroAchievements Android natifs | Métadonnées et relevés transportés au schéma portable 11, incluant les champs introduits au schéma 8 ; connexions et lectures réseau natives absentes. |
 | PSN / PSNProfiles | Références et import au format neutre ; pas de connexion Sony ou synchronisation PSNProfiles |
 | Xbox, Epic, GOG | Références et imports existants ; aucun nouveau connecteur réseau livré. |
 
@@ -70,6 +72,6 @@ Valve documente la connexion navigateur par OpenID, la liste de jeux et les mét
 - [Succès](https://partner.steamgames.com/doc/webapi/ISteamUserStats)
 - [Clés côté serveur](https://partner.steamgames.com/doc/webapi_overview)
 
-**Aucune authentification réelle Steam n’a été effectuée.** Les tests HTTP utilisent des réponses Steam contrôlées. Les essais d’interface de la V0.15 exécutent les scripts et le DOM de l’application dans jsdom, avec réseau et stockages simulés. Les anciens scénarios et rapports Chromium sont conservés ; ils ne constituent pas une exécution Chromium de cette livraison.
+**Aucune authentification réelle Steam n’a été validée dans cette passe.** Les tests HTTP utilisent des réponses Steam contrôlées. Les essais DOM historiques V0.15 utilisaient jsdom et des stockages simulés. La version 0.36 ajoute des contrôles sur une vraie origine Chrome ; ces contrôles locaux ne constituent pas un aller-retour OpenID réel. Les résultats actuels, distincts des rapports historiques, figurent dans [QA_REPORT.md](QA_REPORT.md).
 
-Le trajet réel Steam, les cookies lors d’un aller-retour OpenID et l’installation PWA restent à valider. Android est livré en sources avec des contrôles JVM et une vérification du code non graphique contre des signatures de test, sans build SDK complet, APK/AAB ou essai sur appareil. La portée exacte des essais figure dans `QA_REPORT.md`.
+Le trajet réel Steam, les cookies lors d’un aller-retour OpenID et l’installation PWA restent à valider. La passe 0.36 a produit une compilation SDK Android et un APK de développement, dont les résultats et limites sont décrits dans le rapport QA. Ce build ne fournit pas le connecteur Steam natif manquant et ne remplace pas un essai sur téléphone.

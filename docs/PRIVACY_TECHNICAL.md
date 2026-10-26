@@ -1,4 +1,6 @@
-# Confidentialité technique — FranchiseGuide V0.14
+# Confidentialité technique — FranchiseGuide 0.36.0
+
+La sauvegarde portable courante utilise le **schéma 11**, avec lecture des anciennes sauvegardes **1 à 11**. Les ajouts historiques V0.31/V0.35 décrits plus bas restent applicables au périmètre indiqué. Les preuves de cette passe, distinctes des anciens rapports, sont dans [QA_REPORT.md](QA_REPORT.md).
 
 Ce document décrit le traitement des données dans la distribution locale. Il ne constitue pas la politique d’un futur service commercial identifié. Aucun hébergement public FranchiseGuide n’est livré.
 
@@ -17,7 +19,7 @@ Le PC utilise le stockage du navigateur pour la bibliothèque, sans base chiffr�
 
 ## Services contactés
 
-Les recherches et actualisations catalogue interrogent TMDb, RAWG et Open Library. Les affiches et portraits contactent les hôtes des images retournées ou les URL HTTPS présentes dans les imports. Les destinataires reçoivent les paramètres demandés et les informations réseau nécessaires, notamment l’adresse IP. La réduction du referrer ne masque pas cette adresse.
+Selon la source choisie et les accès configurés, les recherches et actualisations catalogue interrogent TMDb, RAWG, Open Library, TVmaze, Apple/iTunes ou FreeToGame, directement ou par la passerelle personnelle. Voir [AUTOMATIC_SERVICES.md](AUTOMATIC_SERVICES.md) pour leurs périmètres. Les affiches et portraits contactent les hôtes des images retournées ou les URL HTTPS présentes dans les imports. Les destinataires reçoivent les paramètres demandés et les informations réseau nécessaires, notamment l’adresse IP. La réduction du referrer ne masque pas cette adresse.
 
 Trakt reçoit les requêtes de connexion, les lectures et les modifications de suivi prévues par les actions et réglages. Les avis sont envoyés après confirmation ; publier un avis constitue une action publique. La déconnexion ou l’effacement local ne supprime pas les données déjà enregistrées sur Trakt.
 
@@ -31,7 +33,7 @@ Le jingle original est un fichier local. Aucun module publicitaire ou de mesure 
 
 ## Sauvegardes et transfert
 
-L’export portable **schéma 8** exclut les clés de configuration, jetons, cookies de session, file Trakt et brouillons d’avis. Il contient des titres, notes, historiques, profils publics, éditions et dates de déblocage : **un export sans clé n’est pas anonyme**. Les copies IndexedDB utilisent ce format portable.
+L’export portable courant, au **schéma 11**, exclut les clés de configuration, jetons, cookies de session, file Trakt et brouillons d’avis. Il conserve les champs gaming introduits au schéma 8. Il contient des titres, notes, historiques, profils publics, éditions et dates de déblocage : **un export sans clé n’est pas anonyme**. Les copies IndexedDB utilisent le format portable courant.
 
 Le fichier brut de récupération est différent : il conserve l’original sans nettoyage et peut contenir des secrets. Les JSON téléchargés restent sur le disque jusqu’à leur suppression par l’utilisateur. Restaurer une sauvegarde suspend les automatismes gaming ; un transfert de profil ou de relevé ne vaut pas authentification.
 
@@ -45,9 +47,9 @@ Cette action ne supprime ni les données distantes chez les fournisseurs, ni les
 
 ## Portée des vérifications
 
-Les essais de cette livraison utilisent des fournisseurs simulés, des parcours DOM dans jsdom et IndexedDB simulé. Aucun compte Steam, Trakt ou RetroAchievements réel n’a été validé. Les scénarios Chromium d’anciennes versions sont conservés ; ils ne prouvent pas une exécution Chromium de la V0.14, l’application effective de la CSP sur une origine réelle, un aller-retour OAuth/OpenID ou une installation PWA.
+Les essais de cette passe utilisent des fournisseurs simulés. Aux parcours DOM contrôlés s’ajoutent des vérifications sur une vraie origine Chrome, avec CSP, localStorage et IndexedDB réels. Aucun compte Steam, Trakt ou RetroAchievements réel, ni installation PWA au niveau du système, n’a été validé. Les scénarios d’anciennes versions restent historiques et ne sont pas comptés comme une nouvelle exécution.
 
-Android est fourni en sources avec des tests de règles et codecs JVM. Aucun build complet avec SDK, APK/AAB, essai Compose ou stockage sur téléphone n’est livré. Les résultats exacts et les validations encore ouvertes sont dans QA_REPORT.md et FEATURE_MATRIX.md.
+La passe 0.36 a produit une compilation SDK Android et un APK de développement. Les règles pures JVM et les parités exécutées sont distinguées des tests de codecs et des essais appareil encore manquants. Aucun fonctionnement du stockage sur téléphone n’est déduit de la compilation. Les résultats de build/lint, les groupes exécutés et les limites sont dans [QA_REPORT.md](QA_REPORT.md) et [FEATURE_MATRIX.md](FEATURE_MATRIX.md).
 
 ## V0.31 — préparations d'accès
 

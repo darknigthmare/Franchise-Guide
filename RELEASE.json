@@ -31,7 +31,7 @@
     "Local gateway JSON credential redaction, duplicate-header and cooldown fixes",
     "Strict PC Steam JSON and UTF-8 validation",
     "Reproducible Web copies and automated GitHub validation",
-    "Android SDK36 Compose compilation and debug APK assembly; lint compatibility fixes in progress",
+    "Android SDK36 Compose compilation, debug APK assembly and lint with zero errors",
     "Real Chrome local-origin storage, offline reload and two-tab write-lock checks"
   ],
   "not_delivered": [
@@ -46,7 +46,8 @@
   "tests": {
     "current_evidence": "docs/QA_REPORT.md",
     "historical_results": "docs/archives/v035/RELEASE.json",
-    "note": "Only results recorded for this source revision belong to this release."
+    "note": "Only results recorded for this source revision belong to this release.",
+    "machine_readable": "docs/qa/current.json"
   },
   "all_runtime_credentials_included": false,
   "assessed_at": "2026-10-26"

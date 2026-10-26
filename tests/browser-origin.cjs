@@ -91,10 +91,31 @@ function check(name, condition) {
     await page.evaluate(async () => { await navigator.serviceWorker.ready; });
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     check('Service worker controls the actual origin', await page.evaluate(() => !!navigator.serviceWorker.controller));
+    const offlineProbe = '/__offline_probe__?nonce=' + Date.now();
+    const onlineProbeStatus = await page.evaluate(async url => (await fetch(url, { cache: 'no-store' })).status, offlineProbe);
     await context.setOffline(true);
-    await page.reload({ waitUntil: 'domcontentloaded' });
+    const offlineNavigation = await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => storageWritable && state.media.length === 4);
-    check('Offline reload keeps the full library and theme', await page.evaluate(() => !navigator.onLine && state.settings.dark && state.media.length === 4));
+    // Chromium 151 Headless Shell can report online after a service-worker reload
+    // while its transport remains offline. This uncached path returns HTTP 404
+    // online; offline, the same request must reject before any HTTP response.
+    report.offline = await page.evaluate(async url => {
+      const stored = JSON.parse(localStorage.getItem(KEY));
+      const networkBlocked = await fetch(url + '&attempt=offline', { cache: 'no-store' }).then(() => false, () => true);
+      return {
+        navigatorOnline: navigator.onLine, networkBlocked,
+        theme: state.settings.dark, storedTheme: stored.settings.dark,
+        media: state.media.length, storedMedia: stored.media.length,
+        revision: storageRevision, storedRevision: stored._revision
+      };
+    }, offlineProbe);
+    report.offline.onlineProbeStatus = onlineProbeStatus;
+    report.offline.navigationFromServiceWorker = offlineNavigation.fromServiceWorker();
+    console.log('Offline reload evidence: ' + JSON.stringify(report.offline));
+    check('Offline reload keeps the full library and theme',
+      onlineProbeStatus === 404 && report.offline.networkBlocked && report.offline.navigationFromServiceWorker &&
+      report.offline.theme === true && report.offline.storedTheme === true &&
+      report.offline.media === 4 && report.offline.storedMedia === 4);
     check('Recovery snapshot persists across offline reload', await page.evaluate(async () => (await FGDurable.latest()).state.media.length === 4));
     const privateCache = await page.evaluate(async () => {
       const urls = [];

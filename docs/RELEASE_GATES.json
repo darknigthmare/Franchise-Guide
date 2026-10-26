@@ -6,7 +6,7 @@
     {
       "id": "android-release",
       "status": "partial",
-      "why": "SDK36 Compose compilation and debug APK assembly succeeded. Initial lint found13 errors; compatibility fixes are in progress. testDebugUnitTest has NO-SOURCE. Device and signed distribution validation remain open.",
+      "why": "SDK36 Compose compilation, debug APK assembly and lint succeeded (0 errors,31 warnings,1 informational suggestion). testDebugUnitTest has NO-SOURCE. Signed distribution, device validation and Android runtime test coverage remain open.",
       "evidence": "docs/QA_REPORT.md",
       "required": "Real build/lint/test artifacts, signed release and device matrix"
     },
@@ -20,7 +20,7 @@
     {
       "id": "web-origin-pwa",
       "status": "partial",
-      "why": "Real Chrome HTTP origin, confirmed import, localStorage/IndexedDB, two tabs and offline reload pass 22 controls. Installed PWA, update from older shells, other engines and quota eviction remain unverified.",
+      "why": "Real Chrome151 and156 HTTP origins, confirmed import, localStorage/IndexedDB, two tabs and offline reload pass22 controls each. Offline transport failure and service-worker response verified. Installed PWA, update from older shells, other browser engines and quota eviction remain unverified.",
       "evidence": "docs/QA_REPORT.md; tests/browser-origin.cjs",
       "required": "Real HTTPS origin, CSP/install/offline/update/persistent/multibrowser evidence"
     },

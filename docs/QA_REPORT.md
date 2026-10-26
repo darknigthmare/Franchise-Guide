@@ -12,10 +12,10 @@
 | Build PC et `--probe` |Réussis | JAR reconstruit depuis les sources et ressources 0.36.0. |
 | `tests/desktop_http.py` |109 contrôles | Ressources embarquées exactes, routes HTTP, en-têtes, refus des requêtes non autorisées, version et compatibilité Java 17. |
 | `tests/desktop_startup.py` |9 contrôles | Démarrage, ports occupés, ancien service, réponse bloquée et refus des redirections. |
-| `npm run test:browser` |22 contrôles | Chrome 156.0.8078.47, vraie origine locale, CSP conservée, vrais stockages et service worker. |
+| `npm run test:browser` |22 contrôles | 22/22 sur Chrome Headless Shell 151.0.7922.34 et 22/22 sur Chrome 156.0.8078.47 : vraie origine locale, CSP, stockages et service worker. |
 | Règles check-in Kotlin JVM |33 assertions et parité JS/Kotlin réussies |27 fichiers de modèle compilés avec Kotlin2.0.21/JDK17, sans simulation des résultats. |
 | Distribution Web extraite |110 contrôles sur la suite, puis110 sur une copie isolée |Vrai HTTP local, métadonnées0.36 et repli sans RELEASE.json ; version incohérente refusée. |
-| Android SDK36 |Compilation Compose et assembleDebug réussies |APK de développement0.36.0/code36 ; analyse lint initiale :13 erreurs,31 avertissements et1 conseil, correctifs en cours. |
+| Android SDK 36 |Compilation Compose, assembleDebug et lintDebug réussis |APK 0.36.0/code 36 ; lint : **0 erreur**,31 avertissements et1 conseil. |
 
 Les groupes de 1 580 tests comprennent les suites jsdom/fake-indexeddb auparavant non exécutées : 18 tests DOM et 20 tests d’orchestration RetroAchievements. Les 33 nouveaux cas de reprise check-in sont inclus dans le total 1 580 ; ils ne s’y ajoutent pas.
 
@@ -27,10 +27,12 @@ Les groupes de 1 580 tests comprennent les suites jsdom/fake-indexeddb auparavan
 - Conservation des catégories et notes personnelles après rechargement.
 - Écriture et lecture d’une véritable copie IndexedDB.
 - Deux onglets d’une même origine : second onglet en lecture seule, tentative d’écrasement refusée, reprise de l’écriture après fermeture du premier et rechargement.
-- Service worker actif, rechargement hors ligne conservant bibliothèque et thème.
+- Service worker actif, rechargement hors ligne conservant quatre titres et le thème en mémoire et dans localStorage. Une URL à nonce absente du cache répond en HTTP 404 en ligne puis échoue au niveau transport hors ligne ; le rechargement est effectivement servi par le service worker.
 - Absence des réponses privées `/api/` dans les caches du service worker.
 - Mise en page à 390 px sans débordement horizontal du document.
 - Aucune exception JavaScript non interceptée, aucun appel fournisseur requis par cette recette.
+
+Sous Chromium 151, `navigator.onLine` redevient vrai après le rechargement alors que les requêtes réseau sont bloquées. Ce comportement a provoqué le premier échec de CI. Le test conserve cet indicateur comme diagnostic et exige désormais la preuve de transport décrite ci-dessus, ainsi que les données persistées. Le script corrigé passe sur les deux moteurs.
 
 Les captures de recette utilisent des données fictives. Elles ne sont pas une revue de toutes les pages ni une validation sur téléphone.
 
@@ -46,7 +48,13 @@ Aucun compte réel Trakt, Steam ou RetroAchievements ni identifiant fournisseur 
 
 L’installation autonome PWA, la mise à jour depuis une ancienne version, Safari/Firefox, l’éviction des données par le navigateur, les OS PC utilisateurs et la matrice de téléphones restent à qualifier. Le test hors ligne porte sur une application déjà chargée, avec une bibliothèque locale.
 
-La compilation Android SDK36/JDK17 a produit un APK de développement0.36.0/code36 après correction de trois écrans Compose. La première analyse lint a identifié13 erreurs réelles, en cours de correction : compatibilité API26–32, structure du widget et règles de sauvegarde. `testDebugUnitTest` indique `NO-SOURCE` : aucun test JUnit Android n’a été exécuté par cette tâche. Les33 assertions Kotlin séparées ne sont pas encore intégrées au workflow CI. La compilation et l’assemblage ne constituent pas une recette appareil, Play Store ou comptes réels.
+La compilation Android SDK 36/JDK 17 a produit un APK de développement 0.36.0/code 36 après correction de trois écrans Compose. Les 13 erreurs de lint initiales ont été corrigées : compatibilité API 26–32 des encodeurs URL et du lecteur borné, structure du widget et règles de sauvegarde. La commande complète assembleDebug/testDebugUnitTest/lintDebug termine avec succès en 5 min 24 s ; le rapport final contient 0 erreur, 31 avertissements et 1 conseil. Aucune règle de lint n’a été désactivée et aucune baseline ne masque ces erreurs. `testDebugUnitTest` indique `NO-SOURCE` : aucun test JUnit Android n’a été exécuté par cette tâche. Les33 assertions Kotlin séparées ne sont pas encore intégrées au workflow CI. La compilation et l’assemblage ne constituent pas une recette appareil, Play Store ou comptes réels.
+
+## Publication vérifiée
+
+Le commit d’import `f954889bceaa81636c5c24a37f78a5ea1951554c` a été relu par un nouveau clone public du dépôt. Il contient 589 fichiers suivis ; les 588 entrées du manifeste SHA-256, le conteneur Excel et l’état Git propre ont été vérifiés avant toute reconstruction. Depuis ce clone, `npm ci --ignore-scripts --offline` a utilisé le cache de paquets disponible, le contrôle de structure a réussi, le JAR PC a été reconstruit/probé et `npm start` a servi la page en HTTP 200. Cela ne constitue pas un essai sur une machine dépourvue de tout cache.
+
+Les jobs GitHub Web/PC (Node 22) et Android ont également réussi sur le commit `6f5340f804987a3e1a0c6a5f6e44155908dc5897`, [exécution 40402512586](https://github.com/darknigthmare/Franchise-Guide/actions/runs/40402512586). L’APK et les rapports Android sont disponibles dans ses artefacts. La première installation Android en CI demandait un ancien paquet SDK `tools`, indisponible ; le workflow demande désormais explicitement `platform-tools` puis SDK 36/Build Tools 35. Les résultats distants sont distingués des contrôles locaux dans `docs/qa/current.json`.
 
 ## Reproduire
 

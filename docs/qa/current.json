@@ -32,12 +32,26 @@
     },
     "browser": {
       "command": "npm run test:browser",
-      "engine": "Chrome156.0.8078.47",
+      "engine": "Chrome Headless Shell151.0.7922.34 and Chrome for Testing156.0.8078.47",
       "passed": 22,
       "real_origin": true,
       "real_indexeddb": true,
       "offline_reload": true,
-      "two_tab_write_lock": true
+      "two_tab_write_lock": true,
+      "results_by_engine": [
+        {
+          "engine": "Chrome Headless Shell151.0.7922.34",
+          "passed": 22,
+          "failed": 0
+        },
+        {
+          "engine": "Chrome for Testing156.0.8078.47",
+          "passed": 22,
+          "failed": 0
+        }
+      ],
+      "offline_proof": "Uncached nonce URL responds HTTP404 online, then rejects fetch offline; reload is served by service worker; four items and dark theme persist in memory and localStorage.",
+      "navigator_online_is_diagnostic_only": true
     },
     "kotlin_checkin": {
       "compiler": "Kotlin2.0.21",
@@ -60,8 +74,36 @@
       "compileDebugKotlin": "passed",
       "assembleDebug": "passed",
       "testDebugUnitTest": "NO-SOURCE",
-      "lintDebug": "13 errors; fixes in progress",
-      "device_tested": false
+      "lintDebug": {
+        "status": "passed",
+        "errors": 0,
+        "warnings": 31,
+        "informational": 1
+      },
+      "device_tested": false,
+      "assembly_validation": {
+        "duration": "5m24s",
+        "tasks": 50,
+        "executed": 20,
+        "up_to_date": 30
+      },
+      "apk": {
+        "path": "app/build/outputs/apk/debug/app-debug.apk",
+        "bytes": 19796878,
+        "sha256": "9b596e254675f8ad4f1a488c5b2a7de39076a61a4d635cc4c9fc8b767bf167eb",
+        "signature": "Android debug, APK Signature Scheme v2 verified",
+        "min_sdk": 26,
+        "target_sdk": 36
+      },
+      "lint_issue_counts": {
+        "ApplySharedPref": 1,
+        "GradleDependency": 6,
+        "ObsoleteSdkInt": 1,
+        "AutoboxingStateCreation": 1,
+        "Overdraw": 1,
+        "UseKtx": 21,
+        "HardcodedText": 1
+      }
     }
   },
   "limitations": [
@@ -72,5 +114,25 @@
     "No automatic external backup",
     "Historical test totals are not current proof"
   ],
-  "details": "docs/QA_REPORT.md"
+  "details": "docs/QA_REPORT.md",
+  "publication": {
+    "repository": "https://github.com/darknigthmare/Franchise-Guide",
+    "initial_commit": "f954889bceaa81636c5c24a37f78a5ea1951554c",
+    "verified_clean_clone": true,
+    "tracked_files_at_initial_import": 589,
+    "sha256_manifest_entries_verified": 588,
+    "xlsx_container_verified": true,
+    "npm_ci": "passed using cached packages with --offline",
+    "web_http_status": 200,
+    "pc_rebuild_and_probe": "passed"
+  },
+  "ci": {
+    "source_commit": "6f5340f804987a3e1a0c6a5f6e44155908dc5897",
+    "run_url": "https://github.com/darknigthmare/Franchise-Guide/actions/runs/40402512586",
+    "web_pc": "success",
+    "android": "success",
+    "browser": "Old navigator.onLine assertion failed on Chromium151; updated transport assertion passes22 controls on both local engines, awaiting publication and remote run.",
+    "android_apk_artifact_id": 12689617072,
+    "android_reports_artifact_id": 12689736840
+  }
 }

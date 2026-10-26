@@ -1,4 +1,10 @@
-# Jeux, trophées et comptes — V0.14
+# Jeux, trophées et comptes — 0.36.0
+
+## Compatibilité de cette version
+
+La sauvegarde portable courante utilise le **schéma 11** et lit les anciennes sauvegardes **1 à 11**. Les données gaming ont été introduites dans le schéma 8, qui reste lisible ; ce numéro historique n’est pas celui des nouveaux exports. Le format neutre de listes de succès garde sa version propre.
+
+Les preuves de cette passe sont décrites dans [QA_REPORT.md](QA_REPORT.md). Les anciens rapports V0.14/V0.15 documentent leurs essais respectifs et ne sont pas additionnés aux résultats actuels.
 
 Les fiches jeux possèdent une entrée **Trophées & succès**. Les listes restent séparées par jeu local, compte, fournisseur, plateforme et édition. Une liste PS4, PS5 ou d’un remaster conserve sa propre identité.
 
@@ -39,8 +45,8 @@ L’espace gaming est limité à 100 profils, 2 000 listes, 5 000 succès par li
 
 Le format neutre **FranchiseGuide Achievements v1** reste accepté ; il n’est pas présenté comme un export natif PSNProfiles. Les exemples fournis sont fictifs. L’import identifie sa provenance comme fichier et ne constitue pas une lecture distante vérifiée.
 
-La sauvegarde complète reste au **schéma 8**. Elle comprend les profils, relevés, dates, notes, métadonnées Steam et alias d’identité supplémentaires, sans les clés serveur ni les cookies de session. Elle reste personnelle. Restaurer une sauvegarde désactive les automatismes gaming ; il faut les réactiver volontairement.
+La sauvegarde complète utilise le **schéma 11**. Elle conserve notamment les profils, relevés, dates, notes, métadonnées Steam et alias d’identité gaming introduits au schéma 8, sans les clés serveur ni les cookies de session. Elle reste personnelle. Restaurer une sauvegarde désactive les automatismes gaming ; il faut les réactiver volontairement.
 
-Les sources Android transportent ces champs et incluent la consultation des modes normal et Hardcore. La connexion et les lectures réseau natives Steam et RetroAchievements ne sont pas livrées. Les relevés peuvent être transférés par JSON depuis Web/PC. Les tests JVM ne constituent pas un APK, un build Android complet ou un essai de l’interface sur téléphone.
+Les sources Android transportent ces champs et incluent la consultation des modes normal et Hardcore. La connexion et les lectures réseau natives Steam et RetroAchievements ne sont pas livrées. Les relevés peuvent être transférés par JSON depuis Web/PC. La passe 0.36 a produit un build SDK et un APK de développement ; cela ne valide pas encore ces parcours sur téléphone. Voir [ANDROID_BUILD.md](ANDROID_BUILD.md) et le rapport QA pour les résultats de compilation, de lint et leurs limites.
 
-La V0.14 utilise des réponses fournisseurs et des stockages simulés pour ses tests d’interface DOM. Aucun compte réel ni installation PWA n’est validé ; les anciens rapports Chromium ne sont pas une validation Chromium de cette livraison. Voir QA_REPORT.md.
+Les essais historiques V0.14 utilisaient des réponses fournisseurs et des stockages simulés. La passe 0.36 ajoute des contrôles sur une vraie origine Chrome, décrits dans le rapport QA courant. Les comptes fournisseurs réels et l’installation PWA restent à qualifier ; les résultats historiques ne remplacent pas cette recette.

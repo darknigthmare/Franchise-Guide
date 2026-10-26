@@ -1,4 +1,6 @@
-# RetroAchievements — FranchiseGuide 0.14
+# RetroAchievements — FranchiseGuide 0.36.0
+
+Le portable courant utilise le **schéma 11** et lit les sauvegardes **1 à 11**. Les champs RetroAchievements introduits au schéma 8 sont conservés. Consulter [QA_REPORT.md](QA_REPORT.md) pour les preuves de cette passe ; les rapports V0.14/V0.15 sont historiques.
 
 ## Ce qui est disponible
 
@@ -68,15 +70,15 @@ Une réponse privée, inexistante, incohérente, provenant d’un autre compte o
 
 ## Sauvegardes et Android
 
-Le format portable reste **V8**. Les profils, identifiants, alias fournisseurs et relevés sont transportés dans les JSON. Restaurer une sauvegarde suspend les automatismes de lecture ; il faut les réactiver volontairement sur l’appareil de destination.
+Le format portable courant est **V11** ; les anciens fichiers V8 restent lisibles. Les profils, identifiants, alias fournisseurs et relevés sont transportés dans les JSON. Restaurer une sauvegarde suspend les automatismes de lecture ; il faut les réactiver volontairement sur l’appareil de destination.
 
-Les sources Android conservent ces informations et affichent les modes normal et Hardcore. **La connexion et la lecture réseau RetroAchievements natives Android ne sont pas livrées** : transférer les relevés par sauvegarde depuis Web/PC. Aucun APK/AAB n’est inclus.
+Les sources Android conservent ces informations et affichent les modes normal et Hardcore. **La connexion et la lecture réseau RetroAchievements natives Android ne sont pas livrées** : transférer les relevés par sauvegarde depuis Web/PC. La construction et l’état de l’APK de développement 0.36 sont décrits dans [ANDROID_BUILD.md](ANDROID_BUILD.md) et le rapport QA ; ils ne qualifient pas le connecteur natif manquant.
 
 ## Portée technique
 
 Les passerelles restent des serveurs personnels attachés à `127.0.0.1`. Elles ne sont pas un service public multi-utilisateur. Les requêtes sont en lecture seule, avec contrôle de l’origine, délais, limites de taille et de concurrence, cache mémoire borné et réponses non mises en cache par le navigateur. Le serveur ne journalise pas la clé et ne renvoie pas de jeton d’authentification RA.
 
-Les fournisseurs ont été simulés pour les tests. Aucun vrai compte RetroAchievements n’a été utilisé ; la validation du parcours réel reste à faire avec la configuration personnelle de l’utilisateur. Les parcours d’interface V0.15 utilisent jsdom et des stockages simulés, dont fake-indexeddb. Les rapports Chromium historiques ne constituent pas une exécution Chromium de cette livraison. Aucun build Android complet avec SDK, essai Compose ou essai sur téléphone n’est validé ; voir `QA_REPORT.md`.
+Les fournisseurs sont simulés dans les tests de cette passe. Aucun vrai compte RetroAchievements n’a été validé ; la recette du parcours réel reste ouverte. Les essais DOM V0.15 avec jsdom et fake-indexeddb sont historiques. La version 0.36 ajoute des contrôles sur une vraie origine Chrome ainsi qu’une compilation SDK et un assemblage APK Android, sans recette sur téléphone. Voir [QA_REPORT.md](QA_REPORT.md) pour les résultats actuels et les vérifications encore ouvertes.
 
 ## Sources techniques officielles
 
