@@ -62,6 +62,6 @@ fun main(args:Array<String>){
  rejects("Negative consultation timestamp rejected"){WatchAvailabilityRules.parse(raw(),q(),-1)}
  fun json(v:Any?):String=when(v){null->"null";is String->"\""+v.replace("\\","\\\\").replace("\"","\\\"").replace("\n","\\n")+"\"";is Number,is Boolean->v.toString();is List<*>->v.joinToString(",","[","]"){json(it)};is Map<*,*>->v.entries.joinToString(",","{","}"){json(it.key.toString())+":"+json(it.value)};else->error("Unsupported test JSON")}
  val parity=listOf(read(),read(req=q("DE")),read(raw(emptyMap<String,Any?>())),ordered).map{a->mapOf("key" to a.query.key,"path" to a.query.path,"state" to WatchAvailabilityRules.state(a),"countryReported" to a.countryReported,"link" to a.link,"totalProviders" to a.totalProviders,"totalOffers" to a.totalOffers,"groups" to a.groups.map{g->mapOf("mode" to g.mode,"offers" to g.offers.map{p->listOf(p.id,p.name,p.logoUrl,p.priority)})})}
- if(args.isNotEmpty())Files.writeString(Path.of(args[0]),json(parity))
+ if(args.isNotEmpty())java.io.File(args[0]).writeText(json(parity))
  println("WatchAvailabilityRules: $total assertions passed on JVM; no Android SDK/device.")
 }

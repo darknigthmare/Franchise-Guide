@@ -61,6 +61,6 @@ fun main(args:Array<String>){
  val max=s.copy(episodes=(1..10001).map{ep("e$it")});no("10k safety cap no truncation"){plan(max,max.episodes.map{it.id},"collect")}
  val counts=listOf(p.counts,skip.counts,erased.counts,coll.counts)
  val json="["+counts.joinToString(","){"{\"selected\":${it.selected},\"changed\":${it.changed},\"unchanged\":${it.unchanged},\"historyProtected\":${it.historyProtected},\"skippedProtected\":${it.skippedProtected},\"dateProtected\":${it.dateProtected},\"knownDatesRemoved\":${it.knownDatesRemoved},\"playsRemoved\":${it.playsRemoved},\"providerChanges\":${it.providerChanges}}"}+"]"
- if(args.isNotEmpty())Files.writeString(Path.of(args[0]),json)
+ if(args.isNotEmpty())java.io.File(args[0]).writeText(json)
  println("$n EpisodeBatchRules assertions passed on JVM, no Android SDK.")
 }
