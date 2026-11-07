@@ -1,0 +1,4 @@
+{
+  "parts": [".delivery/resume.part1", ".delivery/resume.part2", ".delivery/resume.part3", ".delivery/resume.part4", ".delivery/resume.part5", ".delivery/resume.part6"],
+  "sha256": "bcab8573e9bbcce26fdae91b0820b4b5e208511ff5a208878d62713ee4a2419b"
+}
