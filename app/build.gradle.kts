@@ -12,8 +12,8 @@ android {
         applicationId = "com.franchiseguide.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 36
-        versionName = "0.36.0"
+        versionCode = 37
+        versionName = "0.37.0"
     }
 
     compileOptions {
@@ -32,7 +32,15 @@ android {
     }
 }
 
+kotlin.sourceSets.getByName("test").kotlin.apply {
+    srcDir("../tests")
+    include("**/*Test.kt")
+    exclude("typecheck-stubs/**")
+}
+
 dependencies {
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20240303")
     val composeBom = platform("androidx.compose:compose-bom:2024.12.01")
     implementation(composeBom)
     androidTestImplementation(composeBom)

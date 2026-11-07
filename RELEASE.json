@@ -1,6 +1,6 @@
 {
   "name": "FranchiseGuide Suite",
-  "version": "0.36.0",
+  "version": "0.37.0",
   "base": "Recovered Drive V0.35 ZIP",
   "base_zip_sha256": "6628593fb329ea964d6f73b95c072bef5f26810715fcf08943d2421c79dde022",
   "portable_schema": 11,
@@ -44,11 +44,12 @@
     "PWA installed state, upgrades and full cross-browser validation"
   ],
   "tests": {
-    "current_evidence": "docs/QA_REPORT.md",
+    "current_evidence": "docs/qa/2026-11-07.md",
     "historical_results": "docs/archives/v035/RELEASE.json",
     "note": "Only results recorded for this source revision belong to this release.",
-    "machine_readable": "docs/qa/current.json"
+    "machine_readable": "docs/qa/2026-11-07.json"
   },
   "all_runtime_credentials_included": false,
-  "assessed_at": "2026-10-26"
+  "assessed_at": "2026-11-07",
+  "previous_release": "0.36.0"
 }

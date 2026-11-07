@@ -57,6 +57,19 @@
     if(!after?.watched||after.skipped||(before?.watched&&integer(after.plays)<=integer(before.plays)))return [];
     const previous=new Set(knownWatchHistory(before));return knownWatchHistory(after).filter(t=>!previous.has(t));
   }
+  // Catalogue dates are local all-day dates, not guessed broadcast times.
+  // Unknown dates stay unknown; explicit manual tracking does not fill them.
+  function requireEpisodeNotFuture(e, now = Date.now()) {
+    if (!e || typeof e !== 'object') throw Error('Épisode introuvable.');
+    const day = localDate(now);
+    if (!day) throw Error('Horloge invalide.');
+    for (const value of [e.date, e.airDate]) {
+      if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) continue;
+      if (localDate(new Date(value + 'T12:00:00')) !== value) continue;
+      if (value > day) throw Object.assign(Error('Cet épisode est annoncé pour une date future. Aucun visionnage enregistré ni envoyé.'), {code:'EPISODE_FUTURE'});
+    }
+    return e;
+  }
   function episodeState(e, action, now = Date.now()) {
     const out = {...e, watchHistory:knownWatchHistory(e)};
     if (action === 'watch') action = e.watched ? 'unwatch' : 'watched';
@@ -237,6 +250,6 @@
     while (set.has(cursor)) { current++; cursor=shiftDate(cursor,-1); }
     return {current,longest};
   }
-  return {KINDS, n, integer, localDate, shiftDate, normalizeStatus, safeUrl, aliases, sameMedia, knownWatchHistory, historyAdditions,syncAcknowledged, episodeIndex, timeline, episodeState,
+  return {KINDS, n, integer, localDate, shiftDate, normalizeStatus, safeUrl, aliases, sameMedia, knownWatchHistory, historyAdditions,syncAcknowledged, episodeIndex, timeline, episodeState, requireEpisodeNotFuture,
     seasonProgress, statusFilter, sortMedia, calendarEpisodes, validateSeason, validateBackup, validatePreferences, contentLanguage, reviewText, redact, streaks};
 });

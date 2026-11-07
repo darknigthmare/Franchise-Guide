@@ -340,6 +340,7 @@ function bindDetail(m) {
       const e=state.episodes.find(x=>x.id===b.dataset.eid);if(!e)return;
       if(b.dataset.ep==='skip'&&!e.skipped&&FGEpisodes.hasHistory(e)){toast('Historique protégé : utilise explicitement l’effacement des visionnages avant d’ignorer un épisode vu.');return;}
       if(b.dataset.ep==='watch'&&e.watched){try{previewEpisodeAction(m.id,[e.id],'unwatch');}catch(error){toast(error.message);}return;}
+      try{if(b.dataset.ep==='watch'||b.dataset.ep==='replay')FGCore.requireEpisodeNotFuture(e);}catch(error){toast(error.message);return;}
       Object.assign(e,FGCore.episodeState(e,b.dataset.ep));m.lastWatchedAt=episodesFor(m.id).reduce((last,e)=>Math.max(last,e.lastWatchedAt||0),0)||null;
       const y=window.scrollY;save();render();window.scrollTo(0,y);
     };
@@ -403,6 +404,7 @@ function bindRows() {
       const next=FGLibrary.nextUp([m],state.episodes,{today:today(),includeSpecials:!!state.settings.includeSpecials}).records[0];
       if(!next||next.status!=='ready'||!next.episodeId)return toast('Le prochain épisode est futur ou à compléter. Aucun épisode antérieur sauté : ouvre la fiche.');
       const e=state.episodes.find(e=>e.id===next.episodeId&&e.showId===m.id);if(!e||e.watched||e.skipped)return;
+      try{FGCore.requireEpisodeNotFuture(e);}catch(error){toast(error.message);return;}
       Object.assign(e,FGCore.episodeState(e,'watched'));m.lastWatchedAt=Math.max(m.lastWatchedAt||0,e.lastWatchedAt||0);
     } else { Object.assign(m,FGProgress.finish(m,Date.now(),m.watched&&(!FGProgress.applicable(m)||FGProgress.status(m)==='completed'))); }
     save();render();

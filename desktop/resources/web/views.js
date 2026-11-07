@@ -20,6 +20,7 @@ function bindEpisodeActions(m,host=document){
     const episode=state.episodes.find(e=>e.id===b.dataset.eid);if(!episode)return;
     if(b.dataset.ep==='skip'&&!episode.skipped&&FGEpisodes.hasHistory(episode)){toast('Historique conservé : un épisode déjà vu ne peut pas être ignoré sans effacement explicite.');return;}
     if(b.dataset.ep==='watch'&&episode.watched){try{previewEpisodeAction(m.id,[episode.id],'unwatch');}catch(e){toast(e.message);}return;}
+    try{if(b.dataset.ep==='watch'||b.dataset.ep==='replay')FGCore.requireEpisodeNotFuture(episode);}catch(error){toast(error.message);return;}
     Object.assign(episode,FGCore.episodeState(episode,b.dataset.ep));m.lastWatchedAt=episodesFor(m.id).reduce((at,e)=>Math.max(at,e.lastWatchedAt||0),0)||null;
     const y=window.scrollY;save();render();window.scrollTo(0,y);
   });

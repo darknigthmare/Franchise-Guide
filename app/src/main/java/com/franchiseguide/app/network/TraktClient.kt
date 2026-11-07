@@ -102,7 +102,7 @@ class TraktClient {
     fun startCheckInEpisode(tmdbId:Int,accessToken:String,clientId:String):Long? = startCheckIn("episode",tmdbId,accessToken,clientId)
     private fun startCheckIn(kind:String,tmdbId:Int,accessToken:String,clientId:String):Long? {
         require(kind in setOf("movie","episode")&&tmdbId>0)
-        val body=JSONObject().put(kind,mediaNode(tmdbId)).put("app_version","0.36.0").put("app_date","2026-10-26").toString()
+        val body=JSONObject().put(kind,mediaNode(tmdbId)).put("app_version","0.37.0").put("app_date","2026-11-07").toString()
         val root=JSONObject(post("https://api.trakt.tv/checkin",body,clientId,accessToken))
         return isoMillis(root.optString("started_at"))
     }

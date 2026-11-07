@@ -26,7 +26,7 @@ function openViewingDialog(mediaId,episodeId=null){
   const candidates=FGActivity.localChoices($('#viewingDay').value,$('#viewingTime').value);
   if(!candidates.length)throw Error('Cette heure locale n’existe pas au changement d’heure.');
   const chosen=candidates.length===1?candidates[0]:Number($('#viewingOffset')?.value||NaN);if(!candidates.includes(chosen))throw Error('Choisis explicitement le décalage de cette heure répétée.');
-  const fresh=viewingTarget(mediaId,episodeId);const updated=FGActivity.addViewing(fresh.item,chosen);Object.assign(fresh.item,updated);
+  const fresh=viewingTarget(mediaId,episodeId);if(episodeId!=null)FGCore.requireEpisodeNotFuture(fresh.item);const updated=FGActivity.addViewing(fresh.item,chosen);Object.assign(fresh.item,updated);
   if(episodeId!=null)fresh.media.lastWatchedAt=episodesFor(mediaId).reduce((v,x)=>Math.max(v,x.lastWatchedAt||0),0)||null;
   save();d.close();render();toast('Visionnage daté enregistré. Les dates précédentes restent intactes.');
  }catch(e){error.textContent=e.message;error.classList.remove('hidden');}};

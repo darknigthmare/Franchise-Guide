@@ -52,6 +52,7 @@ async function startTraktCheckIn(kind,id){
   const existing=checkInRead();if(checkInLoadError)throw Error('Récupère ou oublie explicitement la session illisible avant d’en démarrer une autre.');
   if(existing){overlay={type:'today',title:'Aujourd’hui'};return render();}
   const target=FGCheckIn.target(state,kind,id);checkInRequireHistoryClear(target);
+  if(kind==='episode')FGCore.requireEpisodeNotFuture(state.episodes.find(e=>e.id===id));
   if(traktSyncing)throw Error('Synchronisation Trakt en cours. Réessaie après sa fin.');
   if(!confirm(`Démarrer un check-in Trakt pour « ${target.title}${target.code?' · '+target.code:''} » ? Aucun visionnage local ne sera ajouté avant confirmation.`))return;
   session=FGCheckIn.create(target,checkInAccount(),checkInAppRef(),Date.now());checkInCommit(session);op=checkInOperation(session);

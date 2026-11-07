@@ -62,7 +62,7 @@ fun EpisodeManagerScreen(repo:AppRepository,showId:String,initialSeason:Int?=nul
                 TextButton(onClick={selected=selected-visible}){Text("Désélectionner les résultats")};TextButton(onClick={selected=emptySet()}){Text("Vider")}
             }
             Row(Modifier.horizontalScroll(rememberScrollState())){episodeActions.forEach{(k,n)->FilterChip(selected=action==k,onClick={action=k},label={Text(n)})}}
-            if(action=="watch")Row(Modifier.fillMaxWidth().clickable{includeDates=!includeDates},verticalAlignment=Alignment.CenterVertically){Checkbox(checked=includeDates,onCheckedChange=null);Text("Autoriser explicitement les dates inconnues ou futures pour marquer vu.")}
+            if(action=="watch")Row(Modifier.fillMaxWidth().clickable{includeDates=!includeDates},verticalAlignment=Alignment.CenterVertically){Checkbox(checked=includeDates,onCheckedChange=null);Text("Autoriser les dates inconnues pour marquer vu. Les dates futures restent exclues.")}
             Text("« Vu » protège les ignorés et ne crée pas de revisionnage. « Ignorer » ne supprime pas un historique. Utilise la fiche pour ajouter une lecture à une date précise.")
             Button(enabled=selected.isNotEmpty(),onClick={runCatching{repo.prepareEpisodeBatch(showId,selected.toList(),action,includeDates)}.onSuccess{plan=it;ack=false;previewLimit=40;generation=repo.gamingLibraryEpoch();account=repo.episodeBatchAccount();error=null}.onFailure{error=it.message}}){Text("Prévisualiser l’action")}
             error?.let{Text(it,color=MaterialTheme.colorScheme.error)}

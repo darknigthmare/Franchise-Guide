@@ -36,17 +36,17 @@ public final class Main {
                 String health = readUrl(URI.create(appUri + "health"));
                 String index = readUrl(appUri);
                 String js = readUrl(URI.create(appUri + "app.js"));
-                if (!health.contains("\"ok\":true") || !index.contains("FranchiseGuide Web 0.36") || !js.contains("franchiseguide-web-v8")) {
+                if (!health.contains("\"ok\":true") || !index.contains("FranchiseGuide Web 0.37") || !js.contains("franchiseguide-web-v8")) {
                     throw new IOException("Desktop probe failed: embedded assets not served correctly");
                 }
-                System.out.println("{\"ok\":true,\"app\":\"FranchiseGuide PC\",\"version\":\"0.36.0\",\"assets\":true}");
+                System.out.println("{\"ok\":true,\"app\":\"FranchiseGuide PC\",\"version\":\"0.37.0\",\"assets\":true}");
             } finally {
                 if (server != null) server.stop(0);
             }
             return;
         }
         Runtime.getRuntime().addShutdownHook(new Thread(() -> { if(server != null) server.stop(0); }));
-        if(headless) { System.out.println("FranchiseGuide 0.36.0 · " + appUri); new java.util.concurrent.CountDownLatch(1).await(); return; }
+        if(headless) { System.out.println("FranchiseGuide 0.37.0 · " + appUri); new java.util.concurrent.CountDownLatch(1).await(); return; }
         boolean noBrowser = java.util.Arrays.asList(args).contains("--no-browser");
         SwingUtilities.invokeLater(() -> createWindow(noBrowser));
     }
@@ -76,8 +76,8 @@ public final class Main {
             } catch (IOException unavailable) {
                 throw new IOException("Le port 47631 est occupé par un service non joignable. Ferme l’autre lanceur avant de réessayer.", unavailable);
             }
-            if (health.contains("\"app\":\"FranchiseGuide PC\"") && health.contains("\"version\":\"0.36.0\"")) return;
-            throw new IOException("Une autre application ou une ancienne version utilise le port 47631. Ferme son lanceur avant de démarrer la V0.36.", occupied);
+            if (health.contains("\"app\":\"FranchiseGuide PC\"") && health.contains("\"version\":\"0.37.0\"")) return;
+            throw new IOException("Une autre application ou une ancienne version utilise le port 47631. Ferme son lanceur avant de démarrer la V0.37.", occupied);
         }
         SteamBridge bridge=new SteamBridge();
         SteamAuth auth=new SteamAuth(bridge);
@@ -87,7 +87,7 @@ public final class Main {
         server.createContext("/", Main::handleStatic);
         server.createContext("/health", ex -> {
             if(!validateRequest(ex)) return;
-            reply(ex,200,"application/json; charset=utf-8",("{\"ok\":true,\"app\":\"FranchiseGuide PC\",\"version\":\"0.36.0\",\"time\":\""+Instant.now()+"\"}").getBytes(StandardCharsets.UTF_8));
+            reply(ex,200,"application/json; charset=utf-8",("{\"ok\":true,\"app\":\"FranchiseGuide PC\",\"version\":\"0.37.0\",\"time\":\""+Instant.now()+"\"}").getBytes(StandardCharsets.UTF_8));
         });
         server.setExecutor(Executors.newFixedThreadPool(8, r -> {
             Thread t = new Thread(r, "franchiseguide-http");
@@ -141,7 +141,7 @@ public final class Main {
     }
 
     private static void createWindow(boolean noBrowser) {
-        JFrame frame = new JFrame("FranchiseGuide PC 0.36");
+        JFrame frame = new JFrame("FranchiseGuide PC 0.37");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(560, 300);
         frame.setMinimumSize(new Dimension(480, 260));
@@ -151,7 +151,7 @@ public final class Main {
         root.setBorder(BorderFactory.createEmptyBorder(24, 24, 24, 24));
         root.setLayout(new BoxLayout(root, BoxLayout.Y_AXIS));
 
-        JLabel title = new JLabel("FranchiseGuide PC 0.36");
+        JLabel title = new JLabel("FranchiseGuide PC 0.37");
         title.setFont(title.getFont().deriveFont(Font.BOLD, 24f));
         title.setAlignmentX(Component.LEFT_ALIGNMENT);
         JLabel info = new JLabel("<html>Le moteur local est actif sur <b>127.0.0.1</b>.<br>Les données restent dans le profil local du navigateur/PWA.</html>");

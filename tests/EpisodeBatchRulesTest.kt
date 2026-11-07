@@ -28,7 +28,7 @@ fun main(args:Array<String>){
  yes("Skip target protected",updated.episodes[2]==s.episodes[2])
  yes("Future date not rewritten",updated.episodes[3]==s.episodes[3])
  val force=apply(s,plan(s,listOf("e4","e5"),include=true))
- yes("Explicit date override allowed",force.episodes[3].watched&&force.episodes[4].watched&&force.episodes[4].airDate==null)
+ yes("Unknown-date consent cannot bypass future protection",!force.episodes[3].watched&&force.episodes[4].watched&&force.episodes[4].airDate==null)
  val skip=plan(s,listOf("e1","e2"),"skip")
  yes("Skip never loses viewed history",skip.counts.historyProtected==1&&apply(s,skip).episodes[1]==s.episodes[1])
  yes("Single native skip also protects history",TrackingRules.episode(s.episodes[1],"skip")==s.episodes[1])

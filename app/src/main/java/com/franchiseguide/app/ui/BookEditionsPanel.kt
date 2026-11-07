@@ -1,6 +1,10 @@
 package com.franchiseguide.app.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.SubcomposeAsyncImage
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
@@ -30,6 +34,8 @@ private fun BookEditionsDialog(repo:AppRepository,initial:MediaItem,onClose:()->
     var loading by remember{mutableStateOf(false)};var error by remember{mutableStateOf<String?>(null)}
     var generation by remember{mutableIntStateOf(0)};var observed by remember{mutableStateOf<Long?>(null)};var failedOffset by remember{mutableIntStateOf(0)}
     var query by remember{mutableStateOf("")};var known by remember{mutableStateOf(false)}
+    var language by remember { mutableStateOf("") }
+    var showCovers by remember { mutableStateOf(false) }
     var pending by remember{mutableStateOf<BookPagePlan?>(null)}
     var choice by remember{mutableStateOf<BookSelectionPlan?>(null)}
     var isbn by remember{mutableStateOf("")};var matches by remember{mutableStateOf<List<IsbnCandidate>>(emptyList())}
@@ -76,10 +82,31 @@ private fun BookEditionsDialog(repo:AppRepository,initial:MediaItem,onClose:()->
             result?.let { data->
                 Text("${data.entries.size} chargées / ${data.total} annoncées · dernière lecture ${observed?.let{java.time.Instant.ofEpochMilli(it).toString()}.orEmpty()}",style=MaterialTheme.typography.labelSmall)
                 OutlinedTextField(query,{query=it.take(250)},label={Text("Titre, éditeur, année, ISBN")},singleLine=true)
-                FilterChip(selected=known,onClick={known=!known},label={Text("Pages connues")})
-                val entries=BookEditionRules.filter(data.entries,query,known=known)
+                Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                    FilterChip(selected=known,onClick={known=!known},label={Text("Pages connues")})
+                    FilterChip(selected=showCovers,onClick={showCovers=!showCovers},label={Text("Afficher les couvertures")})
+                }
+                val languages = (data.entries.flatMap { it.languages } + listOf(language).filter { it.isNotBlank() }).distinct().sorted()
+                Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                    FilterChip(selected=language.isBlank(),onClick={language=""},label={Text("Toutes les langues")})
+                    languages.forEach { code ->
+                        FilterChip(selected=language==code,onClick={language=code},label={Text(code)})
+                    }
+                }
+                val entries=BookEditionRules.filter(data.entries,query,language=language,known=known)
+                Text("${entries.size} édition(s) correspondante(s) dans les pages chargées.",style=MaterialTheme.typography.labelSmall)
+                if(entries.isEmpty())Text("Aucune édition ne correspond aux filtres. Les éditions non chargées ne sont pas recherchées.")
                 LazyColumn(Modifier.weight(1f,false),verticalArrangement=Arrangement.spacedBy(8.dp)) {
                     items(entries,key={it.id}){e->ElevatedCard(Modifier.fillMaxWidth()){Column(Modifier.padding(12.dp)){
+                        if(showCovers) {
+                            if(e.coverUrl==null)Text("Couverture non renseignée",style=MaterialTheme.typography.labelSmall)
+                            else SubcomposeAsyncImage(
+                                model=e.coverUrl, contentDescription="Couverture de ${e.title}",
+                                modifier=Modifier.width(80.dp).height(112.dp), contentScale=ContentScale.Fit,
+                                loading={Text("Chargement…",style=MaterialTheme.typography.labelSmall)},
+                                error={Text("Couverture indisponible",style=MaterialTheme.typography.labelSmall)}
+                            )
+                        }
                         Text(e.title,style=MaterialTheme.typography.titleMedium);Text(e.publishers.joinToString(" · ").ifBlank{"Éditeur inconnu"})
                         Text("${e.publishDate.ifBlank{"Date inconnue"}} · ${e.languages.joinToString(", ").ifBlank{"Langue inconnue"}}")
                         Text(e.pages?.let{"$it pages"}?:"Pages non renseignées");Text(e.format.ifBlank{"Format inconnu"})
