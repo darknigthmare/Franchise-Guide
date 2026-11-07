@@ -48,7 +48,7 @@ object EpisodeBatchRules {
             e.watched->e to "already-watched"
             hasHistory(e)->e to "history-protected"
             e.skipped->e to "skipped-protected"
-            !include&&(e.airDate==null||e.airDate.isAfter(today))->e to "date-protected"
+            (e.airDate?.isAfter(today)==true||!include&&e.airDate==null)->e to "date-protected"
             else->e.copy(watched=true,skipped=false,plays=1,lastWatchedAt=at,watchHistory=listOf(at)) to "unchanged"
         }
     }

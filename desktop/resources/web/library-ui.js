@@ -20,7 +20,7 @@ function renderNextUp(){
  $$('[data-next-watch]').forEach(b=>b.onclick=()=>{
   try{assertWritable();const live=nextUpResult().records.find(r=>r.mediaId===b.dataset.nextWatch);if(!live||live.status!=='ready'||(live.episodeId||'')!==b.dataset.nextEpisode)throw Error('La progression a changé depuis l’affichage. Aucun autre épisode n’a été marqué.');
    const m=state.media.find(m=>m.id===live.mediaId),e=live.episodeId?state.episodes.find(e=>e.id===live.episodeId&&e.showId===m.id):m;
-   if(!e||e.watched||e.skipped)throw Error('Ce visionnage a déjà été traité.');const now=Date.now();Object.assign(e,FGCore.episodeState(e,'watch',now));if(live.episodeId)m.lastWatchedAt=Math.max(m.lastWatchedAt||0,now);save();render();toast('Visionnage enregistré. Le prochain épisode est recalculé.');
+   if(!e||e.watched||e.skipped)throw Error('Ce visionnage a déjà été traité.');const now=Date.now();if(live.episodeId)FGCore.requireEpisodeNotFuture(e,now);Object.assign(e,FGCore.episodeState(e,'watch',now));if(live.episodeId)m.lastWatchedAt=Math.max(m.lastWatchedAt||0,now);save();render();toast('Visionnage enregistré. Le prochain épisode est recalculé.');
   }catch(e){toast(e.message);if(!storageDraft)render();}
  });bindImages();
 }

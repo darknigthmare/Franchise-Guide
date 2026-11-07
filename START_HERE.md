@@ -1,4 +1,4 @@
-# Démarrage — FranchiseGuide 0.36.0
+# Démarrage — FranchiseGuide 0.37.0
 
 Consulter le [README](README.md) pour les prérequis, lanceurs et commandes de build.
 

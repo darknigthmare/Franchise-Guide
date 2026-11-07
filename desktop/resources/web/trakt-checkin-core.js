@@ -39,7 +39,7 @@ function validate(s){
 function encode(s){const raw=JSON.stringify(validate(s));if(new TextEncoder().encode(raw).length>MAX_BYTES)fail('Session trop volumineuse.');return raw;}
 function decode(raw){if(raw==null||raw==='')return null;if(typeof raw!=='string'||new TextEncoder().encode(raw).length>MAX_BYTES)fail('Session locale illisible.','CHECKIN_RECOVERY');let parsed;try{parsed=JSON.parse(raw);}catch{fail('Session locale illisible.','CHECKIN_RECOVERY');}return validate(parsed);}
 function context(s,accountName,applicationRef){s=validate(s);return s.account===account(accountName)&&(s.appRef??null)===(appRef(applicationRef)??null);}
-function body(s){s=validate(s);const node={ids:{tmdb:s.tmdbId}},key=s.kind==='episode'?'episode':'movie';return {[key]:node,app_version:'0.36.0',app_date:'2026-10-26'};}
+function body(s){s=validate(s);const node={ids:{tmdb:s.tmdbId}},key=s.kind==='episode'?'episode':'movie';return {[key]:node,app_version:'0.37.0',app_date:'2026-11-07'};}
 function startConfirmed(s,response,receivedAt=Date.now()){
  s=validate(s);integer(receivedAt,'Réception',1);if(!object(response))fail('Accusé de check-in Trakt invalide.');let remote=null;if(response.started_at!=null){const t=Date.parse(response.started_at);if(!Number.isFinite(t))fail('Date de début Trakt invalide.');remote=t;}
  return {...s,status:'active',remoteStartedAt:remote,lastError:null};

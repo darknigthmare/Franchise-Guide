@@ -335,7 +335,7 @@ class AppRepository private constructor(context: Context) {
                 try{save()}catch(e:Exception){media[mi]=oldMedia;throw e}
             }else {
                 val ei=episodes.indexOfFirst{it.id==episodeId&&it.showId==mediaId};require(ei>=0)
-                val old=episodes[ei];require(!old.watched&&!old.skipped)
+                val old=episodes[ei];require(!old.watched&&!old.skipped);EpisodeAiringRules.requireNotFuture(old.airDate)
                 val fresh=TrackingRules.episode(old,"watch");episodes[ei]=fresh;media[mi]=oldMedia.copy(lastWatchedAt=maxOf(oldMedia.lastWatchedAt?:0L,fresh.lastWatchedAt?:0L))
                 try{save()}catch(e:Exception){episodes[ei]=old;media[mi]=oldMedia;throw e}
             }
@@ -390,7 +390,7 @@ class AppRepository private constructor(context: Context) {
             try { save() } catch(e:Exception) { media[mi]=oldMedia;throw e }
         } else {
             val ei=episodes.indexOfFirst { it.id==episodeId&&it.showId==mediaId };require(ei>=0) { "Épisode introuvable." }
-            val old=episodes[ei];val next=ActivityRules.add(old,at);episodes[ei]=next
+            val old=episodes[ei];EpisodeAiringRules.requireNotFuture(old.airDate);val next=ActivityRules.add(old,at);episodes[ei]=next
             media[mi]=oldMedia.copy(lastWatchedAt=episodes.filter { it.showId==mediaId }.maxOfOrNull { it.lastWatchedAt?:0L }?.takeIf { it>0 })
             try { save() } catch(e:Exception) { episodes[ei]=old;media[mi]=oldMedia;throw e }
         }
@@ -438,8 +438,8 @@ class AppRepository private constructor(context: Context) {
         }catch(e:Exception){media.clear();media.addAll(before.media);episodes.clear();episodes.addAll(before.episodes);throw e}
         finally{syncLock.unlock()}
     }
-    fun markEpisodeWatched(id:String,watched:Boolean=true)=changeEpisodeSafely(id){TrackingRules.episode(it,if(watched)"watch" else "unwatch")}
-    fun replayEpisode(id:String)=changeEpisodeSafely(id){TrackingRules.episode(it,"replay")}
+    fun markEpisodeWatched(id:String,watched:Boolean=true)=changeEpisodeSafely(id){if(watched)EpisodeAiringRules.requireNotFuture(it.airDate);TrackingRules.episode(it,if(watched)"watch" else "unwatch")}
+    fun replayEpisode(id:String)=changeEpisodeSafely(id){EpisodeAiringRules.requireNotFuture(it.airDate);TrackingRules.episode(it,"replay")}
     fun toggleEpisodeSkipped(id:String)=changeEpisodeSafely(id){TrackingRules.episode(it,"skip")}
     fun toggleEpisodeCollected(id:String)=changeEpisodeSafely(id){it.copy(collected=!it.collected)}
 
@@ -831,10 +831,12 @@ class AppRepository private constructor(context: Context) {
     suspend fun traktCheckInEpisode(episodeId:String):Result<String> = checkInLock.withLock {
         runCatching {
             val cfg=settings.value;require(cfg.traktClientId.isNotBlank()) { "Ajoute ton Client ID Trakt dans Réglages." }
+            EpisodeAiringRules.requireNotFuture(episodes.single{it.id==episodeId}.airDate)
             val initial=startCheckIn(TraktCheckInRules.episode(media.toList(),episodes.toList(),episodeId));val op=checkInOperation(initial)
             try {
                 val token=validTraktToken(cfg)?:error("Connecte d’abord ton compte Trakt.")
                 requireCheckInOperation(op)
+                EpisodeAiringRules.requireNotFuture(episodes.single{it.id==episodeId}.airDate)
                 val remote=withContext(Dispatchers.IO){trakt.startCheckInEpisode(initial.tmdbId,token,cfg.traktClientId.trim())}
                 persistCheckInOperation(TraktCheckInRules.started(initial,remote),op)
                 "Check-in Trakt commencé : ${initial.title} ${initial.code.orEmpty()}."
@@ -1517,10 +1519,10 @@ class AppRepository private constructor(context: Context) {
         if(!savingBackup&&settings.value.autoBackupEnabled&&System.currentTimeMillis()-prefs.getLong("last_backup",0)>=settings.value.autoBackupMinutes.coerceIn(1,1440)*60000L)createLocalBackup("Automatique")
     }
 
-    private fun checkInToJson(v:TraktCheckInSession)=JSONObject().apply {put("version",v.version);put("id",v.id);put("account",v.account);put("appRef",v.appRef?:JSONObject.NULL);put("kind",v.kind);put("localId",v.localId);put("parentId",v.parentId?:JSONObject.NULL);put("tmdbId",v.tmdbId);put("title",v.title);put("code",v.code?:JSONObject.NULL);put("runtimeMinutes",v.runtimeMinutes?:JSONObject.NULL);put("identity",v.identity);put("startedAt",v.startedAt);put("remoteStartedAt",v.remoteStartedAt?:JSONObject.NULL);put("expectedEndAt",v.expectedEndAt?:JSONObject.NULL);put("status",v.status);put("finishAt",v.finishAt?:JSONObject.NULL);put("lastError",v.lastError?:JSONObject.NULL);put("historyApplied",v.historyApplied)}
+    private fun checkInToJson(v:TraktCheckInSession)=TraktCheckInCodec.write(v)
     // Android's JSONObject.NULL is coerced to the text "null" by optString.
     // Keep absent optional values null so persisted movie sessions remain valid.
-    private fun jsonToCheckIn(o:JSONObject)=TraktCheckInRules.validate(TraktCheckInSession(version=o.getInt("version"),id=o.getString("id"),account=o.getString("account"),appRef=if(o.isNull("appRef"))null else o.getString("appRef").takeIf{it.isNotBlank()},kind=o.getString("kind"),localId=o.getString("localId"),parentId=if(o.isNull("parentId"))null else o.getString("parentId").takeIf{it.isNotBlank()},tmdbId=o.getInt("tmdbId"),title=o.getString("title"),code=if(o.isNull("code"))null else o.getString("code").takeIf{it.isNotBlank()},runtimeMinutes=o.optInt("runtimeMinutes",0).takeIf{it>0},identity=o.getString("identity"),startedAt=o.getLong("startedAt"),remoteStartedAt=o.optLong("remoteStartedAt",0).takeIf{it>0},expectedEndAt=o.optLong("expectedEndAt",0).takeIf{it>0},status=o.getString("status"),finishAt=o.optLong("finishAt",0).takeIf{it>0},lastError=if(o.isNull("lastError"))null else o.getString("lastError").takeIf{it.isNotBlank()},historyApplied=o.optBoolean("historyApplied")))
+    private fun jsonToCheckIn(o:JSONObject)=TraktCheckInCodec.read(o)
     private fun loadTraktCheckIn():TraktCheckInSession? {val raw=prefs.getString("trakt_checkin_v35",null)?:return null;return runCatching{require(raw.length<=65536);jsonToCheckIn(JSONObject(raw))}.getOrElse{checkInRecoveryRaw=raw;checkInLoadProblem="Session de check-in locale illisible : exporte-la ou oublie-la explicitement. Aucun suivi local appliqué.";null}}
     private fun backupToJson(v:ExternalBackupRecord)=JSONObject().apply{put("version",v.version);put("proposedAt",v.proposedAt?:JSONObject.NULL);put("proposedKind",v.proposedKind?:JSONObject.NULL);put("fileName",v.fileName?:JSONObject.NULL);put("verifiedAt",v.verifiedAt?:JSONObject.NULL);put("snoozedUntil",v.snoozedUntil?:JSONObject.NULL)}
     private fun loadExternalBackup():ExternalBackupRecord {val raw=prefs.getString("external_backup_v35",null)?:return ExternalBackupRecord();return runCatching{require(raw.length<=16384);val o=JSONObject(raw);BackupSafetyRules.validate(ExternalBackupRecord(version=o.optInt("version",1),proposedAt=o.optLong("proposedAt",0).takeIf{it>0},proposedKind=o.optString("proposedKind").takeIf{it.isNotBlank()},fileName=o.optString("fileName").takeIf{it.isNotBlank()},verifiedAt=o.optLong("verifiedAt",0).takeIf{it>0},snoozedUntil=o.optLong("snoozedUntil",0).takeIf{it>0}))}.getOrElse{backupSafetyProblem="Rappel de sauvegarde illisible ; aucune vérification externe supposée.";ExternalBackupRecord()}}

@@ -1,6 +1,6 @@
 {
   "name": "FranchiseGuide Suite",
-  "version": "0.36.0",
+  "version": "0.37.0",
   "base": "Recovered Drive V0.35 ZIP",
   "base_zip_sha256": "6628593fb329ea964d6f73b95c072bef5f26810715fcf08943d2421c79dde022",
   "portable_schema": 11,
@@ -32,7 +32,12 @@
     "Strict PC Steam JSON and UTF-8 validation",
     "Reproducible Web copies and automated GitHub validation",
     "Android SDK36 Compose compilation, debug APK assembly and lint with zero errors",
-    "Real Chrome local-origin storage, offline reload and two-tab write-lock checks"
+    "Real Chrome local-origin storage, offline reload and two-tab write-lock checks",
+    "30 native JUnit groups integrated into Android Gradle CI with real JSON codecs",
+    "Bounded coalescing of simultaneous PC Steam reads with account/game/language isolation",
+    "Future episode guards on individual tracking, batches and check-ins",
+    "Strict native Trakt check-in JSON codec and uncertain-session recovery",
+    "Android book-edition language filters and opt-in covers"
   ],
   "not_delivered": [
     "SeriesGuide Cloud or general multi-device synchronization",
@@ -40,15 +45,16 @@
     "Background Web completion while application is closed",
     "Real provider accounts or credentials",
     "New PSN/Xbox/Epic/GOG connectors or commercial certification",
-    "Android device validation, signed distribution and automatic Kotlin regression integration in CI",
+    "Android device validation, signed distribution",
     "PWA installed state, upgrades and full cross-browser validation"
   ],
   "tests": {
-    "current_evidence": "docs/QA_REPORT.md",
-    "historical_results": "docs/archives/v035/RELEASE.json",
+    "current_evidence": "docs/qa/2026-11-07.md",
+    "historical_results": "docs/archives/v036/current.json",
     "note": "Only results recorded for this source revision belong to this release.",
-    "machine_readable": "docs/qa/current.json"
+    "machine_readable": "docs/qa/2026-11-07.json"
   },
   "all_runtime_credentials_included": false,
-  "assessed_at": "2026-10-26"
+  "assessed_at": "2026-11-07",
+  "previous_release": "0.36.0"
 }

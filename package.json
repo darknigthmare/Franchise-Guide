@@ -1,13 +1,13 @@
 {
   "name": "franchiseguide-suite",
-  "version": "0.36.0",
+  "version": "0.37.0",
   "private": true,
   "description": "FranchiseGuide QA dependencies; production Web and local server have no npm dependencies.",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test tests/*.test.cjs",
+    "test": "node --test --test-concurrency=2 tests/*.test.cjs",
     "test:dom": "node --test tests/web-dom-v014.test.cjs tests/retro-orchestration-v014.test.cjs",
     "start": "node server/start.cjs",
     "sync:web": "node tools/sync_web.cjs",

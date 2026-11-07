@@ -74,7 +74,7 @@ fun main(args:Array<String>){
  checkCase("Valid sync count acknowledged",ActivityRules.acknowledgedCounts(listOf(null,1)))
  if(args.isNotEmpty()) {
   val parity=events[0].copy(key="movie:clé *",uid=ActivityRules.uid("movie:clé *"),title="Film très long 日本語 🐈 ".repeat(15)+"; virgule, antislash\\\nSecond line",description="Description\nHoraire inconnu.")
-  Files.writeString(Path.of(args[0]),ActivityRules.calendar(listOf(parity),Instant.parse("2026-10-06T12:00:00Z")),StandardCharsets.UTF_8)
+  java.io.File(args[0]).writeText(ActivityRules.calendar(listOf(parity),Instant.parse("2026-10-06T12:00:00Z")),StandardCharsets.UTF_8)
  }
  println("$passed Activity V0.16 JVM assertions passed. No Android SDK or device.")
 }

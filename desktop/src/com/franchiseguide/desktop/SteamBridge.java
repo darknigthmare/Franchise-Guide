@@ -23,6 +23,8 @@ public final class SteamBridge implements HttpHandler {
     private final Semaphore slots = new Semaphore(2);
     private final ArrayDeque<Long> requests = new ArrayDeque<>();
     private final LinkedHashMap<String, Cached> cache = new LinkedHashMap<>();
+    // Protected by the cache monitor, bounded by the same two owner permits.
+    private final Map<String, CompletableFuture<String>> inFlight = new HashMap<>();
     record Cached(long at, String json) {}
     @FunctionalInterface interface Reader { String read(URI uri) throws Exception; }
     public SteamBridge() { this(System.getenv("FG_STEAM_API_KEY"), SteamBridge::readSteam); }
@@ -53,12 +55,39 @@ public final class SteamBridge implements HttpHandler {
         Map<String,String> q=parseQuery(encoded);
         if(!configured())throw new Failure(503,"Steam key missing");
         String cacheKey=q.get("steamid")+":"+q.get("appid")+":"+q.get("language");
-        synchronized(cache){Cached c=cache.get(cacheKey);if(c!=null&&System.currentTimeMillis()-c.at<60000)return c.json;}
-        if(!takeRate()||!slots.tryAcquire())throw new Failure(429,"Local rate limit");
+        CompletableFuture<String> flight;
+        boolean owner = false;
+        synchronized (cache) {
+            Cached c = cache.get(cacheKey);
+            if (c != null && System.currentTimeMillis() - c.at < 60000) return c.json;
+            flight = inFlight.get(cacheKey);
+            if (flight == null) {
+                if (!slots.tryAcquire()) throw new Failure(429, "Local concurrency limit");
+                if (!takeRate()) { slots.release(); throw new Failure(429, "Local rate limit"); }
+                flight = new CompletableFuture<>();
+                inFlight.put(cacheKey, flight);
+                owner = true;
+            }
+        }
+        if (!owner) {
+            try { return flight.get(45, TimeUnit.SECONDS); }
+            catch (InterruptedException failure) { Thread.currentThread().interrupt(); throw failure; }
+            catch (ExecutionException failure) {
+                if (failure.getCause() instanceof Exception cause) throw cause;
+                if (failure.getCause() instanceof Error cause) throw cause;
+                throw new IOException("Steam read failed", failure.getCause());
+            }
+        }
         try {
             String common="appid="+q.get("appid")+"&l="+q.get("language")+"&key="+enc(key);
             String schema=reader.read(URI.create("https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?"+common));
-            boolean noAchievements=schema.contains("\"gameName\"") && (!schema.contains("\"achievements\"") || java.util.regex.Pattern.compile("\"achievements\"\\s*:\\s*\\[\\s*\\]").matcher(schema).find());
+            Object parsedSchema = RetroBridge.Json.parse(schema);
+            Object gameValue = parsedSchema instanceof Map<?, ?> root ? root.get("game") : null;
+            Map<?, ?> game = gameValue instanceof Map<?, ?> map ? map : Map.of();
+            Object statsValue = game.get("availableGameStats");
+            Object definitions = statsValue instanceof Map<?, ?> stats ? stats.get("achievements") : null;
+            boolean noAchievements = game.get("gameName") instanceof String title && !title.isBlank()
+                && (definitions == null || definitions instanceof List<?> list && list.isEmpty());
             String player="null",rarity="null";
             if(!noAchievements){
                 player=reader.read(URI.create("https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v1/?"+common+"&steamid="+q.get("steamid")));
@@ -68,8 +97,15 @@ public final class SteamBridge implements HttpHandler {
             String result="{\"provider\":\"steam\",\"steamid\":\""+q.get("steamid")+"\",\"appid\":\""+q.get("appid")+"\",\"fetchedAt\":"+System.currentTimeMillis()+",\"noAchievements\":"+noAchievements+",\"schema\":"+schema+",\"player\":"+player+",\"rarity\":"+rarity+"}";
             result=AutoServices.redactResponse(result,List.of(key));
             synchronized(cache){cache.put(cacheKey,new Cached(System.currentTimeMillis(),result));while(cache.size()>32)cache.remove(cache.keySet().iterator().next());}
+            flight.complete(result);
             return result;
-        } finally { slots.release(); }
+        } catch (Exception | Error failure) {
+            flight.completeExceptionally(failure);
+            throw failure;
+        } finally {
+            synchronized (cache) { inFlight.remove(cacheKey, flight); }
+            slots.release();
+        }
     }
     private synchronized boolean takeRate() { long now=System.currentTimeMillis();while(!requests.isEmpty()&&requests.peekFirst()<now-60000)requests.removeFirst();if(requests.size()>=12)return false;requests.add(now);return true; }
     static Map<String,String> parseQuery(String raw) {

@@ -32,7 +32,7 @@ function outcome(e,action,at,today,includeUndatedFuture){
  if(e.watched)return {change:null,reason:'already-watched'};
  if(hasHistory(e))return {change:null,reason:'history-protected'};
  if(e.skipped)return {change:null,reason:'skipped-protected'};
- const date=e.date??e.airDate;if(!includeUndatedFuture&&(!A.validDate(date)||date>today))return {change:null,reason:'date-protected'};
+ const date=e.date??e.airDate;if([e.date,e.airDate].some(d=>A.validDate(d)&&d>today)||!includeUndatedFuture&&!A.validDate(date))return {change:null,reason:'date-protected'};
  return {change:{watched:true,plays:1,skipped:false,lastWatchedAt:at,watchHistory:[at]},reason:'unchanged'};
 }
 function makePlan(s,showId,ids,action,options={}){

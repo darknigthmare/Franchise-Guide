@@ -1,4 +1,4 @@
-# FranchiseGuide Web/PWA 0.36.0
+# FranchiseGuide Web/PWA 0.37.0
 
 Moteur Web canonique avec check-ins Trakt récupérables, écran Aujourd’hui et rappel de sauvegarde externe. Lancer depuis la distribution Web ou la Suite avec Node22+ : `node server/start.cjs`, puis `http://127.0.0.1:47632/`. Ne pas utiliser file://.
 

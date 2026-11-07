@@ -1,13 +1,14 @@
 {
   "schemaVersion": 1,
   "project": "FranchiseGuide",
-  "assessedAt": "2026-10-26",
-  "baselineVersion": "0.35.0",
-  "targetVersion": "0.36.0",
+  "assessedAt": "2026-11-07",
+  "baselineVersion": "0.36.0",
+  "targetVersion": "0.37.0",
   "baseline": {
     "archive": "FranchiseGuide_Suite_V0_35.zip",
     "sha256": "6628593fb329ea964d6f73b95c072bef5f26810715fcf08943d2421c79dde022",
-    "note": "Base de reprise : archive Drive V0.35 récupérable, empreinte vérifiée. Les notes finales antérieures citent un ZIP d’empreinte différente qui n’a pas été retrouvé. Le dossier V0.36 repéré était vide. Les résultats historiques ne sont pas des exécutions de cette passe."
+    "note": "Base de reprise : archive Drive V0.35 récupérable, empreinte vérifiée. Les notes finales antérieures citent un ZIP d’empreinte différente qui n’a pas été retrouvé. Le dossier V0.36 repéré était vide. Les résultats historiques ne sont pas des exécutions de cette passe.",
+    "resumeCommit": "d1ce70edc13d41520200ad9c3081100abaae4da7"
   },
   "statusDefinitions": {
     "À développer": "Fonction ou livraison absente du périmètre récupéré.",
@@ -20,7 +21,7 @@
     "P1": "Fonction essentielle, fiabilité ou distribution utilisable.",
     "P2": "Extension ou amélioration après les blocages."
   },
-  "note": "Ce registre suit les travaux identifiés. Le nombre de tâches terminées n’est pas un pourcentage d’achèvement de toute l’application. Les sources de preuve sont des chemins relatifs au dépôt. Les statuts combinent lecture du code, preuves réellement exécutées dans cette passe et vérifications encore ouvertes ; les résultats historiques restent distincts.",
+  "note": "Suivi cumulatif de 103 actions, et non pourcentage global du produit. Les validations non réexécutées restent datées du 26/10/2026 ; les preuves nouvelles sont datées du 07/11/2026. Une fonction codée ne ferme pas une recette appareil ou compte réel.",
   "items": [
     {
       "id": "FG-001",
@@ -34,7 +35,7 @@
       "acceptance": "Les fichiers nécessaires à chaque canal sont présents dans le commit GitHub et correspondent au contenu vérifié.",
       "dependencies": "",
       "evidence": "README.md; docs/INTEGRATION_GITHUB.md; RELEASE.json; MANIFEST.sha256",
-      "validation": "Commit f954889bceaa81636c5c24a37f78a5ea1951554c retrouvé dans un nouveau clone public propre. Arbre et Excel vérifiés.",
+      "validation": "Historique 26/10/2026 — Commit f954889bceaa81636c5c24a37f78a5ea1951554c retrouvé dans un nouveau clone public propre. Arbre et Excel vérifiés.",
       "followup": ""
     },
     {
@@ -44,13 +45,13 @@
       "platform": "Toutes",
       "title": "Exécuter les contrôles à chaque modification",
       "status": "Partiel",
-      "current": "Workflow push/PR publié et exécuté. Les trois jobs distants web-pc, browser et android réussissent dans la CI finale. Le test navigateur corrigé réussit également localement sur Chrome 156 et sur la version Chromium de CI.",
+      "current": "CI étendue aux 30 groupes JUnit natifs et à la concurrence Steam. Un garde refuse les rapports absents, incomplets, ignorés ou en échec.",
       "steps": "Déclencher la CI sur push et PR. Installer les dépendances verrouillées et exécuter les suites appropriées, avec journaux et artefacts.",
       "acceptance": "Un commit propre passe les contrôles automatiques. Une régression injectée fait échouer le job concerné.",
       "dependencies": "FG-001",
-      "evidence": ".github/workflows/build.yml; package.json; docs/QA_REPORT.md; docs/qa/current.json",
-      "validation": "GitHub Actions 40403868550 : COMPLETED/SUCCESS le 26/10/2026 à 21:26:39 UTC, commit 8f7f1b7. Jobs web-pc, browser et android réussis. Navigateur CI : 22/22 contrôles. APK et rapports Android publiés.",
-      "followup": "L’injection contrôlée de régression reste à exercer pour fermer le critère. La divergence navigator.onLine est un diagnostic navigateur ; la preuve hors ligne utilise désormais le rejet réel d’une requête sans cache."
+      "evidence": ".github/workflows/build.yml; app/src/test/java/NativeRegressionSuitesTest.kt; tools/check_junit_results.py; docs/qa/2026-11-07.md",
+      "validation": "CI 42386272622 : Web/PC, navigateur et Android réussis. Garde CI exécuté avec 30 groupes. Ses 6 scénarios positifs/négatifs passent localement ; injection réelle d’une régression dans GitHub non réalisée.",
+      "followup": "L’injection volontaire d’une régression dans un job GitHub reste à exercer pour fermer tout le critère."
     },
     {
       "id": "FG-003",
@@ -58,14 +59,14 @@
       "domain": "Android",
       "platform": "Android",
       "title": "Compiler réellement Android avec SDK et Compose",
-      "status": "Partiel",
-      "current": "Compilation SDK/Compose, assemblage de l’APK et lint réussis. Trois fichiers Compose invalides et 13 erreurs lint corrigés. Les tests Android JUnit ne sont pas encore présents.",
+      "status": "Terminé",
+      "current": "Compilation SDK/Compose, APK de développement 0.37 et lint réussis. Les 30 groupes JUnit sont réellement exécutés ; NO-SOURCE n’est plus accepté.",
       "steps": "Exécuter assembleDebug, tests unitaires et lint avec JDK17 et SDK requis. Corriger les erreurs et conserver les rapports.",
       "acceptance": "APK debug produit, tests et lint réussis. Aucune compilation avec stubs présentée comme build Android.",
       "dependencies": "FG-002",
-      "evidence": "app/build.gradle.kts; build.gradle.kts; app/src/main/java/com/franchiseguide/app/ui/FranchisePanels.kt; app/src/main/java/com/franchiseguide/app/ui/InsightsPanels.kt; app/src/main/java/com/franchiseguide/app/ui/WatchAvailabilityScreen.kt; docs/ANDROID_BUILD.md; docs/qa/current.json",
-      "validation": "Local : assembleDebug + testDebugUnitTest + lintDebug, exit 0 en 5 min 24 s. Même groupe réussi dans la CI finale 40403868550. Lint : 0 erreur, 31 avertissements, 1 remarque. JUnit Android : NO-SOURCE, aucun test exécuté. APK locale debug v2 vérifiée.",
-      "followup": "Complément pour clore le critère de tests : ajouter/exécuter de vrais tests unitaires Android. Les 31 avertissements lint ne sont pas 31 bugs fonctionnels : 21 UseKtx, 6 dépendances, 1 ApplySharedPref, 1 ObsoleteSdkInt, 1 Overdraw et 1 HardcodedText. Préserver le commit synchrone requis par la sécurité."
+      "evidence": "app/build.gradle.kts; app/src/test/java/NativeRegressionSuitesTest.kt; tools/check_junit_results.py; docs/ANDROID_BUILD.md; docs/qa/2026-11-07.md",
+      "validation": "CI 42386272622, commit 3763ae9 : assembleDebug/testDebugUnitTest/lintDebug réussis. Rapport téléchargé : 30 groupes, 0 échec, 0 ignoré ; lint 0 erreur, 31 avertissements et 1 conseil.",
+      "followup": "La recette sur téléphone reste suivie séparément en FG-009/010/011/012/013. Aucun test UI Android n’est déduit des groupes JUnit."
     },
     {
       "id": "FG-004",
@@ -74,12 +75,12 @@
       "platform": "Toutes",
       "title": "Harmoniser versions et manifestes de distribution",
       "status": "Terminé",
-      "current": "Versions harmonisées en 0.36.0, miroirs Web synchronisés et JAR PC reconstruit. Le manifeste du premier clone publié a été vérifié.",
+      "current": "Métadonnées harmonisées en 0.37.0/code 37. Miroirs Web et JAR PC reconstruits depuis les sources corrigées ; schéma portable 11 inchangé.",
       "steps": "Synchroniser les métadonnées, reconstruire le JAR, générer les empreintes et comparer les ressources des distributions.",
       "acceptance": "Version affichée, RELEASE.json, manifestes PWA et binaire PC cohérents. Aucun moteur Web périmé livré.",
       "dependencies": "FG-001",
       "evidence": "tools/build_pc.sh; web/sw.js; web/manifest.webmanifest; RELEASE.json",
-      "validation": "588 fichiers SHA-256 vérifiés dans le clone public. JAR 0.36.0 et --probe réussis ; 109 contrôles HTTP et 9 de démarrage.",
+      "validation": "07/11 : build PC/probe, 109 contrôles HTTP et 9 contrôles de démarrage réussis. Références et manifeste de la livraison vérifiés.",
       "followup": "Régénérer le manifeste après chaque nouvelle modification ou export du classeur."
     },
     {
@@ -89,12 +90,12 @@
       "platform": "Toutes",
       "title": "Consolider la documentation courante",
       "status": "Terminé",
-      "current": "Entrées README/START_HERE, matrice, barrières de publication et guide Android actualisés. Quatre guides liés clarifient 0.36.0, portable 11 et preuves historiques.",
+      "current": "README, guide Android, journal de changements et rapport QA actualisés pour 0.37. Les preuves 0.36 restent archivées et ne sont pas comptées comme essais nouveaux.",
       "steps": "Séparer les références historiques des instructions courantes. Mettre à jour matrice de fonctions, conditions de démarrage et barrières selon preuves de cette passe.",
       "acceptance": "Un nouvel utilisateur trouve les commandes et limites actuelles sans choisir entre des instructions contradictoires.",
       "dependencies": "FG-004",
-      "evidence": "README.md; START_HERE.md; docs/FEATURE_MATRIX.md; docs/GAMING_ACHIEVEMENTS.md; docs/STEAM_SIGN_IN.md; docs/RETROACHIEVEMENTS.md; docs/PRIVACY_TECHNICAL.md",
-      "validation": "Lecture des guides liés. Contradictions « export courant schéma 8 » et « aucun build SDK » supprimées. Le rapport QA courant reste la référence des résultats.",
+      "evidence": "README.md; CHANGELOG.md; docs/ANDROID_BUILD.md; docs/QA_REPORT.md; docs/qa/2026-11-07.md",
+      "validation": "Rapport daté 07/11, suivi JSON et Excel concordants. Parcours non testés et comptes réels explicitement distingués.",
       "followup": ""
     },
     {
@@ -109,7 +110,7 @@
       "acceptance": "Clone vierge puis commandes documentées suffisants pour lancer Web et construire PC. Échecs de prérequis expliqués.",
       "dependencies": "FG-002",
       "evidence": "tools/bootstrap-gradle.sh; tools/build_pc.sh; tools/run_checks.sh; package-lock.json",
-      "validation": "HEAD exact et arbre propre. npm ci --offline : 42 paquets. Structure : 216 contrôles. Build PC et --probe réussis. npm start répond HTTP 200 sur port 47642.",
+      "validation": "Historique 26/10/2026 — HEAD exact et arbre propre. npm ci --offline : 42 paquets. Structure : 216 contrôles. Build PC et --probe réussis. npm start répond HTTP 200 sur port 47642.",
       "followup": "Cette recette réutilise le cache npm de l’environnement. La CI distante vérifie séparément le parcours d’installation sur son runner."
     },
     {
@@ -118,14 +119,14 @@
       "domain": "Livraison",
       "platform": "Toutes",
       "title": "Régénérer et vérifier les archives livrables",
-      "status": "À valider",
-      "current": "Des vérificateurs ZIP/RAR et manifestes existent. Les empreintes anciennes ne couvrent pas les nouvelles modifications.",
+      "status": "Partiel",
+      "current": "Archive source exacte produite et contrôlée dans GitHub Actions (chemins et octets comparés aux fichiers suivis). Les paquets de distribution RAR et installateurs ne sont pas qualifiés.",
       "steps": "Assembler les archives de la nouvelle version, les extraire indépendamment et comparer chemins, tailles, octets et modes exécutables.",
       "acceptance": "Archives extractibles et lancement depuis leur contenu extrait. Rapport d’empreintes rattaché à la version publiée.",
       "dependencies": "FG-004",
-      "evidence": "tools/verify_archive.py; tools/check_extracted_web.py; tools/create_rar5.py",
-      "validation": "Non vérifié dans cette passe",
-      "followup": ""
+      "evidence": ".github/workflows/source-package.yml; tools/verify_archive.py; docs/qa/2026-11-07.md",
+      "validation": "Workflow source-package réussi sur la branche et sur la PR. Aucun résultat RAR ou installation utilisateur déduit de cette vérification.",
+      "followup": "Compléter archives Web/PC isolées et lancement après extraction sur les systèmes cibles."
     },
     {
       "id": "FG-008",
@@ -133,14 +134,14 @@
       "domain": "Android",
       "platform": "Android",
       "title": "Tester les codecs avec le véritable moteur JSON",
-      "status": "À valider",
-      "current": "Deux groupes de codecs JSON natifs étaient exclus de la QA récupérée. Les stubs prouvent seulement des signatures.",
+      "status": "Partiel",
+      "current": "GamingCodecRetroTest et MediaIdentityCodecTest exécutés avec org.json réel. Codec strict des sessions check-in ajouté, avec 35 assertions sur types, nulls, bornes et reprises.",
       "steps": "Exécuter GamingCodecRetroTest et MediaIdentityCodecTest avec org.json réel, puis les migrations avec le runtime Android.",
       "acceptance": "Identités, alias et succès conservés. JSON invalide ou version future refusés sans écraser la bibliothèque.",
       "dependencies": "FG-003",
-      "evidence": "tests/GamingCodecRetroTest.kt; tests/MediaIdentityCodecTest.kt; app/src/main/java/com/franchiseguide/app/data/",
-      "validation": "Non vérifié dans cette passe",
-      "followup": ""
+      "evidence": "tests/GamingCodecRetroTest.kt; tests/MediaIdentityCodecTest.kt; tests/TraktCheckInCodecTest.kt; app/src/main/java/com/franchiseguide/app/data/TraktCheckInCodec.kt",
+      "validation": "30 groupes JUnit réussis localement et dans le build SDK/Gradle CI. GamingCodecRetroTest, MediaIdentityCodecTest et TraktCheckInCodecTest utilisent org.json réel. Runtime JSON et migrations sur appareil encore à qualifier.",
+      "followup": "Exercer le stockage et les migrations sur émulateur/téléphone, au-delà du moteur JSON JVM."
     },
     {
       "id": "FG-009",
@@ -299,13 +300,13 @@
       "platform": "Android",
       "title": "Compléter la consultation native des éditions de livres",
       "status": "Partiel",
-      "current": "Le panneau natif d’éditions ne possède pas toute la présentation Web, notamment couvertures et filtre de langue.",
+      "current": "Filtres par langue des éditions chargées et couvertures sur demande ajoutés au panneau Compose. Chargement, image absente et erreur ont un repli explicite ; sélectionner une édition reste une action séparée.",
       "steps": "Ajouter couvertures à la demande, filtre de langue et états d’erreur accessibles. Conserver la sélection d’édition explicite.",
       "acceptance": "Même édition retrouvée avec ses pages/langue. Aucune progression modifiée par une simple consultation.",
       "dependencies": "FG-003",
       "evidence": "app/src/main/java/com/franchiseguide/app/ui/BookEditionsPanel.kt; docs/BOOK_EDITIONS.md",
-      "validation": "Non vérifié dans cette passe",
-      "followup": ""
+      "validation": "Compilation Compose et assemblage APK 0.37 réussis dans CI 42386272622. Filtre et couvertures non testés sur téléphone ni avec réseau fournisseur réel.",
+      "followup": "Vérifier langue absente, pagination, couvertures en échec et sélection sur téléphone."
     },
     {
       "id": "FG-020",
@@ -349,7 +350,7 @@
       "acceptance": "Bibliothèque consultable hors ligne après préparation. Aucune erreur réseau interprétée comme catalogue vide ou déconnexion certaine.",
       "dependencies": "FG-021",
       "evidence": "web/sw.js; web/maintenance.js; tests/sw.test.cjs; tests/browser-origin.cjs; docs/qa/current.json",
-      "validation": "22/22 contrôles sur chacune des deux versions Chrome. URL à nonce : HTTP 404 en ligne, fetch rejeté hors ligne sans cache ; rechargement servi par le service worker, 4 titres et thème conservés en mémoire et localStorage. Pas de PWA installée OS.",
+      "validation": "Historique 26/10/2026 — 22/22 contrôles sur chacune des deux versions Chrome. URL à nonce : HTTP 404 en ligne, fetch rejeté hors ligne sans cache ; rechargement servi par le service worker, 4 titres et thème conservés en mémoire et localStorage. Pas de PWA installée OS.",
       "followup": ""
     },
     {
@@ -379,7 +380,7 @@
       "acceptance": "Refus de stockage signalé avant faux succès. Export de récupération disponible. Limite de chaque navigateur documentée.",
       "dependencies": "FG-021",
       "evidence": "web/durable.js; web/persistence.js; web/maintenance.js; tests/browser-origin.cjs; docs/qa/current.json",
-      "validation": "Stockages localStorage et IndexedDB réels exercés dans Chrome 156 et ChromeHeadlessShell 151. Quota plein, persistance accordée/refusée, mode privé et éviction restent à vérifier.",
+      "validation": "Historique 26/10/2026 — Stockages localStorage et IndexedDB réels exercés dans Chrome 156 et ChromeHeadlessShell 151. Quota plein, persistance accordée/refusée, mode privé et éviction restent à vérifier.",
       "followup": ""
     },
     {
@@ -394,7 +395,7 @@
       "acceptance": "Aucune perte silencieuse de notes, lectures ou file d’envoi. Conflit détecté et action de reprise claire.",
       "dependencies": "FG-021",
       "evidence": "web/persistence.js; web/reliability-core.js; web/import-ui.js; tests/browser-origin.cjs; docs/qa/current.json",
-      "validation": "Dans le groupe de 22 contrôles réussi sur chaque version Chrome : deux onglets, lecture seule et transfert du verrou. Scénarios avancés de concurrence et autres moteurs à compléter.",
+      "validation": "Historique 26/10/2026 — Dans le groupe de 22 contrôles réussi sur chaque version Chrome : deux onglets, lecture seule et transfert du verrou. Scénarios avancés de concurrence et autres moteurs à compléter.",
       "followup": ""
     },
     {
@@ -454,7 +455,7 @@
       "acceptance": "Pas de bouton inaccessible ni texte essentiel coupé. Les fiches et dialogues restent utilisables avec le clavier virtuel.",
       "dependencies": "FG-009",
       "evidence": "web/app.css; web/views.js; app/src/main/java/com/franchiseguide/app/ui/; docs/qa/current.json",
-      "validation": "Chrome 156 et ChromeHeadlessShell 151 à 390 px sans débordement dans tests/browser-origin.cjs. Autres largeurs, paysage, clavier virtuel et Android appareil à compléter.",
+      "validation": "Historique 26/10/2026 — Chrome 156 et ChromeHeadlessShell 151 à 390 px sans débordement dans tests/browser-origin.cjs. Autres largeurs, paysage, clavier virtuel et Android appareil à compléter.",
       "followup": ""
     },
     {
@@ -539,13 +540,13 @@
       "platform": "Toutes",
       "title": "Appliquer les gardes de diffusion à tous les suivis",
       "status": "Partiel",
-      "current": "Les lots d’épisodes protègent futurs et inconnus. Tous les points d’entrée individuels/check-ins doivent être cohérents.",
+      "current": "Garde commune contre les dates futures ajoutée aux actions individuelles Web et Android : vu, revu, date choisie, prochain épisode et check-in. Le consentement sur une date inconnue ne contourne plus le blocage des futurs dans les lots.",
       "steps": "Auditer chaque action vu/terminer/check-in, bloquer une diffusion future et traiter explicitement date inconnue et fuseau.",
       "acceptance": "Même protection dans fiche, liste, saison et check-in. Pas d’écriture distante interdite ou de suivi local faussement confirmé.",
       "dependencies": "",
-      "evidence": "web/episodes-core.js; web/app.js; web/trakt-checkin-ui.js; app/src/main/java/com/franchiseguide/app/data/AppRepository.kt",
-      "validation": "Points d’entrée d’épisodes futurs audités. Aucune correction globale livrée dans cette passe ; recette et harmonisation restent ouvertes.",
-      "followup": ""
+      "evidence": "web/core.js; web/app.js; web/trakt-checkin-ui.js; app/src/main/java/com/franchiseguide/app/model/EpisodeAiringRules.kt; tests/airing-v037.test.cjs; tests/EpisodeAiringRulesTest.kt",
+      "validation": "17 nouveaux tests JavaScript, dont actions UI et quatre fuseaux ; 8 assertions Kotlin. Une date inconnue reste inconnue. Les historiques distants confirmés ne sont pas supprimés.",
+      "followup": "Recette de tous les écrans sur appareil et aller-retour Trakt réel encore ouverts."
     },
     {
       "id": "FG-036",
@@ -1249,7 +1250,7 @@
       "acceptance": "Démarrage et arrêt prévisibles. Messages de prérequis utiles. Une seconde instance ne corrompt pas la session.",
       "dependencies": "FG-004",
       "evidence": "desktop/FranchiseGuide-PC.bat; desktop/FranchiseGuide-PC.sh; desktop/src/com/franchiseguide/desktop/Main.java",
-      "validation": "JAR PC exécuté : 109 contrôles HTTP et 9 de démarrage réussis. Session graphique Windows/macOS et lanceurs dans ces OS non qualifiés.",
+      "validation": "Historique 26/10/2026 — JAR PC exécuté : 109 contrôles HTTP et 9 de démarrage réussis. Session graphique Windows/macOS et lanceurs dans ces OS non qualifiés.",
       "followup": ""
     },
     {
@@ -1424,13 +1425,13 @@
       "platform": "Toutes",
       "title": "Exécuter une recette de version complète",
       "status": "Partiel",
-      "current": "Cette passe réexécute les tests disponibles et ajoute une origine réelle Chrome. La recette comptes réels, appareils natifs et navigateurs multiples reste ouverte.",
+      "current": "Régressions 0.37 rejouées : Node, structure, PC, passerelles Java, Kotlin/JVM et origine navigateur en CI. Les parcours appareil et comptes réels restent ouverts.",
       "steps": "Définir matrice navigateur/OS/appareil et scénarios utilisateur, exécuter les régressions de la version finale, enregistrer réussites et exclusions réelles.",
       "acceptance": "Aucun groupe manquant compté réussi. Les problèmes bloquants restent ouverts dans le suivi avant annonce de disponibilité.",
       "dependencies": "FG-002, FG-003, FG-021, FG-082",
-      "evidence": "docs/QA_REPORT.md; tests/browser-origin.cjs; tools/validate_project.py; docs/RELEASE_GATES.json; docs/qa/current.json",
-      "validation": "Node : 1 580/1 580, 0 échec/ignoré. Structure : 216. Passerelles Java : 353 assertions. Navigateurs : 22/22 sur Chrome 156 et ChromeHeadlessShell 151. Kotlin check-in : 33 assertions + parité. SDK/APK/lint réussis localement et en CI ; JUnit Android NO-SOURCE. Trois jobs de la CI finale 40403868550 réussis.",
-      "followup": ""
+      "evidence": "docs/qa/2026-11-07.md; docs/qa/2026-11-07.json; .github/workflows/build.yml",
+      "validation": "CI 42386272622 : Node 1 597/1 597 ; structure 216 ; Java 369 assertions ; PC HTTP 109 + démarrage 9 ; navigateur réel 22 ; Android 30 groupes JUnit, APK et lint 0 erreur. Pas de comptes réels ni téléphone.",
+      "followup": "Ne pas confondre les 30 groupes de domaine JUnit avec 30 parcours sur téléphone."
     },
     {
       "id": "FG-095",
@@ -1444,7 +1445,7 @@
       "acceptance": "Secrets d’application absents des réponses, y compris dans clés et objets imbriqués. JSON et jetons utilisateur restent valides.",
       "dependencies": "",
       "evidence": "server/auto-services.cjs; desktop/src/com/franchiseguide/desktop/AutoServices.java; tests/auto-services.test.cjs; tests/AutoServicesTest.java",
-      "validation": "Suite serveur ciblée : 204 tests Node réussis. Java17 : 353 assertions réussies. HTTP local et fournisseurs simulés, sans compte réel.",
+      "validation": "Historique 26/10/2026 — Suite serveur ciblée : 204 tests Node réussis. Java17 : 353 assertions réussies. HTTP local et fournisseurs simulés, sans compte réel.",
       "followup": ""
     },
     {
@@ -1459,7 +1460,7 @@
       "acceptance": "Une réponse reçue après 25 s avec attente 60 s bloque encore 60 s. Aucun nouvel appel pendant le délai et reprise après échéance.",
       "dependencies": "",
       "evidence": "server/auto-services.cjs; desktop/src/com/franchiseguide/desktop/AutoServices.java; tests/auto-services.test.cjs; tests/AutoServicesTest.java",
-      "validation": "Suite serveur ciblée : 204 tests Node réussis. Java17 : 353 assertions réussies. HTTP local et fournisseurs simulés, sans compte réel.",
+      "validation": "Historique 26/10/2026 — Suite serveur ciblée : 204 tests Node réussis. Java17 : 353 assertions réussies. HTTP local et fournisseurs simulés, sans compte réel.",
       "followup": ""
     },
     {
@@ -1474,7 +1475,7 @@
       "acceptance": "403 avant lecture distante pour une requête ambiguë. Une requête valide reste acceptée.",
       "dependencies": "",
       "evidence": "server/start.cjs; server/steam-bridge.cjs; desktop/src/com/franchiseguide/desktop/Main.java; tests/web-local-server.test.cjs; tests/SteamBridgeTest.java",
-      "validation": "Suite serveur ciblée : 204 tests Node réussis. Java17 : 353 assertions réussies. HTTP local et fournisseurs simulés, sans compte réel.",
+      "validation": "Historique 26/10/2026 — Suite serveur ciblée : 204 tests Node réussis. Java17 : 353 assertions réussies. HTTP local et fournisseurs simulés, sans compte réel.",
       "followup": ""
     },
     {
@@ -1489,7 +1490,7 @@
       "acceptance": "Corps invalide ou destination détournée rejetés sans corruption de cache ni fuite de clé. Lecture ultérieure saine possible.",
       "dependencies": "",
       "evidence": "server/steam-bridge.cjs; desktop/src/com/franchiseguide/desktop/SteamBridge.java; tests/steam-bridge.test.cjs; tests/SteamBridgeTest.java",
-      "validation": "Suite serveur ciblée : 204 tests Node réussis. Java17 : 353 assertions réussies. HTTP local et fournisseurs simulés, sans compte réel.",
+      "validation": "Historique 26/10/2026 — Suite serveur ciblée : 204 tests Node réussis. Java17 : 353 assertions réussies. HTTP local et fournisseurs simulés, sans compte réel.",
       "followup": ""
     },
     {
@@ -1498,14 +1499,14 @@
       "domain": "Sécurité",
       "platform": "Web / PC",
       "title": "Regrouper les lectures Steam simultanées sur PC",
-      "status": "Partiel",
-      "current": "La passerelle Node regroupe déjà des requêtes identiques. Le canal Java PC ne possède pas encore le même regroupement.",
+      "status": "Terminé",
+      "current": "Lectures Steam Java identiques regroupées par compte, jeu et langue. Concurrence unique bornée, attente des suiveurs, propagation des erreurs et nettoyage garantis avant reprise.",
       "steps": "Partager une requête en cours par clé complète de lecture, nettoyer à la fin/erreur et préserver limites et contexte de compte.",
       "acceptance": "Deux lectures identiques simultanées ne déclenchent qu’un appel fournisseur. Comptes et paramètres différents restent isolés.",
       "dependencies": "",
-      "evidence": "server/steam-bridge.cjs; desktop/src/com/franchiseguide/desktop/SteamBridge.java",
-      "validation": "Écart identifié lors de l’audit serveur. Implémentation et recette PC à faire.",
-      "followup": ""
+      "evidence": "desktop/src/com/franchiseguide/desktop/SteamBridge.java; tests/SteamConcurrencyTest.java; docs/qa/2026-11-07.md",
+      "validation": "16 assertions de concurrence réussies sur HTTP local : 13 appelants pour un seul lot, isolation, saturation, interruption, échec et nouvelle tentative. Ancienne implémentation mise en défaut par le test.",
+      "followup": "Les comptes Steam réels restent à qualifier dans FG-052/053."
     },
     {
       "id": "FG-100",
@@ -1519,7 +1520,7 @@
       "acceptance": "Une réponse added=0 ne marque rien vu. Seul un acquittement cohérent d’une action applique le suivi local.",
       "dependencies": "",
       "evidence": "web/trakt-checkin-core.js; web/trakt-checkin-ui.js; tests/checkin-recovery-v036.test.cjs; tests/checkin-v035.test.cjs",
-      "validation": "Web : reprise V0.36 33/33, check-in V0.35 23/23. Kotlin/JVM : 33 assertions et parité JS/Kotlin réussies. Fournisseurs simulés. Compte réel et appareil non testés.",
+      "validation": "Historique 26/10/2026 — Web : reprise V0.36 33/33, check-in V0.35 23/23. Kotlin/JVM : 33 assertions et parité JS/Kotlin réussies. Fournisseurs simulés. Compte réel et appareil non testés.",
       "followup": ""
     },
     {
@@ -1534,7 +1535,7 @@
       "acceptance": "Un clic répété ou rechargement après réponse perdue ne produit pas une seconde requête d’ajout d’historique.",
       "dependencies": "",
       "evidence": "web/trakt-checkin-core.js; web/trakt-checkin-ui.js; tests/checkin-recovery-v036.test.cjs",
-      "validation": "Web : reprise V0.36 33/33, check-in V0.35 23/23. Kotlin/JVM : 33 assertions et parité JS/Kotlin réussies. Fournisseurs simulés. Compte réel et appareil non testés.",
+      "validation": "Historique 26/10/2026 — Web : reprise V0.36 33/33, check-in V0.35 23/23. Kotlin/JVM : 33 assertions et parité JS/Kotlin réussies. Fournisseurs simulés. Compte réel et appareil non testés.",
       "followup": ""
     },
     {
@@ -1544,13 +1545,13 @@
       "platform": "Web / PC",
       "title": "Bloquer l’envoi si la session n’est pas persistée",
       "status": "Terminé",
-      "current": "L’échec de persistance avant requête bloque l’envoi Web. La session corrompue est conservée. En source Android, JSONObject.NULL est restauré comme null pour appRef/parentId/code/lastError, au lieu de la chaîne « null ».",
+      "current": "Protection Web avant envoi conservée. Le codec Android extrait refuse types incohérents, nombres fractionnaires/hors limites et booléens ambigus, tout en gardant les nulls et les états de reprise.",
       "steps": "Vérifier la persistance, conserver la donnée brute illisible et exposer la récupération sans remplacement silencieux.",
       "acceptance": "Quota refusé : aucun appel distant. Session invalide : aucun reset automatique ni nouvelle session écrasant la référence.",
       "dependencies": "",
-      "evidence": "web/trakt-checkin-ui.js; tests/checkin-recovery-v036.test.cjs; app/src/main/java/com/franchiseguide/app/data/AppRepository.kt",
-      "validation": "Web : reprise 33/33 et check-in 23/23. Kotlin/JVM règles : 33 assertions et parité réussies. Codec nullable Android corrigé et compilé, sans test de lecture JSON natif ni essai appareil.",
-      "followup": ""
+      "evidence": "web/trakt-checkin-ui.js; app/src/main/java/com/franchiseguide/app/data/TraktCheckInCodec.kt; tests/TraktCheckInCodecTest.kt; docs/qa/2026-11-07.md",
+      "validation": "35 nouvelles assertions du codec Trakt avec org.json réel ; règles check-in réexécutées dans JUnit. Pas d’essai de SharedPreferences sur téléphone.",
+      "followup": "FG-010 conserve la recette d’arrêt de processus et de stockage Android."
     },
     {
       "id": "FG-103",
@@ -1564,93 +1565,75 @@
       "acceptance": "Une réponse de l’ancien compte n’applique ni suivi ni nettoyage au nouveau. Aucune opération concurrente conflictuelle envoyée.",
       "dependencies": "",
       "evidence": "web/trakt-checkin-ui.js; web/trakt.js; tests/checkin-recovery-v036.test.cjs",
-      "validation": "Web : reprise V0.36 33/33, check-in V0.35 23/23. Kotlin/JVM : 33 assertions et parité JS/Kotlin réussies. Fournisseurs simulés. Compte réel et appareil non testés.",
+      "validation": "Historique 26/10/2026 — Web : reprise V0.36 33/33, check-in V0.35 23/23. Kotlin/JVM : 33 assertions et parité JS/Kotlin réussies. Fournisseurs simulés. Compte réel et appareil non testés.",
       "followup": ""
     }
   ],
   "validationSummary": {
     "node": {
-      "passed": 1580,
+      "passed": 1597,
       "failed": 0,
       "skipped": 0
     },
     "structure": {
-      "checks": 216
+      "passed": 216
     },
-    "javaGateways": {
-      "assertions": 353
+    "java_gateways": {
+      "assertions": 369,
+      "groups": {
+        "AutoServicesTest": 81,
+        "SteamBridgeTest": 35,
+        "SteamAuthTest": 53,
+        "RetroBridgeTest": 184,
+        "SteamConcurrencyTest": 16
+      }
     },
-    "browserOrigin": {
-      "checksPerBrowser": 22,
-      "browsers": [
-        "Chrome 156.0.8078.47",
-        "ChromeHeadlessShell 151.0.7922.34 (version du navigateur CI)"
-      ],
-      "scope": "HTTP loopback réel, CSP intacte, localStorage/IndexedDB réels, import de 4 catégories, deux onglets, rechargement offline, mobile 390 px",
-      "offlineEvidence": "URL à nonce répondant HTTP 404 en ligne puis fetch rejeté hors ligne sans cache ; service worker servant le rechargement ; 4 titres et thème conservés en mémoire et localStorage",
-      "navigatorOnLine": "Diagnostic seulement, non utilisé comme preuve de coupure réseau"
+    "desktop": {
+      "http_controls": 109,
+      "startup_controls": 9,
+      "rebuilt": true,
+      "version": "0.37.0"
     },
-    "remaining": "Installation PWA OS, Safari/Firefox, mise à jour SW depuis ancienne version, comptes fournisseurs réels, appareil Android, OS desktop cibles",
+    "browser": {
+      "checks": 22,
+      "real_origin": true,
+      "scope": "Controlled fixtures; HTTP, storage, two tabs and offline reload; not installed PWA"
+    },
     "android": {
-      "compileDebugKotlin": "Réussi",
-      "assembleDebug": "Réussi",
-      "testDebugUnitTest": "NO-SOURCE : aucun test JUnit Android exécuté",
+      "compileDebugKotlin": "passed",
+      "assembleDebug": "passed",
+      "testDebugUnitTest": {
+        "tests": 30,
+        "failures": 0,
+        "ignored": 0,
+        "scope": "JUnit parameterized groups of domain rules and JSON codecs; not UI/device tests"
+      },
       "lintDebug": {
         "errors": 0,
         "warnings": 31,
         "hints": 1
       },
-      "apk": {
-        "version": "0.36.0",
-        "versionCode": 36,
-        "minSdk": 26,
-        "targetSdk": 36,
-        "bytes": 19796878,
-        "signature": "debug v2 vérifiée",
-        "sha256": "9b596e254675f8ad4f1a488c5b2a7de39076a61a4d635cc4c9fc8b767bf167eb"
-      },
-      "device": "Non exécuté"
+      "device_tested": false
     },
-    "desktop": {
-      "httpChecks": 109,
-      "startupChecks": 9,
-      "jarProbe": "Réussi",
-      "nativeOS": "Windows/macOS non exécutés"
-    },
-    "kotlinCheckIn": {
-      "assertions": 33,
-      "parityJSKotlin": "Réussie",
-      "jsonCodecRuntime": "Non exécuté"
+    "junit_gate_negative_tests": {
+      "tests": 6,
+      "failed": 0,
+      "scope": "Local Python unittest; deliberate absent/too few/failed/error/skipped reports rejected"
     },
     "ci": {
-      "finalRun": {
-        "id": 40403868550,
-        "status": "COMPLETED/SUCCESS",
-        "completedAt": "2026-10-26T21:26:39Z",
-        "commit": "8f7f1b7f4b0319042f03bc4b55977fde23d741b2",
-        "jobs": {
-          "web-pc": "SUCCESS",
-          "browser": "SUCCESS",
-          "android": "SUCCESS"
-        }
-      },
-      "webPC": "Réussi dans GitHub Actions 40403868550 : Node 1 580/1 580 et passerelles Java 353 assertions",
-      "browserFix": "Correction publiée ; 22/22 contrôles dans le job distant avec ChromeHeadlessShell 151.0.7922.34. Également 22/22 sur Chrome 156 en local.",
-      "remoteAndroid": {
-        "status": "Réussi",
-        "runId": 40403868550,
-        "commit": "8f7f1b7f4b0319042f03bc4b55977fde23d741b2",
-        "apkArtifactId": 12691310204,
-        "reportsArtifactId": 12691290247,
-        "testDebugUnitTest": "NO-SOURCE",
-        "lint": {
-          "errors": 0,
-          "warnings": 31,
-          "hints": 1
-        }
-      },
-      "deliberateRegressionInjection": "Non exécutée"
-    }
+      "run_id": 42386272622,
+      "url": "https://github.com/darknigthmare/Franchise-Guide/actions/runs/42386272622",
+      "web_pc": "success",
+      "browser": "success",
+      "android": "success",
+      "artifacts": {
+        "android_apk": 13580130579,
+        "android_reports": 13580021196,
+        "pc": 13580180294,
+        "browser": 13580200127
+      }
+    },
+    "remaining": "Comptes réels, appareils Android, installation/mise à jour PWA et matrice OS/navigateurs. Les développements cloud, sauvegardes externes et connecteurs manquants restent ouverts."
   },
   "publication": {
     "repository": "https://github.com/darknigthmare/Franchise-Guide",
@@ -1659,6 +1642,13 @@
     "manifestFilesVerified": 588,
     "cleanPublicClone": true,
     "npmInstall": "npm ci --offline (cache du poste réutilisé)",
-    "webHTTPStatus": 200
-  }
+    "webHTTPStatus": 200,
+    "v037": {
+      "branch": "feat/backlog-20261107",
+      "pr": 1,
+      "testedCommit": "3763ae968bb0a575e8f4fc00eefb3b81f4ecc40d",
+      "ciRun": 42386272622
+    }
+  },
+  "previousAssessment": "2026-10-26"
 }

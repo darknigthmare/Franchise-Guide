@@ -1,3 +1,17 @@
+# V0.37.0 — Régressions natives, concurrence Steam et suivi sûr
+
+7 novembre 2026. Reprise de la 0.36 publiée, sans remplacement des outils IA du dépôt.
+
+- 30 groupes JUnit/Gradle natifs, avec org.json réel et garde refusant les résultats absents, incomplets ou ignorés.
+- Concurrence Steam PC : requêtes identiques regroupées, limites et reprise testées, comptes/jeux/langues séparés.
+- Épisodes futurs : nouvelles actions vu/revu/vue datée/prochain/check-in et lots protégés sur Web et repository Android.
+- Session Trakt native : validation stricte des types, entiers et valeurs nulles ; original corrompu conservé pour récupération.
+- Livres Android : filtre des langues chargées et couvertures optionnelles avec replis.
+- Versions et ressources 0.37 harmonisées, JAR reconstruit, Excel et preuves actualisés.
+- CI Web/PC, navigateur et Android réussie ; détails et limites dans `docs/qa/2026-11-07.md`.
+
+---
+
 # V0.36.0 — Import GitHub, reprise fiable et compilation Android
 
 26 octobre 2026. Base exacte : archive Suite V0.35 récupérable, documentée dans `docs/INTEGRATION_GITHUB.md`.

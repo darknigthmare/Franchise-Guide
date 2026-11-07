@@ -1,12 +1,12 @@
 {
-  "release": "0.36.0",
-  "assessed_at": "2026-10-26",
+  "release": "0.37.0",
+  "assessed_at": "2026-11-07",
   "verdict": "NO-GO",
   "gates": [
     {
       "id": "android-release",
       "status": "partial",
-      "why": "SDK36 Compose compilation, debug APK assembly and lint succeeded (0 errors,31 warnings,1 informational suggestion). testDebugUnitTest has NO-SOURCE. Signed distribution, device validation and Android runtime test coverage remain open.",
+      "why": "SDK36 Compose, debug APK, 30 JUnit domain/codec groups and lint succeed (0 errors,31 warnings,1 hint). Device runtime, signed distribution and instrumented UI tests remain open.",
       "evidence": "docs/QA_REPORT.md",
       "required": "Real build/lint/test artifacts, signed release and device matrix"
     },
@@ -20,14 +20,14 @@
     {
       "id": "web-origin-pwa",
       "status": "partial",
-      "why": "Real Chrome151 and156 HTTP origins, confirmed import, localStorage/IndexedDB, two tabs and offline reload pass22 controls each. Offline transport failure and service-worker response verified. Installed PWA, update from older shells, other browser engines and quota eviction remain unverified.",
+      "why": "22 real-origin browser checks pass on the 0.37 CI code. Installed PWA, upgrades, other browser engines and quota eviction remain unverified.",
       "evidence": "docs/QA_REPORT.md; tests/browser-origin.cjs",
       "required": "Real HTTPS origin, CSP/install/offline/update/persistent/multibrowser evidence"
     },
     {
       "id": "desktop-real-users",
       "status": "unverified",
-      "why": "Java17 JAR0.36.0 rebuilt;109 HTTP and9 startup controls pass. Windows/macOS graphical user sessions remain unverified.",
+      "why": "Java17 JAR0.37.0 rebuilt;109 HTTP and9 startup controls pass. Windows/macOS graphical user sessions remain unverified.",
       "evidence": "docs/QA_REPORT.md",
       "required": "Real OS install/start/exit/browser/profile regression tests"
     },
@@ -88,5 +88,5 @@
       "required": "Authorized real reads by country/season, provider-link review and native SDK/device validation; no price or entitlement claim until independently confirmed."
     }
   ],
-  "note": "Automated and real-origin local checks do not close real-account, device, distribution or commercial gates. Historical V0.35 assessment retained in docs/archives/v035/."
+  "note": "Current evidence: docs/qa/2026-11-07.md. Automated success does not close real-account/device/commercial gates. Previous assessment archived under docs/archives/v036/."
 }

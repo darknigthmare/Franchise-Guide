@@ -1,0 +1,43 @@
+name: FranchiseGuide source package
+on:
+  push:
+    branches: [main, 'feat/backlog-*']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Archive exact tracked sources and verify extraction
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/fg-package"
+          git archive --format=zip --prefix=Franchise-Guide/ --output="$RUNNER_TEMP/fg-package/FranchiseGuide-source.zip" HEAD
+          python3 - "$RUNNER_TEMP/fg-package/FranchiseGuide-source.zip" <<'PY'
+          import hashlib, json, pathlib, subprocess, sys, zipfile
+          target = pathlib.Path(sys.argv[1])
+          files = subprocess.check_output(['git','ls-files','-z']).decode().split('\0')
+          files = [p for p in files if p]
+          with zipfile.ZipFile(target) as archive:
+              assert archive.testzip() is None
+              for name in files:
+                  assert archive.read('Franchise-Guide/' + name) == pathlib.Path(name).read_bytes(), name
+          report = {'commit': subprocess.check_output(['git','rev-parse','HEAD']).decode().strip(),
+                    'filesVerified': len(files), 'sha256': hashlib.sha256(target.read_bytes()).hexdigest(),
+                    'scope': 'Tracked-source archive; not an application acceptance test'}
+          target.with_suffix('.json').write_text(json.dumps(report, indent=2) + '\n')
+          print(json.dumps(report))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FranchiseGuide-source
+          path: ${{ runner.temp }}/fg-package/
+          if-no-files-found: error
+          retention-days: 14
