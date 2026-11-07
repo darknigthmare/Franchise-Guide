@@ -1,8 +1,8 @@
-# FranchiseGuide 0.36.0
+# FranchiseGuide 0.37.0
 
 Bibliothèque personnelle pour **séries, films, jeux vidéo, livres et franchises**, avec une interface Web/PWA, un lanceur PC Java et des sources Android Kotlin/Compose.
 
-Cette version reprend la suite V0.35 récupérable, corrige les check-ins Trakt et les passerelles locales, rétablit les tests DOM et rassemble tout le code dans ce dépôt. [Provenance exacte de l’import](docs/INTEGRATION_GITHUB.md).
+Cette version poursuit la suite publiée : 30 groupes de tests natifs exécutés dans Gradle, reprise Trakt contrôlée, lectures Steam simultanées regroupées, protection des épisodes futurs et éditions de livres Android améliorées. [Provenance exacte de l’import](docs/INTEGRATION_GITHUB.md).
 
 ## Suivre les travaux
 
@@ -84,6 +84,7 @@ npm run check:structure
 npm run build:pc
 python3 tests/desktop_http.py
 python3 tests/desktop_startup.py
+python3 tests/test_junit_gate.py
 ```
 
 Le build PC demande un **JDK**, incluant `javac` et `jar`. Il synchronise automatiquement `web-preview/` et `desktop/resources/web/` depuis `web/` avant compilation. Modifier uniquement la source canonique `web/` pour changer l’interface.
@@ -99,10 +100,14 @@ npm run test:browser
 
 GitHub Actions exécute les contrôles Web/PC, navigateur et Android à chaque pull request ou modification de `main`. Ses artefacts contiennent le JAR, l’APK de développement lorsqu’il est compilé et les rapports de test.
 
+## Résultat 0.37
+
+La [CI du code testé](https://github.com/darknigthmare/Franchise-Guide/actions/runs/42386272622) est réussie sur les trois jobs. Les 30 groupes JUnit sont des tests de règles/codecs, pas des tests téléphone. [Rapport détaillé](docs/qa/2026-11-07.md).
+
 ## État de livraison
 
 Il reste notamment à qualifier les connexions avec de vrais comptes, la synchronisation générale multiappareil, les sauvegardes externes automatiques, le fonctionnement natif sur appareils et la distribution installable/signée. Le classeur détaille ces travaux et leurs critères de fermeture.
 
-Les anciens rapports sont conservés dans `docs/history/` et `docs/archives/v035/`. Ils décrivent leurs versions respectives ; seuls les résultats de `docs/QA_REPORT.md` concernent cette livraison.
+Les anciens rapports sont conservés dans `docs/history/` et `docs/archives/v035/` / `docs/archives/v036/`. Ils décrivent leurs versions respectives ; seuls les résultats de `docs/QA_REPORT.md` concernent cette livraison.
 
 Les licences et notices d’origine sont conservées dans [LICENSE](LICENSE), [UPSTREAM_NOTICE.md](UPSTREAM_NOTICE.md) et [les attributions](docs/THIRD_PARTY_ATTRIBUTION.md).

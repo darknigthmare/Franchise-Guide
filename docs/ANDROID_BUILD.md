@@ -1,33 +1,24 @@
-# Android — construction 0.36.0
+# Android — construction 0.37.0
 
-Le projet utilise AGP 8.10.1, Kotlin/Compose 2.0.21, Gradle 8.11.1, JDK 17, compile/target SDK 36 et minSdk 26. Build Tools 35.0.0 est requis. [Compatibilité officielle AGP 8.10](https://developer.android.com/build/releases/agp-8-10-0-release-notes).
-
-Installer les prérequis avec Android Studio ou les outils Android officiels, puis ouvrir la racine du dépôt. Les dépendances Google Maven/Maven Central demandent une connexion autorisée pendant le premier build.
+Prérequis : JDK 17, Android SDK 36, Build Tools 35.0.0. Le projet conserve AGP 8.10.1, Kotlin/Compose 2.0.21 et Gradle 8.11.1. minSdk 26, targetSdk 36, versionCode 37. Les accès de distribution restent hors dépôt.
 
 ```bash
 bash tools/bootstrap-gradle.sh :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+python3 tools/check_junit_results.py app/build/test-results/testDebugUnitTest
 ```
 
-Sous PowerShell :
+Sous PowerShell, remplacer le bootstrap par `powershell -File tools/bootstrap-gradle.ps1` avec les mêmes tâches. Le bootstrap vérifie le SHA-256 de Gradle. Les dépendances demandent une connexion autorisée lors de leur première résolution.
 
-```powershell
-powershell -File tools/bootstrap-gradle.ps1 :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
-```
+## Résultats vérifiés
 
-Le bootstrap télécharge Gradle 8.11.1 et vérifie son SHA-256 officiel avant extraction. Le premier build résout également les bibliothèques Android et Compose.
+La [CI 42386272622](https://github.com/darknigthmare/Franchise-Guide/actions/runs/42386272622) a réussi la compilation Compose, l'assemblage debug, les **30 groupes JUnit** et le lint (**0 erreur, 31 avertissements, 1 conseil**). Contrairement à 0.36, `testDebugUnitTest` n'est plus `NO-SOURCE`. Les classes de tests partagées sont dans `tests/`, l'adaptateur JUnit dans `app/src/test/java/NativeRegressionSuitesTest.kt`.
 
-L’APK de développement attendu est `app/build/outputs/apk/debug/app-debug.apk`. Les résultats réels de compilation, de lint et les corrections de cette passe figurent dans [QA_REPORT.md](QA_REPORT.md). GitHub Actions conserve l’APK de développement lorsqu’un job Android aboutit.
+Les codecs utilisent `org.json` réel pour ces tests JVM. Cela ne qualifie pas le stockage, les migrations ni le moteur JSON d'un appareil réel. Les groupes de règles ne constituent pas des tests Compose instrumentés.
 
-Cette sortie de développement doit encore être testée sur téléphone : navigation et rotation, import/restauration, interruptions de processus, Trakt réel, widgets, notifications et travail en arrière-plan. La publication magasin exige sa signature de distribution et ses recettes propres.
+L'APK est produite dans `app/build/outputs/apk/debug/app-debug.apk`. [APK GitHub](https://github.com/darknigthmare/Franchise-Guide/actions/runs/42386272622/artifacts/13580130579) ; [rapports JUnit/lint](https://github.com/darknigthmare/Franchise-Guide/actions/runs/42386272622/artifacts/13580021196).
 
-Le schéma portable est 11 et la version de l’application 0.36.0 (`versionCode 36`). Les clés de distribution et les comptes utilisateurs restent hors du dépôt.
+## Restant à tester
 
-## Résultat de cette version
+Téléphone/émulateur : navigation, rotation, import/restauration, arrêt de processus, Trakt réel, widget, permissions et notifications, Doze, couvertures et filtre de langue. La connexion native Steam/RetroAchievements et l'effacement local complet restent des développements séparés.
 
-Compilation Compose, assemblage de développement et lint exécutés avec succès. Le lint final comporte 0 erreur, 31 avertissements et 1 conseil. La tâche `testDebugUnitTest` retourne `NO-SOURCE` : elle ne représente pas une suite de tests Android réussie. Les 33 assertions de règles check-in ont été exécutées séparément sur Kotlin/JVM et comparées au moteur JavaScript.
-
-L’APK local vérifié fait 19 796 878 octets, porte la version 0.36.0/code 36 (minSdk 26, targetSdk 36), et sa signature de développement APK v2 est valide. SHA-256 : `9b596e254675f8ad4f1a488c5b2a7de39076a61a4d635cc4c9fc8b767bf167eb`. Une reconstruction, notamment avec une autre clé de développement, produit un autre hash.
-
-Le projet limite Gradle à 1 536 Mio de heap et un worker, et utilise la compilation Kotlin dans le processus Gradle. Ce réglage a permis la compilation complète dans l’environnement de recette.
-
-Le même code a aussi réussi les trois jobs de [l’exécution GitHub 40403868550](https://github.com/darknigthmare/Franchise-Guide/actions/runs/40403868550). [Télécharger l’APK de développement produite par GitHub](https://github.com/darknigthmare/Franchise-Guide/actions/runs/40403868550/artifacts/12691310204) ; [rapports de lint](https://github.com/darknigthmare/Franchise-Guide/actions/runs/40403868550/artifacts/12691290247). La clé debug de la CI est propre à son environnement : le hash de cet APK peut différer du hash local indiqué ci-dessus.
+Une APK debug n'est pas une version magasin signée. Les clés et le dossier de publication restent à établir. Consulter [le rapport courant](QA_REPORT.md) et le [classeur](FranchiseGuide_Reste_a_faire.xlsx).

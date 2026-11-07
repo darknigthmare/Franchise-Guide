@@ -32,7 +32,12 @@
     "Strict PC Steam JSON and UTF-8 validation",
     "Reproducible Web copies and automated GitHub validation",
     "Android SDK36 Compose compilation, debug APK assembly and lint with zero errors",
-    "Real Chrome local-origin storage, offline reload and two-tab write-lock checks"
+    "Real Chrome local-origin storage, offline reload and two-tab write-lock checks",
+    "30 native JUnit groups integrated into Android Gradle CI with real JSON codecs",
+    "Bounded coalescing of simultaneous PC Steam reads with account/game/language isolation",
+    "Future episode guards on individual tracking, batches and check-ins",
+    "Strict native Trakt check-in JSON codec and uncertain-session recovery",
+    "Android book-edition language filters and opt-in covers"
   ],
   "not_delivered": [
     "SeriesGuide Cloud or general multi-device synchronization",
@@ -40,12 +45,12 @@
     "Background Web completion while application is closed",
     "Real provider accounts or credentials",
     "New PSN/Xbox/Epic/GOG connectors or commercial certification",
-    "Android device validation, signed distribution and automatic Kotlin regression integration in CI",
+    "Android device validation, signed distribution",
     "PWA installed state, upgrades and full cross-browser validation"
   ],
   "tests": {
     "current_evidence": "docs/qa/2026-11-07.md",
-    "historical_results": "docs/archives/v035/RELEASE.json",
+    "historical_results": "docs/archives/v036/current.json",
     "note": "Only results recorded for this source revision belong to this release.",
     "machine_readable": "docs/qa/2026-11-07.json"
   },

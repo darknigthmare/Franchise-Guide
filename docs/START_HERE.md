@@ -1,4 +1,4 @@
-# Démarrage — FranchiseGuide V0.36.0
+# Démarrage — FranchiseGuide V0.37.0
 
 ## Migration depuis une version antérieure
 

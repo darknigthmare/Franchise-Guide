@@ -1,0 +1,93 @@
+{
+  "release": "0.37.0",
+  "assessed_at": "2026-11-07",
+  "source_commit": "3763ae968bb0a575e8f4fc00eefb3b81f4ecc40d",
+  "ci": {
+    "run_id": 42386272622,
+    "url": "https://github.com/darknigthmare/Franchise-Guide/actions/runs/42386272622",
+    "web_pc": "success",
+    "browser": "success",
+    "android": "success",
+    "artifacts": {
+      "android_apk": 13580130579,
+      "android_reports": 13580021196,
+      "pc": 13580180294,
+      "browser": 13580200127
+    }
+  },
+  "checks": {
+    "node": {
+      "passed": 1597,
+      "failed": 0,
+      "skipped": 0
+    },
+    "structure": {
+      "passed": 216
+    },
+    "java_gateways": {
+      "assertions": 369,
+      "groups": {
+        "AutoServicesTest": 81,
+        "SteamBridgeTest": 35,
+        "SteamAuthTest": 53,
+        "RetroBridgeTest": 184,
+        "SteamConcurrencyTest": 16
+      }
+    },
+    "desktop": {
+      "http_controls": 109,
+      "startup_controls": 9,
+      "rebuilt": true,
+      "version": "0.37.0"
+    },
+    "browser": {
+      "checks": 22,
+      "real_origin": true,
+      "scope": "Controlled fixtures; HTTP, storage, two tabs and offline reload; not installed PWA"
+    },
+    "android": {
+      "compileDebugKotlin": "passed",
+      "assembleDebug": "passed",
+      "testDebugUnitTest": {
+        "tests": 30,
+        "failures": 0,
+        "ignored": 0,
+        "scope": "JUnit parameterized groups of domain rules and JSON codecs; not UI/device tests"
+      },
+      "lintDebug": {
+        "errors": 0,
+        "warnings": 31,
+        "hints": 1
+      },
+      "device_tested": false
+    },
+    "junit_gate_negative_tests": {
+      "tests": 6,
+      "failed": 0,
+      "scope": "Local Python unittest; deliberate absent/too few/failed/error/skipped reports rejected"
+    },
+    "ci": {
+      "run_id": 42386272622,
+      "url": "https://github.com/darknigthmare/Franchise-Guide/actions/runs/42386272622",
+      "web_pc": "success",
+      "browser": "success",
+      "android": "success",
+      "artifacts": {
+        "android_apk": 13580130579,
+        "android_reports": 13580021196,
+        "pc": 13580180294,
+        "browser": 13580200127
+      }
+    },
+    "remaining": "Comptes réels, appareils Android, installation/mise à jour PWA et matrice OS/navigateurs. Les développements cloud, sauvegardes externes et connecteurs manquants restent ouverts."
+  },
+  "limitations": [
+    "No real provider accounts used",
+    "No Android device or emulator runtime validation",
+    "No installed PWA, multi-browser or upgrade qualification",
+    "No general cloud sync or automated external backups delivered",
+    "No signed store release or commercial approval"
+  ],
+  "historical_evidence": "docs/archives/v036/QA_REPORT.md",
+  "details": "docs/qa/2026-11-07.md"
+}
