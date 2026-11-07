@@ -65,6 +65,9 @@ jobs:
       - run: python3 tests/desktop_http.py && python3 tests/desktop_startup.py
       - name: Commit generated resources without rewriting branch history
         run: |
+          # Workflow edits are published separately with the connected GitHub tool.
+          # This job keeps only its contents permission; no permission escalation.
+          git restore --source=HEAD -- .github/workflows/build.yml
           git config user.name 'FranchiseGuide delivery'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
@@ -73,12 +76,14 @@ jobs:
           git commit -m 'feat: assemble reviewed 0.37 backlog delivery and reproducible PC package'
           git push origin HEAD:feat/backlog-20261107
       - name: Export exact committed source snapshot
+        if: always()
         run: |
           mkdir -p "$RUNNER_TEMP/delivery"
           git archive --format=zip --prefix=Franchise-Guide/ --output="$RUNNER_TEMP/delivery/FranchiseGuide-source.zip" HEAD
           git rev-parse HEAD > "$RUNNER_TEMP/delivery/COMMIT.txt"
           sha256sum "$RUNNER_TEMP/delivery/FranchiseGuide-source.zip" > "$RUNNER_TEMP/delivery/SHA256SUMS"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: reviewed-delivery-source
           path: ${{ runner.temp }}/delivery/
