@@ -1,0 +1,34 @@
+name: FranchiseGuide offline QA toolchain
+on:
+  workflow_dispatch:
+  push:
+    branches: ['feat/backlog-*']
+    paths: ['.github/workflows/qa-toolchain.yml', 'package-lock.json']
+permissions:
+  contents: read
+jobs:
+  dependencies:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - name: Package test dependencies only
+        run: |
+          mkdir -p .work/qa-jars
+          curl --fail --location --retry 2 -o .work/qa-jars/json.jar https://repo.maven.apache.org/maven2/org/json/json/20240303/json-20240303.jar
+          curl --fail --location --retry 2 -o .work/qa-jars/junit.jar https://repo.maven.apache.org/maven2/junit/junit/4.13.2/junit-4.13.2.jar
+          curl --fail --location --retry 2 -o .work/qa-jars/hamcrest.jar https://repo.maven.apache.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar
+          sha256sum package-lock.json .work/qa-jars/*.jar > .work/qa-jars/SHA256SUMS
+          tar -czf "$RUNNER_TEMP/FranchiseGuide-qa-toolchain.tar.gz" node_modules .work/qa-jars
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FranchiseGuide-qa-toolchain
+          path: ${{ runner.temp }}/FranchiseGuide-qa-toolchain.tar.gz
+          retention-days: 3
+          if-no-files-found: error
