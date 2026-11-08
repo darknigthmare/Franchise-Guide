@@ -1,0 +1,43 @@
+{
+  "version": "0.38.0",
+  "checks": [
+    "Application loads on its actual HTTP origin",
+    "Production content security policy remains enabled",
+    "Contextual add dialog: shows",
+    "Contextual add dialog: movies",
+    "Contextual add dialog: games",
+    "Contextual add dialog: books",
+    "Import preview changes no stored library",
+    "Import requires explicit confirmation",
+    "Confirmed import persists all four categories",
+    "Reload retains private notes and category identities",
+    "Real IndexedDB recovery contains the saved library",
+    "Second real tab opens in read-only mode",
+    "Second tab cannot overwrite the first tab",
+    "Closing the writer permits takeover after reload",
+    "New writer can save a preference",
+    "Service worker controls the actual origin",
+    "Offline reload keeps the full library and theme",
+    "Recovery snapshot persists across offline reload",
+    "Private local API responses are absent from service worker caches",
+    "Mobile layout has no document horizontal overflow",
+    "Browser emits no uncaught JavaScript errors",
+    "No external provider requests are required by this recipe"
+  ],
+  "realProviderAccounts": false,
+  "errors": [],
+  "browser": "151.0.7922.34",
+  "offline": {
+    "navigatorOnline": true,
+    "networkBlocked": true,
+    "theme": true,
+    "storedTheme": true,
+    "media": 4,
+    "storedMedia": 4,
+    "revision": 7,
+    "storedRevision": 7,
+    "onlineProbeStatus": 404,
+    "navigationFromServiceWorker": true
+  },
+  "passed": true
+}

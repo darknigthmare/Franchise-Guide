@@ -1,0 +1,13 @@
+{
+  "run_id": 42447378915,
+  "url": "https://github.com/darknigthmare/Franchise-Guide/actions/runs/42447378915",
+  "commit": "25d6c224dc9095e2ed4669706a42e3ffb4b1acb6",
+  "expected_failure": true,
+  "setup_succeeded": true,
+  "tests": 1622,
+  "passed": 1621,
+  "failed": 1,
+  "mutation": "Default external backup enabled without user consent in disposable checkout only",
+  "failing_test": "external target is disabled by default and contains no account material",
+  "merged": false
+}

@@ -47,6 +47,7 @@ function check(name,ok){assert.ok(ok,name);report.checks.push(name);console.log(
     const name=(await caches.keys()).find(x=>x.startsWith('franchiseguide-web-'));const cache=await caches.open(name);
     for(const script of document.querySelectorAll('script[src]'))if(!await cache.match(script.src))return false;return true;
   }));
+  check('Visible version after activation matches the delivered release',await writer.locator('.brand small').innerText()==='Web '+report.version.split('.').slice(0,2).join('.'));
   check('No uncaught errors during guarded update',report.errors.length===0);
   await writer.screenshot({path:path.join(out,'updated.png'),fullPage:true});report.passed=true;
  }catch(error){report.passed=false;report.failure=error.stack||String(error);console.error(error);process.exitCode=1;}

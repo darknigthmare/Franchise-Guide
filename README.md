@@ -1,8 +1,8 @@
-# FranchiseGuide 0.37.0
+# FranchiseGuide 0.38.0
 
 Bibliothèque personnelle pour **séries, films, jeux vidéo, livres et franchises**, avec une interface Web/PWA, un lanceur PC Java et des sources Android Kotlin/Compose.
 
-Cette version poursuit la suite publiée : 30 groupes de tests natifs exécutés dans Gradle, reprise Trakt contrôlée, lectures Steam simultanées regroupées, protection des épisodes futurs et éditions de livres Android améliorées. [Provenance exacte de l’import](docs/INTEGRATION_GITHUB.md).
+Cette passe ajoute un coffre d’accès Android, les confirmations d’effacement local, des sauvegardes vers un dossier choisi sur Web/PC compatible, une mise à jour PWA coordonnée et des rapports d’assistance sans données personnelles brutes. Les preuves distinguent 32 groupes JVM et 11 tests réellement exécutés sur émulateur des parcours et comptes réels encore ouverts.
 
 ## Suivre les travaux
 
@@ -111,3 +111,9 @@ Il reste notamment à qualifier les connexions avec de vrais comptes, la synchro
 Les anciens rapports sont conservés dans `docs/history/` et `docs/archives/v035/` / `docs/archives/v036/`. Ils décrivent leurs versions respectives ; seuls les résultats de `docs/QA_REPORT.md` concernent cette livraison.
 
 Les licences et notices d’origine sont conservées dans [LICENSE](LICENSE), [UPSTREAM_NOTICE.md](UPSTREAM_NOTICE.md) et [les attributions](docs/THIRD_PARTY_ATTRIBUTION.md).
+
+## Nouveautés 0.38 et précautions
+
+Les sauvegardes périodiques sont désactivées par défaut et nécessitent le choix d’un dossier. Elles s’exécutent uniquement lorsque l’application est ouverte et visible, et ne sont confirmées qu’après relecture vérifiée. Elles ne constituent pas une synchronisation cloud. Le JSON portable contient des données personnelles et n’est pas chiffré ; conserver le dossier en privé.
+
+Le coffre Android chiffre les chaînes d’accès avec Android Keystore, pas l’ensemble de la bibliothèque. En cas de perte de clé ou d’altération, l’original est conservé et les écritures sont bloquées. Ne pas supprimer les données avant d’avoir examiné la récupération. L’effacement local ne supprime aucun compte distant ni fichier exporté. Voir [confidentialité technique](docs/PRIVACY_TECHNICAL.md) et [signalement sûr](docs/SUPPORT.md).

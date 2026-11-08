@@ -13,7 +13,7 @@ function portableMedia(m) {
 function toPortableBackup(s) {
   const preferences={darkTheme:!!s.settings?.dark};
   for(const k of PORTABLE_PREFS)if(s.settings?.[k]!==undefined)preferences[k]=clone(s.settings[k]);
-  return {schema:11,app:'FranchiseGuide',exportedBy:'web-0.37.0',createdAt:new Date().toISOString(),
+  return {schema:11,app:'FranchiseGuide',exportedBy:'web-0.38.0',createdAt:new Date().toISOString(),
     media:(s.media||[]).map(portableMedia),suggestions:(s.suggestions||[]).map(portableMedia),
     episodes:(s.episodes||[]).map(e=>{const out={...clone(e),number:e.num??e.number,airDate:e.date??e.airDate??null};delete out.num;delete out.date;return out;}),
     gaming:FGGaming.validateState(s.gaming,s.media),lists:clone(s.lists||[]).map(l=>({...l,sortMode:String(l.sortMode||'title').toUpperCase()})),customFranchises:clone(s.customFranchises||[]),preferences};

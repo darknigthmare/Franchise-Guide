@@ -30,3 +30,13 @@ La présence d’un moteur ou d’un bouton ne prouve pas le fonctionnement avec
 | Livres Android | Filtre de langue et couvertures chargées sur demande ; compilation vérifiée | Réseau réel, TalkBack et manipulation téléphone ouverts |
 
 Le schéma portable demeure 11. Aucun service cloud, aucune sauvegarde périodique externe ni nouveau connecteur PSN/Xbox/Epic/GOG n'est ajouté par cette passe.
+
+## Périmètre ajouté en 0.38
+
+| Fonction | Android | Web / PC | Preuve et limite |
+|---|---|---|---|
+| Coffre d’accès | Keystore/AES-GCM | Pas de coffre équivalent | 8 tests émulateur ; bibliothèque active non chiffrée |
+| Effacement natif | Confirmations et demande système | Parcours préexistant préservé | 3 tests Compose ; effet final natif à qualifier |
+| Sauvegarde périodique externe | Non implémentée | Dossier autorisé, premier plan, opt-in | 16 tests moteur ; sélecteur de permissions à qualifier |
+| Mise à jour multi-onglets | Sans objet | Activation refusée avec autre onglet ; client obsolète figé | Chromium réel, même schéma ; installation PWA non qualifiée |
+| Rapport d’assistance sûr | JSON par liste blanche | JSON par liste blanche | Tests et procédure ; aucun envoi automatique |

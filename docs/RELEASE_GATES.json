@@ -1,12 +1,12 @@
 {
-  "release": "0.37.0",
-  "assessed_at": "2026-11-07",
+  "release": "0.38.0",
+  "assessed_at": "2026-11-08",
   "verdict": "NO-GO",
   "gates": [
     {
       "id": "android-release",
       "status": "partial",
-      "why": "SDK36 Compose, debug APK, 30 JUnit domain/codec groups and lint succeed (0 errors,31 warnings,1 hint). Device runtime, signed distribution and instrumented UI tests remain open.",
+      "why": "SDK36 build/APK, 32 JVM groups, lint 0 errors and 11 Android35 emulator cases pass. Physical devices, full UI, final destructive erase and signed distribution remain open.",
       "evidence": "docs/QA_REPORT.md",
       "required": "Real build/lint/test artifacts, signed release and device matrix"
     },
@@ -20,14 +20,14 @@
     {
       "id": "web-origin-pwa",
       "status": "partial",
-      "why": "22 real-origin browser checks pass on the 0.37 CI code. Installed PWA, upgrades, other browser engines and quota eviction remain unverified.",
+      "why": "22 origin and 8 guarded worker-upgrade checks pass in Chromium on the recorded source. Same-schema only; installed PWA, old-schema migration, picker permissions and other engines remain open.",
       "evidence": "docs/QA_REPORT.md; tests/browser-origin.cjs",
       "required": "Real HTTPS origin, CSP/install/offline/update/persistent/multibrowser evidence"
     },
     {
       "id": "desktop-real-users",
       "status": "unverified",
-      "why": "Java17 JAR0.37.0 rebuilt;109 HTTP and9 startup controls pass. Windows/macOS graphical user sessions remain unverified.",
+      "why": "Java17 PC0.38 built with109 HTTP and9 startup controls. Graphical Windows/macOS user sessions and signed installation remain unverified.",
       "evidence": "docs/QA_REPORT.md",
       "required": "Real OS install/start/exit/browser/profile regression tests"
     },
@@ -88,5 +88,5 @@
       "required": "Authorized real reads by country/season, provider-link review and native SDK/device validation; no price or entitlement claim until independently confirmed."
     }
   ],
-  "note": "Current evidence: docs/qa/2026-11-07.md. Automated success does not close real-account/device/commercial gates. Previous assessment archived under docs/archives/v036/."
+  "note": "See docs/qa/2026-11-08.md and PR #2 for revision-specific proofs. Emulator success is not full device/provider/commercial qualification. Previous report archived under docs/archives/v037/."
 }

@@ -1,4 +1,4 @@
-# Confidentialité technique — FranchiseGuide 0.36.0
+# Confidentialité technique — FranchiseGuide 0.38.0
 
 La sauvegarde portable courante utilise le **schéma 11**, avec lecture des anciennes sauvegardes **1 à 11**. Les ajouts historiques V0.31/V0.35 décrits plus bas restent applicables au périmètre indiqué. Les preuves de cette passe, distinctes des anciens rapports, sont dans [QA_REPORT.md](QA_REPORT.md).
 
@@ -13,7 +13,7 @@ Ce document décrit le traitement des données dans la distribution locale. Il n
 | Navigateur, caches | Interface PWA et images mises en cache selon les règles de l’application. |
 | Serveur personnel Steam | Fichier contenant empreinte du jeton de session, SteamID et expiration, avec un cookie HttpOnly dans le navigateur. Durée maximale de sept jours. |
 | Serveurs personnels Steam / RetroAchievements | Clés API fournies par variables d’environnement et caches mémoire temporaires des lectures. Les caches expirent et disparaissent à l’arrêt du serveur. |
-| Sources Android | État, file et brouillons dans le stockage applicatif prévu, avec gestion séparée des identifiants de connexion. Le comportement réel sur appareil reste à valider. |
+| Android | Bibliothèque, file et brouillons dans le stockage privé. Les chaînes du stockage d’accès sont chiffrées AES-GCM avec une clé Android Keystore ; métadonnées booléennes/numériques non chiffrées. Huit cas du coffre exécutés sur émulateur. |
 
 Le PC utilise le stockage du navigateur pour la bibliothèque, sans base chiffrée intégrée au JAR. Les données de l’origine, y compris les clés et brouillons, ne sont pas chiffrées contre les scripts exécutés sur cette origine. Un autre utilisateur du même profil navigateur ou système peut accéder à ses données selon les droits de ce profil.
 
@@ -62,3 +62,13 @@ Une session de check-in contient compte, référence d’application, identifian
 Le registre de sauvegarde externe ne contient pas la bibliothèque. Il mémorise seulement la proposition, la confirmation déclarative et le report. Une proposition de téléchargement ne devient jamais automatiquement « sauvegarde vérifiée ».
 
 L’effacement Web/PC vise les stockages FranchiseGuide de l’origine et signale toute zone inaccessible. Il ne supprime ni compte, historique distant, fichiers téléchargés ou secrets configurés côté serveur. Android n’a pas d’effacement complet équivalent validé dans cette passe.
+
+## 0.38 — périmètre courant de protection
+
+Le coffre n’est pas un chiffrement total des données actives. La bibliothèque, les notes et les sauvegardes internes restent dans leur format applicatif. Une clé Keystore perdue n’est pas recréée lors d’une lecture ; l’original est conservé et la récupération bloque les écritures. Aucune résistance garantie à un appareil compromis, ni stockage matériel garanti, n’est annoncée. Les 8 tests du coffre couvrent l’émulateur Android35, pas toutes les versions ou téléphones.
+
+La destination de sauvegarde périodique Web/PC est un dossier choisi après consentement. Son handle et sa configuration sont conservés dans un IndexedDB séparé. Le fichier contient le format portable personnel, sans accès mais non anonyme et non chiffré. L’écriture doit être fermée et relue avec une empreinte identique avant la date de succès. Pause et oubli empêchent les nouvelles copies sans supprimer les fichiers existants ; pas d’exécution application fermée ni de copie Drive automatique.
+
+Le nouveau panneau natif d’effacement exige `EFFACER` et un acquittement indépendant. Après gel des opérations il demande à Android l’effacement des données de l’application ; le processus peut s’arrêter. Un refus est affiché et le gel est annulé. Les 3 tests Compose vérifient préparation/annulation, pas l’action destructrice finale ni les résidus au redémarrage. Fichiers externes et données distantes sont exclus.
+
+Le rapport d’assistance est une liste blanche de compteurs, version et états. Les messages du journal, comptes, titres, notes et clés ne sont pas exportés par cette fonction. Un fichier de récupération brut ou une sauvegarde de bibliothèque est différent et doit rester privé. Les sections V0.31/V0.35 ci-dessus sont historiques ; cette section précise les ajouts actuels.

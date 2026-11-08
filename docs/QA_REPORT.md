@@ -1,12 +1,9 @@
-# Validation courante — FranchiseGuide 0.37.0
+# Qualification courante — FranchiseGuide 0.38.0
 
-La recette détaillée et les limitations sont dans [le rapport du 7 novembre 2026](qa/2026-11-07.md).
-Les trois jobs [GitHub 42386272622](https://github.com/darknigthmare/Franchise-Guide/actions/runs/42386272622) sont réussis.
+**Verdict commercial : NO-GO.** La compilation et les suites passent ; les comptes réels, les appareils physiques et les distributions signées restent ouverts.
 
-Résultats : 1 597 tests Node, 369 assertions Java, 216 contrôles structure, 118 contrôles PC, 22 contrôles navigateur, 30 groupes JUnit natifs. Compilation SDK/Compose et APK debug réussies ; lint : 0 erreur, 31 avertissements et 1 conseil.
+La preuve détaillée est dans [la passe du 08/11](qa/2026-11-08.md), avec [données structurées](qa/current.json). Les résultats distinguent explicitement la révision exécutée en CI, les ajouts locaux et la revalidation de la tête finale de PR nº2.
 
-Ces 30 groupes testent les règles et les codecs, pas l'interface sur appareil. Aucun compte fournisseur réel, téléphone ou installation PWA autonome n'est validé. Le cloud général et les sauvegardes externes automatiques restent absents.
+La CI comprend quatre jobs : Web/PC, navigateur réel, Android JVM/build/lint et émulateur Android (Keystore/Compose). Une branche séparée a démontré un échec volontaire de consentement ; elle ne fait pas partie de la livraison.
 
-Le [registre JSON](backlog.json) et [l'Excel](FranchiseGuide_Reste_a_faire.xlsx) conservent 103 tâches : 14 terminées au cumul et 89 ouvertes. Le nombre de tâches n'est pas un pourcentage global du produit.
-
-La [recette 0.36](archives/v036/QA_REPORT.md) est conservée séparément et n'est pas additionnée à la présente passe. Preuves lisibles par machine : [current.json](qa/current.json).
+Le succès du coffre et des trois parcours de confidentialité ne valide pas toute l’interface Android, les effets finaux destructifs, les sauvegardes externes natives ou la synchronisation fournisseur réelle. Voir [registre](backlog.json), [Excel](FranchiseGuide_Reste_a_faire.xlsx) et [portes de sortie](RELEASE_GATES.json).
