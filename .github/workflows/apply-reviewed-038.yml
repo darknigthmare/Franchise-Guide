@@ -1,0 +1,100 @@
+name: Assemble reviewed 0.38 delivery
+on:
+  push:
+    branches: [feat/backlog-20261108]
+    paths: [.delivery/request.json]
+permissions:
+  contents: write
+concurrency:
+  group: reviewed-delivery-038
+  cancel-in-progress: false
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Apply exact reviewed bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib,json,hashlib,base64,gzip
+          root=pathlib.Path.cwd()
+          def safe(name):
+              path=pathlib.Path(name)
+              assert not path.is_absolute() and '..' not in path.parts and '.git' not in path.parts
+              assert not path.is_symlink() and path.resolve().is_relative_to(root)
+              return path
+          request=json.loads(pathlib.Path('.delivery/request.json').read_text())
+          parts=request['parts']
+          assert all(p.startswith('.delivery/') for p in parts)
+          packed=base64.b64decode(''.join(safe(p).read_text().strip() for p in parts),validate=True)
+          assert hashlib.sha256(packed).hexdigest()==request['sha256'],'Transport hash mismatch'
+          rows=json.loads(gzip.decompress(packed));prepared=[]
+          for row in rows:
+              name=row['path'];path=safe(name)
+              assert not name.startswith('.github/workflows/'),'Workflows are published separately'
+              old=path.read_bytes() if path.exists() else None
+              assert (hashlib.sha256(old).hexdigest() if old is not None else None)==row['before'],'Concurrent change: '+name
+              if 'bytes' in row:new=base64.b64decode(row['bytes'],validate=True)
+              elif 'text' in row:new=row['text'].encode()
+              else:
+                  text=old.decode();previous=0
+                  for start,end,value in row['edits']:
+                      assert previous<=start<=end<=len(text);previous=end
+                  for start,end,value in reversed(row['edits']):text=text[:start]+value+text[end:]
+                  new=text.encode()
+              assert hashlib.sha256(new).hexdigest()==row['after'],'Output hash mismatch: '+name
+              prepared.append((path,new))
+          for path,new in prepared:
+              path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(new)
+          for name in parts+['.delivery/request.json']:safe(name).unlink()
+          print('Applied',len(prepared),'verified source files')
+          PY
+      - run: npm ci --ignore-scripts
+      - run: npm run sync:web
+      - run: npm test
+      - run: npm run check:structure
+      - run: python3 tests/test_junit_gate.py
+      - run: npm run build:pc
+      - run: python3 tests/desktop_http.py && python3 tests/desktop_startup.py
+      - name: Commit source and generated resources
+        run: |
+          git config user.name 'FranchiseGuide delivery'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          python3 tools/update_manifest.py
+          git add MANIFEST.sha256
+          git commit -m 'feat: assemble verified 0.38 privacy, backups and update safeguards'
+          git push origin HEAD:feat/backlog-20261108
+      - name: Prepare exact cleanup manifest and snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/delivery"
+          python3 - <<'PY'
+          import pathlib,json,os,subprocess,hashlib
+          remove=['.github/workflows/apply-reviewed-038.yml']
+          text=''.join(line for line in pathlib.Path('MANIFEST.sha256').read_text().splitlines(keepends=True) if line.rstrip().split('  ',1)[1] not in remove)
+          result=subprocess.run(['gh','api','repos/'+os.environ['GITHUB_REPOSITORY']+'/git/blobs','--method','POST','--input','-'],input=json.dumps({'content':text,'encoding':'utf-8'}),text=True,capture_output=True,check=True)
+          record={'parent':subprocess.check_output(['git','rev-parse','HEAD']).decode().strip(),'manifestBlob':json.loads(result.stdout)['sha'],'remove':remove,'sha256':hashlib.sha256(text.encode()).hexdigest()}
+          pathlib.Path(os.environ['RUNNER_TEMP'],'delivery','cleanup.json').write_text(json.dumps(record,indent=2)+'\n')
+          print(json.dumps(record))
+          PY
+          git archive --format=zip --prefix=Franchise-Guide/ --output="$RUNNER_TEMP/delivery/FranchiseGuide-source.zip" HEAD
+          git rev-parse HEAD > "$RUNNER_TEMP/delivery/COMMIT.txt"
+          sha256sum "$RUNNER_TEMP/delivery/FranchiseGuide-source.zip" > "$RUNNER_TEMP/delivery/SHA256SUMS"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reviewed-038-source
+          path: ${{ runner.temp }}/delivery/
+          retention-days: 14
+          if-no-files-found: error
