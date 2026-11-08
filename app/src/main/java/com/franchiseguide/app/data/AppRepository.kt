@@ -31,7 +31,10 @@ class AppRepository private constructor(context: Context) {
         }
     }
     private val prefs = context.getSharedPreferences("franchise_guide", Context.MODE_PRIVATE)
-    private val credentials = context.getSharedPreferences("franchise_guide_credentials", Context.MODE_PRIVATE)
+    private val credentials = ProtectedCredentials.open(context)
+    @Volatile private var localErasePending = false
+    private val eraseLockOwner = Any()
+    private val reviewLock = Mutex()
     val gaming = mutableStateOf(GamingState())
     val media = mutableStateListOf<MediaItem>()
     val episodes = mutableStateListOf<Episode>()
@@ -49,9 +52,38 @@ class AppRepository private constructor(context: Context) {
     val externalBackup = mutableStateOf(loadExternalBackup())
     val recoveryMessage = mutableStateOf<String?>(settingsLoadProblem)
     private var originalRecoveryState: String? = settingsRecoveryRaw
-    fun isRecoveryOnly(): Boolean = recoveryMessage.value != null
-    fun rawRecoveryExport(): String? = originalRecoveryState
-    private fun requireHealthy() { check(!isRecoveryOnly()) { "Bibliothèque en récupération : aucune écriture autorisée." } }
+    fun isRecoveryOnly(): Boolean = recoveryMessage.value != null || credentials.problem != null
+    fun credentialStorageProblem(): String? = credentials.problem
+    fun credentialStorageProtected(): Boolean = credentials.problem == null
+    fun rawRecoveryExport(): String? = originalRecoveryState ?: if(credentials.problem != null) prefs.getString("state", null) else null
+    private fun requireHealthy() { check(!localErasePending) { "Effacement local en cours : aucune modification autorisée." }; check(!isRecoveryOnly()) { "Bibliothèque en récupération : aucune écriture autorisée." } }
+
+    /** Freeze local writes and refuse destructive cleanup while a remote operation is unsettled. */
+    @Synchronized
+    fun prepareLocalErase(confirmation: String, acknowledgePending: Boolean) {
+        check(confirmation == "EFFACER") { "Saisissez EFFACER pour confirmer." }
+        check(!localErasePending) { "Effacement déjà en cours." }
+        check(traktCheckIn.value == null && checkInRecoveryRaw == null) { "Résolvez ou exportez puis oubliez explicitement le check-in avant l'effacement." }
+        check(acknowledgePending) { "Confirmez la perte des modifications locales non envoyées." }
+        val acquired = mutableListOf<Mutex>()
+        try {
+            for(lock in listOf(syncLock, checkInLock, reviewLock)) {
+                check(lock.tryLock(eraseLockOwner)) { "Une opération Trakt est en cours. Attendez sa fin." }
+                acquired += lock
+            }
+            check(traktCheckIn.value == null && checkInRecoveryRaw == null) { "Un check-in est apparu pendant la préparation ; effacement annulé." }
+            localErasePending = true
+            authGeneration++
+            libraryGeneration++
+        } catch(error: Exception) { acquired.asReversed().forEach { it.unlock(eraseLockOwner) }; throw error }
+    }
+
+    @Synchronized fun cancelLocalErase() {
+        if(!localErasePending) return
+        localErasePending = false
+        for(lock in listOf(reviewLock, checkInLock, syncLock)) if(lock.holdsLock(eraseLockOwner)) lock.unlock(eraseLockOwner)
+    }
+
     fun traktUsername(): String? = credentials.getString("trakt_username", null)
 
     private val tmdb = TmdbClient()
@@ -71,8 +103,10 @@ class AppRepository private constructor(context: Context) {
         val loaded = load()
         // An unrecognized or corrupt state must NEVER be replaced by an empty library.
         if (!isRecoveryOnly()) {
-            migrateLegacyCredentials()
-            if (!loaded) {
+            runCatching { migrateLegacyCredentials() }.onFailure {
+                recoveryMessage.value = credentials.problem ?: "Migration des accès non confirmée ; originaux conservés."
+            }
+            if (!loaded && !isRecoveryOnly()) {
                 userLists.add(UserList("watch-later", "À voir / lire / jouer"))
                 save(markTraktDirty = false)
             }
@@ -95,7 +129,7 @@ class AppRepository private constructor(context: Context) {
         }
         if (changed) editor.apply()
         // Remove legacy credentials from the backup-eligible state preferences after migration.
-        prefs.edit()
+        check(prefs.edit()
             .remove("settings")
             .remove("trakt_access_token")
             .remove("trakt_refresh_token")
@@ -109,7 +143,7 @@ class AppRepository private constructor(context: Context) {
             .remove("trakt_verification_url")
             .remove("trakt_user_code")
             .remove("trakt_device_interval")
-            .apply()
+            .commit()) { "Anciennes copies d’accès non supprimées ; coffre conservé." }
     }
 
     fun shows(): List<MediaItem> = visible(MediaKind.SHOW)
@@ -185,7 +219,7 @@ class AppRepository private constructor(context: Context) {
     fun isTraktConnected(): Boolean = credentials.getString("trakt_access_token", "").orEmpty().isNotBlank() && credentials.getString("trakt_app_ref_v31",null)==prefs.getString("trakt_app_ref_v31",null)
     fun traktAccountLabel(): String? = credentials.getString("trakt_display_name", null)?.takeIf { it.isNotBlank() }
         ?: credentials.getString("trakt_username", null)?.takeIf { it.isNotBlank() }
-    fun traktIsDirty(): Boolean = credentials.getBoolean("trakt_dirty", false)
+    fun traktIsDirty(): Boolean = !isRecoveryOnly() && outbox().isNotEmpty()
     fun shouldAutoSyncTrakt(): Boolean {
         val cfg = settings.value
         if (isRecoveryOnly() || !cfg.traktAutoSync || !isTraktConnected() || cfg.traktClientId.isBlank()) return false
@@ -938,7 +972,7 @@ class AppRepository private constructor(context: Context) {
     }.onFailure { if(it is CancellationException)throw it }
 
     /** Never retried: the persisted uncertain draft must be reconciled by the user after a lost response. */
-    suspend fun publishTraktReview(mediaId:String,draft:ReviewDraft):Result<CommunityComment> = runCatching {
+    suspend fun publishTraktReview(mediaId:String,draft:ReviewDraft):Result<CommunityComment> = reviewLock.withLock { runCatching {
         requireHealthy()
         check(!draft.uncertain) { "Vérifie d’abord sur Trakt si la précédente publication a abouti." }
         ReleaseRules.reviewText(draft.text)
@@ -958,14 +992,14 @@ class AppRepository private constructor(context: Context) {
             if(e is TraktClient.HttpFailure && e.status in 400..499)saveReviewDraft(mediaId,draft.copy(uncertain=false),account)
             throw e
         }
-    }.onFailure { if(it is CancellationException)throw it }
+    }.onFailure { if(it is CancellationException)throw it } }
 
-    suspend fun deleteTraktReview(id:Long):Result<Unit> = runCatching {
+    suspend fun deleteTraktReview(id:Long):Result<Unit> = reviewLock.withLock { runCatching {
         requireHealthy()
         val cfg=settings.value;val generation=authGeneration;val account=traktUsername()?:error("Compte non connecté.")
         withContext(Dispatchers.IO) { trakt.deleteReview(id,validTraktToken(cfg)?:error("Reconnecte ton compte."),cfg.traktClientId,account) }
         check(generation==authGeneration) { "Compte modifié : vérifie la suppression sur Trakt." }
-    }.onFailure { if(it is CancellationException)throw it }
+    }.onFailure { if(it is CancellationException)throw it } }
 
     suspend fun readTraktLibrary(kind:MediaKind,section:String,page:Int):Result<TraktClient.LibraryPage> = runCatching {
         val cfg=settings.value;val generation=authGeneration
@@ -979,6 +1013,7 @@ class AppRepository private constructor(context: Context) {
     }.onFailure { if(it is CancellationException)throw it }
 
     suspend fun beginTraktDeviceAuth(): Result<TraktClient.DeviceCode> {
+        if(localErasePending || isRecoveryOnly()) return Result.failure(IllegalStateException("Accès suspendus : récupération ou effacement en cours."))
         val cfg = settings.value
         if (cfg.traktClientId.isBlank()) return Result.failure(IllegalStateException("Ajoute ton Client ID Trakt dans Réglages."))
         if (cfg.traktClientSecret.isBlank()) return Result.failure(IllegalStateException("Ajoute ton Client secret Trakt : il est requis par le Device Flow officiel."))
@@ -1000,6 +1035,7 @@ class AppRepository private constructor(context: Context) {
     }
 
     suspend fun awaitTraktDeviceAuth(code: TraktClient.DeviceCode): Result<String> {
+        if(localErasePending || isRecoveryOnly()) return Result.failure(IllegalStateException("Opération bloquée pendant la récupération ou l’effacement."))
         val cfg = settings.value
         return runCatching {
             val generation=authGeneration
@@ -1072,6 +1108,7 @@ class AppRepository private constructor(context: Context) {
     }
 
     suspend fun finishTraktDeviceAuth(): Result<String> {
+        if(localErasePending || isRecoveryOnly()) return Result.failure(IllegalStateException("Opération bloquée pendant la récupération ou l’effacement."))
         val cfg = settings.value
         val generation=authGeneration
         val deviceCode = credentials.getString("trakt_device_code", "").orEmpty()
@@ -1092,7 +1129,7 @@ class AppRepository private constructor(context: Context) {
         }
     }
 
-    fun cancelTraktAuth() { authGeneration++;credentials.edit().remove("trakt_device_code").apply() }
+    fun cancelTraktAuth() { authGeneration++;if(!localErasePending && !isRecoveryOnly()) credentials.edit().remove("trakt_device_code").apply() }
 
     fun disconnectTrakt() {
         cancelTraktAuth()
@@ -1514,7 +1551,6 @@ class AppRepository private constructor(context: Context) {
         val edit=prefs.edit().putString("state",json).putString("public_preferences_v18",publicPrefs).putString("trakt_outbox_v8",outboxJson(queue))
         if(resetBaseline)edit.putBoolean("trakt_reset_baseline_v9",true)
         check(edit.commit()) { "Enregistrement local impossible : exporte une sauvegarde." }
-        credentials.edit().putBoolean("trakt_dirty",queue.isNotEmpty()).apply()
         lastTracked=current
         if(!savingBackup&&settings.value.autoBackupEnabled&&System.currentTimeMillis()-prefs.getLong("last_backup",0)>=settings.value.autoBackupMinutes.coerceIn(1,1440)*60000L)createLocalBackup("Automatique")
     }
@@ -1528,6 +1564,7 @@ class AppRepository private constructor(context: Context) {
     private fun loadExternalBackup():ExternalBackupRecord {val raw=prefs.getString("external_backup_v35",null)?:return ExternalBackupRecord();return runCatching{require(raw.length<=16384);val o=JSONObject(raw);BackupSafetyRules.validate(ExternalBackupRecord(version=o.optInt("version",1),proposedAt=o.optLong("proposedAt",0).takeIf{it>0},proposedKind=o.optString("proposedKind").takeIf{it.isNotBlank()},fileName=o.optString("fileName").takeIf{it.isNotBlank()},verifiedAt=o.optLong("verifiedAt",0).takeIf{it>0},snoozedUntil=o.optLong("snoozedUntil",0).takeIf{it>0}))}.getOrElse{backupSafetyProblem="Rappel de sauvegarde illisible ; aucune vérification externe supposée.";ExternalBackupRecord()}}
 
     private fun loadSettings():AppSettings {
+        if(credentials.problem != null) { settingsLoadProblem=credentials.problem; return AppSettings() }
         var raw:String?=null
         return try {
             val ref=prefs.getString("settings_ref_v31",null)
@@ -1616,7 +1653,6 @@ class AppRepository private constructor(context: Context) {
     }
     private fun writeOutbox(items:List<PendingChange>) {
         check(prefs.edit().putString("trakt_outbox_v8",outboxJson(items)).commit()) { "Impossible d’enregistrer la file Trakt." }
-        credentials.edit().putBoolean("trakt_dirty",items.isNotEmpty()).apply()
     }
     @Synchronized
     private fun prepareTraktAccount(username:String) {
@@ -1722,10 +1758,15 @@ class AppRepository private constructor(context: Context) {
         val a=JSONArray();entries.forEach { a.put(it) };a.put(JSONObject().put("at",now).put("level",level).put("message",safe))
         prefs.edit().putString("diagnostics_v7",a.toString()).apply()
     }
-    fun diagnosticsText():String {
-        val a=runCatching { JSONArray(prefs.getString("diagnostics_v7","[]")) }.getOrDefault(JSONArray())
-        return (0 until a.length()).mapNotNull { a.optJSONObject(it) }.reversed().joinToString("\n\n") { "${Instant.ofEpochMilli(it.optLong("at"))} · ${it.optString("level")}\n${it.optString("message")}" }.ifBlank { "Aucun événement enregistré." }
+    /** Support exports deliberately omit raw log messages, notes, titles and provider responses. */
+    fun supportReport(version: String): String {
+        val logs=runCatching { JSONArray(prefs.getString("diagnostics_v7","[]")) }.getOrDefault(JSONArray())
+        val levels=(0 until logs.length()).mapNotNull { logs.optJSONObject(it)?.optString("level") }
+        return SupportReportRules.build(version, media.size, episodes.size,
+            runCatching { outbox().size }.getOrDefault(0), levels,
+            isRecoveryOnly(), credentialStorageProtected()).toString(2)
     }
+    fun diagnosticsText():String = "Le rapport partageable contient uniquement la version, des compteurs et des états techniques. Les messages bruts du journal, notes, titres, comptes, clés et jetons n'y figurent pas."
     @Synchronized
     fun createLocalBackup(reason:String="Manuelle"):Result<Unit> = runCatching {
         requireHealthy()

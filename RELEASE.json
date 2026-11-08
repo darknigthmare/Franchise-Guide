@@ -1,6 +1,6 @@
 {
   "name": "FranchiseGuide Suite",
-  "version": "0.37.0",
+  "version": "0.38.0",
   "base": "Recovered Drive V0.35 ZIP",
   "base_zip_sha256": "6628593fb329ea964d6f73b95c072bef5f26810715fcf08943d2421c79dde022",
   "portable_schema": 11,

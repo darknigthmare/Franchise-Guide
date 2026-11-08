@@ -682,6 +682,8 @@ fun SettingsScreen(repo: AppRepository,onImported:()->Unit={}) {
         item { OutlinedButton(onClick={message=repo.createLocalBackup().fold({"Sauvegarde créée."},{it.message})}){Text("Créer une sauvegarde maintenant")} }
         items(repo.localBackupSummaries(),key={it.first}) { (i,label)-> TextButton(enabled=!busy,onClick={busy=true;scope.launch { val r=withContext(Dispatchers.Default){repo.prepareLocalBackupImport(i)};busy=false;r.onSuccess{backupReview=it}.onFailure{message=it.message} }}){Text(label)} }
         item { OutlinedButton(onClick={showDiagnostics=true}){Text("Afficher le diagnostic local")} }
+        item { NativeSupportPanel(repo) }
+        item { NativePrivacyPanel(repo) }
         item { Button(onClick = { if(saveForm())message = "Réglages enregistrés." }, modifier = Modifier.fillMaxWidth()) { Icon(Icons.Default.Save, null); Spacer(Modifier.width(8.dp)); Text("Enregistrer") } }
     }
 }

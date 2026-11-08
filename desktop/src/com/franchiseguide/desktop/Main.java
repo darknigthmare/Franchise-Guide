@@ -39,14 +39,14 @@ public final class Main {
                 if (!health.contains("\"ok\":true") || !index.contains("FranchiseGuide Web 0.37") || !js.contains("franchiseguide-web-v8")) {
                     throw new IOException("Desktop probe failed: embedded assets not served correctly");
                 }
-                System.out.println("{\"ok\":true,\"app\":\"FranchiseGuide PC\",\"version\":\"0.37.0\",\"assets\":true}");
+                System.out.println("{\"ok\":true,\"app\":\"FranchiseGuide PC\",\"version\":\"0.38.0\",\"assets\":true}");
             } finally {
                 if (server != null) server.stop(0);
             }
             return;
         }
         Runtime.getRuntime().addShutdownHook(new Thread(() -> { if(server != null) server.stop(0); }));
-        if(headless) { System.out.println("FranchiseGuide 0.37.0 · " + appUri); new java.util.concurrent.CountDownLatch(1).await(); return; }
+        if(headless) { System.out.println("FranchiseGuide 0.38.0 · " + appUri); new java.util.concurrent.CountDownLatch(1).await(); return; }
         boolean noBrowser = java.util.Arrays.asList(args).contains("--no-browser");
         SwingUtilities.invokeLater(() -> createWindow(noBrowser));
     }
@@ -76,7 +76,7 @@ public final class Main {
             } catch (IOException unavailable) {
                 throw new IOException("Le port 47631 est occupé par un service non joignable. Ferme l’autre lanceur avant de réessayer.", unavailable);
             }
-            if (health.contains("\"app\":\"FranchiseGuide PC\"") && health.contains("\"version\":\"0.37.0\"")) return;
+            if (health.contains("\"app\":\"FranchiseGuide PC\"") && health.contains("\"version\":\"0.38.0\"")) return;
             throw new IOException("Une autre application ou une ancienne version utilise le port 47631. Ferme son lanceur avant de démarrer la V0.37.", occupied);
         }
         SteamBridge bridge=new SteamBridge();
@@ -87,7 +87,7 @@ public final class Main {
         server.createContext("/", Main::handleStatic);
         server.createContext("/health", ex -> {
             if(!validateRequest(ex)) return;
-            reply(ex,200,"application/json; charset=utf-8",("{\"ok\":true,\"app\":\"FranchiseGuide PC\",\"version\":\"0.37.0\",\"time\":\""+Instant.now()+"\"}").getBytes(StandardCharsets.UTF_8));
+            reply(ex,200,"application/json; charset=utf-8",("{\"ok\":true,\"app\":\"FranchiseGuide PC\",\"version\":\"0.38.0\",\"time\":\""+Instant.now()+"\"}").getBytes(StandardCharsets.UTF_8));
         });
         server.setExecutor(Executors.newFixedThreadPool(8, r -> {
             Thread t = new Thread(r, "franchiseguide-http");

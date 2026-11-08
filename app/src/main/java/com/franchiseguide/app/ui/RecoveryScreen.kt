@@ -3,6 +3,8 @@ package com.franchiseguide.app.ui
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -26,13 +28,14 @@ fun RecoveryScreen(repo: AppRepository) {
     }
     FranchiseGuideTheme(darkTheme=repo.settings.value.darkTheme) {
         Surface(Modifier.fillMaxSize()) {
-            Column(Modifier.padding(24.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
+            Column(Modifier.padding(24.dp).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(16.dp)) {
                 Text("Récupération de la bibliothèque",style=MaterialTheme.typography.headlineSmall)
-                Text(repo.recoveryMessage.value.orEmpty())
+                Text(repo.credentialStorageProblem() ?: repo.recoveryMessage.value.orEmpty())
                 Text("La synchronisation, les imports et les modifications sont bloqués. Ne désinstalle pas l’application avant d’avoir sauvegardé l’original.")
                 Text("La copie brute peut contenir des informations privées. Ne la publie pas et ne la partage pas sans la vérifier.",color=MaterialTheme.colorScheme.error)
                 Button(onClick={exporter.launch("FranchiseGuide-original-recovery.json")}) { Text("Exporter l’original intact") }
                 message?.let { Text(it) }
+                NativePrivacyPanel(repo)
             }
         }
     }

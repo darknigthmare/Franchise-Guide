@@ -7,12 +7,14 @@ open class Context {
  fun getSharedPreferences(name:String,mode:Int):SharedPreferences=error("TYPECHECK ONLY")
 }
 interface SharedPreferences {
+ val all: Map<String, *>
  fun getString(key:String,default:String?):String?
  fun getLong(key:String,default:Long):Long
  fun getBoolean(key:String,default:Boolean):Boolean
  fun edit():Editor
  interface Editor {
   fun putString(key:String,value:String?):Editor
+  fun putInt(key:String,value:Int):Editor
   fun putLong(key:String,value:Long):Editor
   fun putBoolean(key:String,value:Boolean):Editor
   fun remove(key:String):Editor

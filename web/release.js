@@ -41,6 +41,10 @@ async function eraseLocalData(){
   if(typeof invalidateGamingReads==='function')invalidateGamingReads();
   if(typeof steamSessionRevision!=='undefined')steamSessionRevision++;
   authGeneration++;libraryEpoch++;searchGeneration++;discoverGeneration++;clearTimeout(traktSaveTimer);if(typeof todayTimer!=='undefined')clearInterval(todayTimer);FGRequests.clear();catalogBusy.clear();reviewSessions.clear();
+  // Freeze writes before awaiting cancellation of any external snapshot.
+  storageWritable=false;
+  // Forget the granted directory only; exported files are outside application storage.
+  if(typeof directoryBackupForget==='function')await directoryBackupForget();
   // Stop future automatic saves and network synchronizations before deleting credentials.
   storageWritable=false;
   const keys=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k?.startsWith('franchiseguide-'))keys.push(k);}
