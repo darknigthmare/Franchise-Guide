@@ -1,0 +1,36 @@
+name: Post-update startup proof 0.38
+on:
+  push:
+    branches: [qa/startup-proof-038]
+    paths: [.github/workflows/startup-proof-038.yml]
+permissions:
+  contents: read
+jobs:
+  rendered-startup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium
+      - name: Add an explicit rendered startup assertion in this isolated test checkout
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path=Path('tests/browser-upgrade.cjs')
+          text=path.read_text()
+          needle='  const cachesAfter=await writer.evaluate(()=>caches.keys());'
+          assert text.count(needle)==1
+          extra="  await writer.waitForFunction(()=>document.querySelector('#content')?.childElementCount>0&&document.body.classList.contains('dark')&&storageWritable);\n  check('Post-update startup renders the saved theme and main content',await writer.evaluate(()=>document.body.classList.contains('dark')&&document.querySelector('#content').childElementCount>0));\n"
+          path.write_text(text.replace(needle,extra+needle))
+          PY
+      - run: node tests/browser-upgrade.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: post-update-rendered-screen
+          path: tests/results/current/browser-upgrade/
+          if-no-files-found: error
