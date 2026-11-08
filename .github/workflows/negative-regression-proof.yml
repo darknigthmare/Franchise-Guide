@@ -1,0 +1,31 @@
+name: Expected failure — isolated regression proof
+on:
+  push:
+    branches: [qa/ci-negative-20261108]
+    paths: [.github/workflows/negative-regression-proof.yml]
+permissions:
+  contents: read
+jobs:
+  reject-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - name: Introduce a deliberate opt-in regression in this disposable checkout only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('web/directory-backup-core.js')
+          source=p.read_text()
+          before='revision:0,enabled:false,intervalDays:7'
+          after='revision:0,enabled:true,intervalDays:7'
+          assert source.count(before)==1, 'Mutation target changed; not a regression proof'
+          p.write_text(source.replace(before,after))
+          print('Deliberate regression: fresh external backup configuration enabled without consent.')
+          PY
+      - name: Normal suite MUST fail on the deliberate regression
+        run: npm test
