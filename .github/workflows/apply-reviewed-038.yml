@@ -42,7 +42,11 @@ jobs:
           request=json.loads(pathlib.Path('.delivery/request.json').read_text())
           parts=request['parts']
           assert all(p.startswith('.delivery/') for p in parts)
-          packed=base64.b64decode(''.join(safe(p).read_text().strip() for p in parts),validate=True)
+          encoded=''.join(safe(p).read_text().strip() for p in parts)
+          for before,after in request.get('transport_repairs',[]):
+              assert before and encoded.count(before)==1, 'Ambiguous transport repair'
+              encoded=encoded.replace(before,after)
+          packed=base64.b64decode(encoded,validate=True)
           assert hashlib.sha256(packed).hexdigest()==request['sha256'],'Transport hash mismatch'
           rows=json.loads(gzip.decompress(packed));prepared=[]
           for row in rows:
