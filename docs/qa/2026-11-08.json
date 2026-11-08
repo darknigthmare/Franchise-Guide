@@ -1,0 +1,91 @@
+{
+  "release": "0.38.0",
+  "assessed_at": "2026-11-08",
+  "source_commit": "809c3d3167630d889a24b4a1b0835bf721b327d1",
+  "ci": {
+    "run_id": 42447334221,
+    "url": "https://github.com/darknigthmare/Franchise-Guide/actions/runs/42447334221",
+    "web_pc": "success",
+    "browser": "success",
+    "android": "success",
+    "android_device": "success",
+    "artifacts": {
+      "android_apk": 13604455778,
+      "android_reports": 13603513572,
+      "device": 13603764976,
+      "browser": 13603619989,
+      "pc": 13603774209
+    }
+  },
+  "checks": {
+    "node": {
+      "passed": 1622,
+      "failed": 0,
+      "skipped": 0
+    },
+    "structure": {
+      "passed": 220
+    },
+    "java_gateways": {
+      "assertions": 369
+    },
+    "desktop": {
+      "http_controls": 109,
+      "startup_controls": 9
+    },
+    "browser": {
+      "origin_controls": 22,
+      "upgrade_controls": 8,
+      "engine": "Chromium",
+      "same_schema_upgrade": true
+    },
+    "android": {
+      "sdk": 36,
+      "jvm_groups": 32,
+      "apk_debug": true,
+      "lint_errors": 0,
+      "lint_warnings": 23,
+      "lint_information": 1
+    },
+    "device": {
+      "android_api": 35,
+      "keystore_cases": 8,
+      "compose_cases": 3,
+      "failed": 0,
+      "skipped": 0,
+      "physical": false,
+      "final_destructive_action_exercised": false
+    }
+  },
+  "negative_ci": {
+    "run_id": 42447378915,
+    "url": "https://github.com/darknigthmare/Franchise-Guide/actions/runs/42447378915",
+    "commit": "25d6c224dc9095e2ed4669706a42e3ffb4b1acb6",
+    "expected_failure": true,
+    "setup_succeeded": true,
+    "tests": 1622,
+    "passed": 1621,
+    "failed": 1,
+    "mutation": "Default external backup enabled without user consent in disposable checkout only",
+    "failing_test": "external target is disabled by default and contains no account material",
+    "merged": false
+  },
+  "additional_local_verification": {
+    "node_passed": 1630,
+    "failed": 0,
+    "skipped": 0,
+    "note": "Six old-client freeze tests and two runtime-version consistency tests added after the recorded CI. Runtime captions corrected. Final remote revalidation is attached to PR #2."
+  },
+  "not_verified": [
+    "real provider account roundtrips",
+    "physical Android device",
+    "final OS clearApplicationUserData action and post-restart residues",
+    "installed PWA and other browser engines",
+    "browser directory picker permissions",
+    "native periodic external backup",
+    "cloud general synchronization",
+    "signed installers/store release",
+    "complete product UI/accessibility matrix"
+  ],
+  "commercial_verdict": "NO-GO"
+}

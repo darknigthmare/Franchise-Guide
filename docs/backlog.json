@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "project": "FranchiseGuide",
-  "assessedAt": "2026-11-07",
-  "baselineVersion": "0.36.0",
-  "targetVersion": "0.37.0",
+  "assessedAt": "2026-11-08",
+  "baselineVersion": "0.37.0",
+  "targetVersion": "0.38.0",
   "baseline": {
     "archive": "FranchiseGuide_Suite_V0_35.zip",
     "sha256": "6628593fb329ea964d6f73b95c072bef5f26810715fcf08943d2421c79dde022",
     "note": "Base de reprise : archive Drive V0.35 récupérable, empreinte vérifiée. Les notes finales antérieures citent un ZIP d’empreinte différente qui n’a pas été retrouvé. Le dossier V0.36 repéré était vide. Les résultats historiques ne sont pas des exécutions de cette passe.",
-    "resumeCommit": "d1ce70edc13d41520200ad9c3081100abaae4da7"
+    "resumeCommit": "2c16df9acf648be6e275a14d2fd6c082b0099e72"
   },
   "statusDefinitions": {
     "À développer": "Fonction ou livraison absente du périmètre récupéré.",
@@ -21,7 +21,7 @@
     "P1": "Fonction essentielle, fiabilité ou distribution utilisable.",
     "P2": "Extension ou amélioration après les blocages."
   },
-  "note": "Suivi cumulatif de 103 actions, et non pourcentage global du produit. Les validations non réexécutées restent datées du 26/10/2026 ; les preuves nouvelles sont datées du 07/11/2026. Une fonction codée ne ferme pas une recette appareil ou compte réel.",
+  "note": "103 actions cumulatives. Passe 08/11 : deux nouvelles clôtures (FG-002, FG-089), périmètres partiels et preuves datées. Les validations historiques ne sont pas réattribuées à cette passe.",
   "items": [
     {
       "id": "FG-001",
@@ -44,14 +44,14 @@
       "domain": "Livraison",
       "platform": "Toutes",
       "title": "Exécuter les contrôles à chaque modification",
-      "status": "Partiel",
-      "current": "CI étendue aux 30 groupes JUnit natifs et à la concurrence Steam. Un garde refuse les rapports absents, incomplets, ignorés ou en échec.",
+      "status": "Terminé",
+      "current": "CI Web/PC, navigateur, Android JVM et émulateur. Les gardes vérifient les vrais testcases et rejettent résultats manquants, ignorés ou falsifiés.",
       "steps": "Déclencher la CI sur push et PR. Installer les dépendances verrouillées et exécuter les suites appropriées, avec journaux et artefacts.",
       "acceptance": "Un commit propre passe les contrôles automatiques. Une régression injectée fait échouer le job concerné.",
       "dependencies": "FG-001",
-      "evidence": ".github/workflows/build.yml; app/src/test/java/NativeRegressionSuitesTest.kt; tools/check_junit_results.py; docs/qa/2026-11-07.md",
-      "validation": "CI 42386272622 : Web/PC, navigateur et Android réussis. Garde CI exécuté avec 30 groupes. Ses 6 scénarios positifs/négatifs passent localement ; injection réelle d’une régression dans GitHub non réalisée.",
-      "followup": "L’injection volontaire d’une régression dans un job GitHub reste à exercer pour fermer tout le critère."
+      "evidence": ".github/workflows/build.yml; app/src/test/java/NativeRegressionSuitesTest.kt; tools/check_junit_results.py; docs/qa/2026-11-07.md; docs/qa/2026-11-08.md",
+      "validation": "08/11/2026 — CI 42447334221 : quatre jobs réussis. Branche isolée 25d6c224 : une activation de sauvegarde sans consentement provoque exactement un échec sur 1 622 tests (42447378915).",
+      "followup": "Conserver la régression volontaire hors de main ; rejouer les contrôles sur les futures PR."
     },
     {
       "id": "FG-003",
@@ -135,13 +135,13 @@
       "platform": "Android",
       "title": "Tester les codecs avec le véritable moteur JSON",
       "status": "Partiel",
-      "current": "GamingCodecRetroTest et MediaIdentityCodecTest exécutés avec org.json réel. Codec strict des sessions check-in ajouté, avec 35 assertions sur types, nulls, bornes et reprises.",
+      "current": "32 groupes JVM utilisent les codecs réels ; la migration des chaînes d’accès a aussi été exécutée dans Android Keystore.",
       "steps": "Exécuter GamingCodecRetroTest et MediaIdentityCodecTest avec org.json réel, puis les migrations avec le runtime Android.",
       "acceptance": "Identités, alias et succès conservés. JSON invalide ou version future refusés sans écraser la bibliothèque.",
       "dependencies": "FG-003",
-      "evidence": "tests/GamingCodecRetroTest.kt; tests/MediaIdentityCodecTest.kt; tests/TraktCheckInCodecTest.kt; app/src/main/java/com/franchiseguide/app/data/TraktCheckInCodec.kt",
-      "validation": "30 groupes JUnit réussis localement et dans le build SDK/Gradle CI. GamingCodecRetroTest, MediaIdentityCodecTest et TraktCheckInCodecTest utilisent org.json réel. Runtime JSON et migrations sur appareil encore à qualifier.",
-      "followup": "Exercer le stockage et les migrations sur émulateur/téléphone, au-delà du moteur JSON JVM."
+      "evidence": "tests/GamingCodecRetroTest.kt; tests/MediaIdentityCodecTest.kt; tests/TraktCheckInCodecTest.kt; app/src/main/java/com/franchiseguide/app/data/TraktCheckInCodec.kt; docs/qa/2026-11-08.md",
+      "validation": "08/11/2026 — 32 groupes JVM réussis ; 8 tests du coffre sur émulateur Android 35. Cela ne couvre pas toutes les migrations de bibliothèque et de succès.",
+      "followup": "Étendre la recette native aux migrations de bibliothèque historique et profils gaming, avec arrêt/reprise."
     },
     {
       "id": "FG-009",
@@ -149,14 +149,14 @@
       "domain": "Android",
       "platform": "Android",
       "title": "Valider les parcours Compose sur appareil",
-      "status": "À valider",
-      "current": "Écrans séries, films, livres, jeux, franchises et imports présents en sources. Aucun essai appareil fourni dans la base.",
+      "status": "Partiel",
+      "current": "Trois parcours Compose réels ajoutés pour confirmation, annulation et gel des écritures de l’effacement local.",
       "steps": "Parcourir ajout, fiche, épisodes, listes, import, export, réglages et reprise sur émulateur puis téléphone. Corriger navigation et recomposition.",
       "acceptance": "Parcours complets sans crash. Retour, rotation et reprise conservent la bonne œuvre, les brouillons et le suivi.",
       "dependencies": "FG-003",
-      "evidence": "app/src/main/java/com/franchiseguide/app/ui/FranchiseGuideApp.kt; app/src/main/java/com/franchiseguide/app/ui/Screens.kt",
-      "validation": "Non vérifié dans cette passe",
-      "followup": ""
+      "evidence": "app/src/main/java/com/franchiseguide/app/ui/FranchiseGuideApp.kt; app/src/main/java/com/franchiseguide/app/ui/Screens.kt; docs/qa/2026-11-08.md",
+      "validation": "08/11/2026 — 3 tests Compose réussis sur émulateur Android 35 dans 42447334221. Les parcours catalogue, rotation et retour ne sont pas déclarés couverts.",
+      "followup": "Compléter ajout, fiche, suivi, import/export, rotation et reprise ; tester ensuite un téléphone physique."
     },
     {
       "id": "FG-010",
@@ -224,14 +224,14 @@
       "domain": "Android",
       "platform": "Android",
       "title": "Compléter l’effacement local natif",
-      "status": "À développer",
-      "current": "La V0.35 documente un effacement Web/PC, sans parcours Android complet équivalent validé.",
+      "status": "Partiel",
+      "current": "Effacement local via clearApplicationUserData, double confirmation et gel des synchronisations/publications. Refus système visible et gel réversible.",
       "steps": "Ajouter aperçu et confirmation, révoquer les sessions concernées, nettoyer stockages applicatifs et tâches, puis vérifier les résidus.",
       "acceptance": "Nettoyage local complet ou résultat partiel explicite. Historiques et comptes distants préservés sauf action dédiée.",
       "dependencies": "FG-003, FG-010",
-      "evidence": "app/src/main/java/com/franchiseguide/app/data/AppRepository.kt; docs/PRIVACY_TECHNICAL.md",
-      "validation": "Non vérifié dans cette passe",
-      "followup": ""
+      "evidence": "app/src/main/java/com/franchiseguide/app/data/AppRepository.kt; docs/PRIVACY_TECHNICAL.md; docs/qa/2026-11-08.md",
+      "validation": "08/11/2026 — Préparation, annulation et protection des écritures testées dans Compose. Aucun appui final destructif ni contrôle de résidus après redémarrage effectué.",
+      "followup": "Sur appareil de test jetable, exercer l’action système finale et vérifier données, tâches, clés et caches après redémarrage ; ne pas effacer un appareil personnel."
     },
     {
       "id": "FG-015",
@@ -240,13 +240,13 @@
       "platform": "Android",
       "title": "Protéger les jetons dans le stockage natif",
       "status": "Partiel",
-      "current": "Les identifiants sont séparés de l’export portable. Leur comportement réel et leur protection sur appareil doivent être revus.",
+      "current": "Chaînes du stockage d’accès natif chiffrées AES-GCM avec Android Keystore, migration atomique vérifiée, récupération bloquant les écritures si clé ou contenu invalide.",
       "steps": "Évaluer le stockage sécurisé Android, migrer les secrets sans perte de session et tester les règles de sauvegarde système.",
       "acceptance": "Secrets absents des exports, journaux et sauvegardes non autorisées. Rotation, migration et déconnexion testées.",
       "dependencies": "FG-003, FG-010",
-      "evidence": "app/src/main/java/com/franchiseguide/app/data/AppRepository.kt; app/src/main/res/xml/backup_rules.xml; app/src/main/res/xml/data_extraction_rules.xml",
-      "validation": "Non vérifié dans cette passe",
-      "followup": ""
+      "evidence": "app/src/main/java/com/franchiseguide/app/data/AppRepository.kt; app/src/main/res/xml/backup_rules.xml; app/src/main/res/xml/data_extraction_rules.xml; docs/qa/2026-11-08.md",
+      "validation": "08/11/2026 — 8 tests instrumentés du coffre réussis : migration, réouverture, altération, AAD, perte de clé et absence de suppression incidente. Les exports excluent les accès.",
+      "followup": "Exercer rotation/révocation réelles des sessions, transfert système et appareils physiques. La bibliothèque active entière n’est pas chiffrée."
     },
     {
       "id": "FG-016",
@@ -359,14 +359,14 @@
       "domain": "Web et PWA",
       "platform": "Web / PC",
       "title": "Qualifier la mise à jour avec plusieurs onglets",
-      "status": "À valider",
-      "current": "Activation du nouveau moteur déclenchée par l’interface. Le cycle multi-onglets réel reste à vérifier.",
+      "status": "Partiel",
+      "current": "Le worker refuse l’activation si un autre onglet demeure ouvert. Un client obsolète bloque définitivement ses écritures tout en permettant l’export.",
       "steps": "Ouvrir deux versions, proposer la sauvegarde puis mise à jour, et fermer/recharger dans des ordres variés.",
       "acceptance": "Aucune écriture de schéma incompatible ni mélange d’assets. Données et opérations incertaines conservées.",
       "dependencies": "FG-021, FG-025",
-      "evidence": "web/sw.js; web/release.js; web/persistence.js",
-      "validation": "Non vérifié dans cette passe",
-      "followup": ""
+      "evidence": "web/sw.js; web/release.js; web/persistence.js; docs/qa/2026-11-08.md",
+      "validation": "08/11/2026 — 8 contrôles de mise à jour Chromium réussis, en plus des 22 contrôles d’origine. 6 tests client supplémentaires exécutés localement. Même schéma applicatif, pas une migration de schéma ancien.",
+      "followup": "Étendre aux installations PWA, autres moteurs, ancienne bibliothèque et interruptions pendant une vraie opération distante."
     },
     {
       "id": "FG-024",
@@ -1109,14 +1109,14 @@
       "domain": "Données",
       "platform": "Toutes",
       "title": "Automatiser une sauvegarde externe périodique",
-      "status": "À développer",
-      "current": "L’application propose export manuel et rappel déclaratif. Elle ne réalise pas une sauvegarde externe périodique.",
+      "status": "Partiel",
+      "current": "Sauvegarde périodique Web/PC vers un dossier choisi, désactivée par défaut, en premier plan seulement ; succès après fermeture, relecture et contrôle SHA-256.",
       "steps": "Choisir une destination explicite et un mécanisme adapté à chaque plateforme, planifier l’export, gérer permissions et erreurs.",
       "acceptance": "Fichier relisible hors du stockage applicatif. Date de succès seulement après écriture vérifiée. Échec visible et relançable.",
       "dependencies": "FG-072",
-      "evidence": "web/backup-safety-core.js; web/backup-safety-ui.js; docs/FEATURE_MATRIX.md",
-      "validation": "Non vérifié dans cette passe",
-      "followup": ""
+      "evidence": "web/backup-safety-core.js; web/backup-safety-ui.js; docs/FEATURE_MATRIX.md; docs/qa/2026-11-08.md",
+      "validation": "08/11/2026 — 16 tests du moteur passent, dont une écriture/relecture dans un vrai dossier temporaire. Permissions du sélecteur navigateur et Android SAF non qualifiés.",
+      "followup": "Valider le sélecteur et refus de permissions dans les navigateurs supportés ; ajouter la destination native Android et la recette de restauration externe."
     },
     {
       "id": "FG-074",
@@ -1169,14 +1169,14 @@
       "domain": "Données",
       "platform": "Toutes",
       "title": "Définir le chiffrement des données actives",
-      "status": "À développer",
-      "current": "Le fichier protégé chiffre l’export uniquement. Bibliothèque, snapshots et certaines données de session restent accessibles localement.",
+      "status": "Partiel",
+      "current": "Périmètre de chiffrement documenté : chaînes d’accès Android protégées ; bibliothèque, notes et sauvegardes périodiques portables non chiffrées.",
       "steps": "Définir les besoins sur appareil partagé, verrouillage et gestion des clés. Implémenter les protections compatibles avec chaque canal.",
       "acceptance": "Périmètre protégé documenté et testé. Perte de clé, migration et récupération traitées sans promesse de chiffrement total infondée.",
       "dependencies": "FG-015",
-      "evidence": "docs/SAUVEGARDES_PROTEGEES.md; docs/PRIVACY_TECHNICAL.md; web/persistence.js",
-      "validation": "Non vérifié dans cette passe",
-      "followup": ""
+      "evidence": "docs/SAUVEGARDES_PROTEGEES.md; docs/PRIVACY_TECHNICAL.md; web/persistence.js; docs/qa/2026-11-08.md",
+      "validation": "08/11/2026 — 36 assertions JCA et 8 cas Keystore couvrent altération, migration et perte de clé. Aucun chiffrement total ou sécurité matérielle garantie annoncé.",
+      "followup": "Définir le verrouillage de bibliothèque sur appareil partagé et la gestion des clés Web/PC ; ne pas confondre export chiffré et stockage actif."
     },
     {
       "id": "FG-078",
@@ -1349,14 +1349,14 @@
       "domain": "Qualité",
       "platform": "Toutes",
       "title": "Assainir diagnostics et procédure de signalement",
-      "status": "Partiel",
-      "current": "Diagnostic et journaux de QA existent, sans support opérationnel complet.",
+      "status": "Terminé",
+      "current": "Rapport d’assistance Android/Web par liste blanche : version, compteurs et états. Ni titres, notes, comptes, secrets ni messages bruts. Procédure de signalement et triage versionné fournis.",
       "steps": "Revoir export de diagnostic, masquer jetons/notes personnelles, joindre version et étapes de reproduction. Définir triage et suivi des incidents.",
       "acceptance": "Un rapport exploitable n’expose pas de secret ni bibliothèque complète par défaut. Incident relié à la version et au correctif.",
       "dependencies": "",
-      "evidence": "web/release.js; docs/SECURITY_AND_DATA.md; docs/QA_REPORT.md",
-      "validation": "Non vérifié dans cette passe",
-      "followup": ""
+      "evidence": "web/release.js; docs/SECURITY_AND_DATA.md; docs/QA_REPORT.md; docs/qa/2026-11-08.md; docs/SUPPORT.md; web/support-report-core.js; app/src/main/java/com/franchiseguide/app/model/SupportReportRules.kt",
+      "validation": "08/11/2026 — Tests JavaScript de données-canaris et règles Kotlin réussis. Un export de diagnostic partageable est distinct du fichier brut de récupération privé.",
+      "followup": "Suivi documenté dans SUPPORT.md ; aucun engagement de support commercial ou envoi automatique. Relire manuellement toute capture avant publication."
     },
     {
       "id": "FG-090",
@@ -1425,13 +1425,13 @@
       "platform": "Toutes",
       "title": "Exécuter une recette de version complète",
       "status": "Partiel",
-      "current": "Régressions 0.37 rejouées : Node, structure, PC, passerelles Java, Kotlin/JVM et origine navigateur en CI. Les parcours appareil et comptes réels restent ouverts.",
+      "current": "Régressions 0.38 : Node, structure, PC, JVM, Chromium et premiers tests réels Android Keystore/Compose. Registre des exclusions conservé.",
       "steps": "Définir matrice navigateur/OS/appareil et scénarios utilisateur, exécuter les régressions de la version finale, enregistrer réussites et exclusions réelles.",
       "acceptance": "Aucun groupe manquant compté réussi. Les problèmes bloquants restent ouverts dans le suivi avant annonce de disponibilité.",
       "dependencies": "FG-002, FG-003, FG-021, FG-082",
-      "evidence": "docs/qa/2026-11-07.md; docs/qa/2026-11-07.json; .github/workflows/build.yml",
-      "validation": "CI 42386272622 : Node 1 597/1 597 ; structure 216 ; Java 369 assertions ; PC HTTP 109 + démarrage 9 ; navigateur réel 22 ; Android 30 groupes JUnit, APK et lint 0 erreur. Pas de comptes réels ni téléphone.",
-      "followup": "Ne pas confondre les 30 groupes de domaine JUnit avec 30 parcours sur téléphone."
+      "evidence": "docs/qa/2026-11-07.md; docs/qa/2026-11-07.json; .github/workflows/build.yml; docs/qa/2026-11-08.md",
+      "validation": "08/11/2026 — CI 42447334221 réussie : 1 622 Node, 220 structure, 369 Java, 109+9 PC, 30 navigateur, 32 groupes JVM, 11 cas émulateur. Ensuite 1 630 Node locaux réussis avec garde des versions.",
+      "followup": "Comptes fournisseurs réels, téléphone physique, installation PWA/OS, accessibilité complète et distribution signée restent à qualifier."
     },
     {
       "id": "FG-095",

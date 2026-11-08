@@ -526,7 +526,7 @@ fun MoreScreen(
     var showNewList by remember { mutableStateOf(false) }; var newListName by remember { mutableStateOf("") }; var newListDesc by remember { mutableStateOf("") }; var showAbout by remember { mutableStateOf(false) }
     var showNewFranchise by remember { mutableStateOf(false) }; var franchiseName by remember { mutableStateOf("") }; var aliases by remember { mutableStateOf("") }; var editingFranchise by remember { mutableStateOf<FranchiseDefinition?>(null) }
     val stats = repo.statistics()
-    if (showAbout) AlertDialog(onDismissRequest = { showAbout = false }, title = { Text("À propos & crédits") }, text = { Text("FranchiseGuide 0.37.0 est une application indépendante inspirée des workflows de SeriesGuide (GPL-3.0-or-later).\n\nThis product uses the TMDB API but is not endorsed or certified by TMDB.\n\nLes données jeux peuvent provenir de RAWG, les livres d’Open Library et la synchronisation optionnelle de Trakt. Le jingle de fiche est une création originale FranchiseGuide et ne reprend pas l’audio de Plex. Aucune clé ou jeton tiers n'est intégré au projet.") }, confirmButton = { TextButton(onClick = { showAbout = false }) { Text("Fermer") } })
+    if (showAbout) AlertDialog(onDismissRequest = { showAbout = false }, title = { Text("À propos & crédits") }, text = { Text("FranchiseGuide 0.38.0 est une application indépendante inspirée des workflows de SeriesGuide (GPL-3.0-or-later).\n\nThis product uses the TMDB API but is not endorsed or certified by TMDB.\n\nLes données jeux peuvent provenir de RAWG, les livres d’Open Library et la synchronisation optionnelle de Trakt. Le jingle de fiche est une création originale FranchiseGuide et ne reprend pas l’audio de Plex. Aucune clé ou jeton tiers n'est intégré au projet.") }, confirmButton = { TextButton(onClick = { showAbout = false }) { Text("Fermer") } })
     if (showNewList) PersonalListEditor(repo,null,{showNewList=false}){showNewList=false;onOpenList(it)}
     if(showNewFranchise)UniverseEditor(repo,editingFranchise){showNewFranchise=false;editingFranchise=null}
     var deleteUniverse by remember{mutableStateOf<String?>(null)};var universeError by remember{mutableStateOf<String?>(null)}
@@ -682,6 +682,8 @@ fun SettingsScreen(repo: AppRepository,onImported:()->Unit={}) {
         item { OutlinedButton(onClick={message=repo.createLocalBackup().fold({"Sauvegarde créée."},{it.message})}){Text("Créer une sauvegarde maintenant")} }
         items(repo.localBackupSummaries(),key={it.first}) { (i,label)-> TextButton(enabled=!busy,onClick={busy=true;scope.launch { val r=withContext(Dispatchers.Default){repo.prepareLocalBackupImport(i)};busy=false;r.onSuccess{backupReview=it}.onFailure{message=it.message} }}){Text(label)} }
         item { OutlinedButton(onClick={showDiagnostics=true}){Text("Afficher le diagnostic local")} }
+        item { NativeSupportPanel(repo) }
+        item { NativePrivacyPanel(repo) }
         item { Button(onClick = { if(saveForm())message = "Réglages enregistrés." }, modifier = Modifier.fillMaxWidth()) { Icon(Icons.Default.Save, null); Spacer(Modifier.width(8.dp)); Text("Enregistrer") } }
     }
 }

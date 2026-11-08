@@ -21,5 +21,5 @@ function start({port=47632,root=fs.existsSync(path.resolve(__dirname,'../web/ind
  });
  server.listen(port,'127.0.0.1');return server;
 }
-if(require.main===module){const port=Number(process.env.FG_PORT||47632);if(!Number.isInteger(port)||port<1024||port>65535)throw Error('FG_PORT invalide.');const server=start({port});server.on('listening',()=>console.log('FranchiseGuide Web 0.37 · http://127.0.0.1:'+port+' · usage personnel local'));server.on('error',()=>{console.error('Port indisponible. Ferme l’ancien lanceur.');process.exitCode=1;});}
+if(require.main===module){const port=Number(process.env.FG_PORT||47632);if(!Number.isInteger(port)||port<1024||port>65535)throw Error('FG_PORT invalide.');const server=start({port});server.on('listening',()=>console.log('FranchiseGuide Web 0.38 · http://127.0.0.1:'+port+' · usage personnel local'));server.on('error',()=>{console.error('Port indisponible. Ferme l’ancien lanceur.');process.exitCode=1;});}
 module.exports={start};

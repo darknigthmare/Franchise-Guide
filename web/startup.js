@@ -51,24 +51,8 @@ const requestedSection=location.hash.slice(1);if(railItems.some(x=>x[0]===reques
 window.addEventListener('hashchange',()=>{const route=location.hash.slice(1);if(railItems.some(x=>x[0]===route)){screen=route;overlay=null;tab=0;render();}});
 document.body.classList.toggle('offline',navigator.onLine===false);
 previousTheme();fillExtraSettings();render();
-protectWriter().then(()=>{if(storageWritable){try{save(false);}catch{}scheduleCatalogRepair();scheduleInitialTraktSync();if(typeof bootstrapSteamConnection==='function')void bootstrapSteamConnection();if(typeof checkRetroBridge==='function')void checkRetroBridge().then(()=>retroForeground());}});
-if('serviceWorker'in navigator) {
-  let updateRequested=false;
-  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(updateRequested)location.reload();});
-  navigator.serviceWorker.register('sw.js').then(reg=>{
-    function offer(){
-      if(!reg.waiting||!navigator.serviceWorker.controller||$('#appUpdate'))return;
-      const panel=document.createElement('section');panel.id='appUpdate';panel.className='update-banner';panel.setAttribute('role','status');
-      panel.innerHTML='<span>Une mise à jour de FranchiseGuide est prête.</span><button class="tonal">Enregistrer et recharger</button>';
-      panel.querySelector('button').onclick=()=>{
-        if(storageDraft){toast('Exporte ou recharge d’abord ta copie de récupération avant la mise à jour.');return;}
-        try{if(storageWritable)save(false);updateRequested=true;reg.waiting?.postMessage({type:'ACTIVATE_UPDATE'});}catch{}
-      };
-      document.body.append(panel);
-    }
-    offer();reg.addEventListener('updatefound',()=>reg.installing?.addEventListener('statechange',offer));
-  }).catch(()=>diagnostic('warn','pwa','Cache hors-ligne indisponible sur cette origine.'));
-}
+protectWriter().then(()=>{startDirectoryBackup();if(storageWritable){try{save(false);}catch{}scheduleCatalogRepair();scheduleInitialTraktSync();if(typeof bootstrapSteamConnection==='function')void bootstrapSteamConnection();if(typeof checkRetroBridge==='function')void checkRetroBridge().then(()=>retroForeground());}});
+FGPwaUpdate.install();
 
 if(loadIssue){diagnostic('error','recovery',loadIssue);toast(loadIssue);}
 

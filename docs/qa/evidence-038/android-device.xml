@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="com.franchiseguide.app.data.CredentialVaultInstrumentedTest" tests="11" failures="0" errors="0" skipped="0" time="8.114" timestamp="2026-11-08T04:38:52" hostname="localhost">
+  <properties>
+    <property name="device" value="emulator-5554 - 15" />
+    <property name="flavor" value="" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="unknownEnvelopePreservesOriginalAndBlocksAllWrites" classname="com.franchiseguide.app.data.CredentialVaultInstrumentedTest" time="0.01" />
+  <testcase name="legacyStringsMigrateTogetherWithoutChangingMetadata" classname="com.franchiseguide.app.data.CredentialVaultInstrumentedTest" time="0.001" />
+  <testcase name="ciphertextCannotMoveBetweenPreferenceNames" classname="com.franchiseguide.app.data.CredentialVaultInstrumentedTest" time="0.023" />
+  <testcase name="missingKeystoreKeyDoesNotCreateReplacementOnRead" classname="com.franchiseguide.app.data.CredentialVaultInstrumentedTest" time="0.031" />
+  <testcase name="removalIsDurableAndLibraryStorageIsUntouched" classname="com.franchiseguide.app.data.CredentialVaultInstrumentedTest" time="0.004" />
+  <testcase name="freshSecretsAreCiphertextAndSurviveReopen" classname="com.franchiseguide.app.data.CredentialVaultInstrumentedTest" time="0.024" />
+  <testcase name="alteredCiphertextPreservesOriginalAndDoesNotResetVault" classname="com.franchiseguide.app.data.CredentialVaultInstrumentedTest" time="0.002" />
+  <testcase name="markedPlaintextFailsClosedWithoutReencryptingIt" classname="com.franchiseguide.app.data.CredentialVaultInstrumentedTest" time="0.031" />
+  <testcase name="preparationFreezesWritesAndCancellationRestoresThem" classname="com.franchiseguide.app.ui.PrivacyComposeInstrumentedTest" time="1.409" />
+  <testcase name="cancelAndReopenResetBothConfirmationsWithoutChangingLibrary" classname="com.franchiseguide.app.ui.PrivacyComposeInstrumentedTest" time="3.413" />
+  <testcase name="twoIndependentConfirmationsAreRequired" classname="com.franchiseguide.app.ui.PrivacyComposeInstrumentedTest" time="2.125" />
+</testsuite>

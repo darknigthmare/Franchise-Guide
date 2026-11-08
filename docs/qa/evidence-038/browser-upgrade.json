@@ -1,0 +1,17 @@
+{
+  "version": "0.38.0",
+  "checks": [
+    "Two real tabs share the original active worker, second is read-only",
+    "Waiting update refuses activation while another tab remains open",
+    "Refused update preserves library content",
+    "Open form blocks activation after other tabs are closed",
+    "Sole writer activates, reloads and retains saved preference",
+    "Only one versioned application shell remains",
+    "Updated worker serves every runtime module from its own cache",
+    "No uncaught errors during guarded update"
+  ],
+  "errors": [],
+  "realProviderAccounts": false,
+  "scope": "Actual Chromium worker update; two candidate caches of the same application schema.",
+  "passed": true
+}

@@ -1,3 +1,19 @@
+# V0.38.0 — Coffre Android, sauvegardes et continuité PWA
+
+8 novembre 2026. Reprise de la 0.37 fusionnée.
+
+- Chaînes d’accès Android protégées par Keystore/AES-GCM, migration vérifiée et conservation des originaux en cas d’erreur.
+- Effacement local explicite avec double confirmation, gel des opérations et annulation sûre ; action système finale encore à qualifier sur appareil jetable.
+- Sauvegardes Web/PC périodiques vers dossier choisi, opt-in et vérification après fermeture/relecture ; pas de traitement fermé ni de cloud.
+- Activation PWA refusée avec d’autres onglets ouverts ; écritures des anciens clients bloquées.
+- Rapports d’assistance par liste blanche et procédure de signalement.
+- 32 groupes JVM, 11 tests instrumentés Android, nouvelle recette de mise à jour Chromium et preuve de rejet d’une régression en CI.
+- Correction des libellés et métadonnées de version résiduels ; Excel 103 tâches, 16 terminées et 87 ouvertes.
+
+Résultats, périmètres et réserves : `docs/qa/2026-11-08.md`. Commercialisation : NO-GO conservé.
+
+---
+
 # V0.37.0 — Régressions natives, concurrence Steam et suivi sûr
 
 7 novembre 2026. Reprise de la 0.36 publiée, sans remplacement des outils IA du dépôt.

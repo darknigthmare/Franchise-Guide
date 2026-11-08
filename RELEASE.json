@@ -1,6 +1,6 @@
 {
   "name": "FranchiseGuide Suite",
-  "version": "0.37.0",
+  "version": "0.38.0",
   "base": "Recovered Drive V0.35 ZIP",
   "base_zip_sha256": "6628593fb329ea964d6f73b95c072bef5f26810715fcf08943d2421c79dde022",
   "portable_schema": 11,
@@ -37,24 +37,31 @@
     "Bounded coalescing of simultaneous PC Steam reads with account/game/language isolation",
     "Future episode guards on individual tracking, batches and check-ins",
     "Strict native Trakt check-in JSON codec and uncertain-session recovery",
-    "Android book-edition language filters and opt-in covers"
+    "Android book-edition language filters and opt-in covers",
+    "Android Keystore credential vault and verified migration",
+    "Explicit native local erase preparation and recovery-safe confirmations",
+    "Opt-in foreground external directory snapshots with post-close SHA-256 readback",
+    "Guarded PWA multi-tab activation and obsolete-client write freeze",
+    "Allowlisted Android/Web support reports and incident triage",
+    "32 JVM regression groups and 11 actual Android emulator testcases"
   ],
   "not_delivered": [
-    "SeriesGuide Cloud or general multi-device synchronization",
-    "Weekly automatic external backup / automatic Drive copy",
-    "Background Web completion while application is closed",
-    "Real provider accounts or credentials",
-    "New PSN/Xbox/Epic/GOG connectors or commercial certification",
-    "Android device validation, signed distribution",
-    "PWA installed state, upgrades and full cross-browser validation"
+    "General multi-device cloud synchronization or automatic Drive copy",
+    "Native Android external periodic backup",
+    "Closed-application Web jobs",
+    "Real provider-account qualification",
+    "Physical Android device and final destructive erase residue audit",
+    "Installed PWA and full cross-browser matrix",
+    "Signed installers/store distribution and commercial approval",
+    "Additional PSN/Xbox/Epic/GOG automatic connectors"
   ],
   "tests": {
-    "current_evidence": "docs/qa/2026-11-07.md",
-    "historical_results": "docs/archives/v036/current.json",
+    "current_evidence": "docs/qa/2026-11-08.md",
+    "historical_results": "docs/archives/v037/current.json",
     "note": "Only results recorded for this source revision belong to this release.",
-    "machine_readable": "docs/qa/2026-11-07.json"
+    "machine_readable": "docs/qa/current.json"
   },
   "all_runtime_credentials_included": false,
-  "assessed_at": "2026-11-07",
-  "previous_release": "0.36.0"
+  "assessed_at": "2026-11-08",
+  "previous_release": "0.37.0"
 }

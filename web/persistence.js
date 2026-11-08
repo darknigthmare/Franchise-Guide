@@ -4,6 +4,7 @@
 let storageRevision=Number(state._revision||0),storageDraft=null,storageWritable=true,writerRelease=null;
 let storedSyncSnapshot=null;
 function assertWritable(){
+  if(typeof FGPwaUpdate!=='undefined'&&FGPwaUpdate.changed()){const e=Error('Ancienne version : recharge cet onglet avant toute modification.');e.code='VERSION_CHANGED';throw e;}
   if(recoveryOnly){const e=Error(loadIssue||'Bibliothèque à récupérer : écriture bloquée.');e.code='RECOVERY_ONLY';throw e;}
   if(!storageWritable){const e=Error('Cette fenêtre est en lecture seule. Ferme l’autre fenêtre puis recharge celle-ci.');e.code='READ_ONLY';throw e;}
   const raw=localStorage.getItem(KEY);
